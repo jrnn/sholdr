@@ -4,14 +4,11 @@ from flask import (
 )
 
 app = Flask(__name__)
-url = "https://github.com/jrnn/sholdr"
+app.config["SECRET_KEY"] = "AllYourBaseAreBelongToUs"
 
 @app.route("/")
-def hello():
+def index():
     return render_template(
         "index.html",
-        url = url
+        url = "https://github.com/jrnn/sholdr"
     )
-
-if __name__ == "__main__":
-    app.run(debug = True)
