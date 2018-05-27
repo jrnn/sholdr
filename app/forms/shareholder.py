@@ -17,7 +17,7 @@ class ShareholderForm(FlaskForm):
             validators.Email("Invalid email format")
             ## TO-DO : check that email not already taken
         ],
-        render_kw = { "placeholder" : "local-part@domain.io" }
+        render_kw = { "placeholder" : "fred@flintstone.io" }
     )
     password = PasswordField(
         "Password",
@@ -36,7 +36,6 @@ class ShareholderForm(FlaskForm):
         "Street address (optional)",
         [ max_length(255) ]
     )
-
     zip_code = StringField(
         "Postal code",
         [

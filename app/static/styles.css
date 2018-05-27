@@ -1,0 +1,19 @@
+/*
+ *  custom global styling
+ */
+body {
+    margin : auto;
+    margin-bottom : 8rem;
+    max-width : 640px;
+}
+
+/*
+ *  custom selectors
+ */
+
+/*
+ *  selectively override Bootstrap default styling
+ */
+* {
+    border-radius : 0 !important;
+}

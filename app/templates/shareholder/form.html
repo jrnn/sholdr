@@ -1,106 +1,43 @@
 {% extends "base.html" %}
+{% from "macros.html" import render_field %}
 
 {% block body %}
   <form
     action = "{{ url_for("shareholder.create") }}"
     method = "POST"
   >
-    {{ form.email.label }}
-    {{ form.email }}
-    <br/>
-    {% for error in form.email.errors %}
-      <small>{{ error }}</small>
-    {% endfor %}
-    <br/>
-    {{ form.password.label }}
-    {{ form.password }}
-    <br/>
-    {% for error in form.password.errors %}
-      <small>{{ error }}</small>
-    {% endfor %}
-    <br/>
+    {{ render_field( form.email ) }}
+    {{ render_field( form.password ) }}
     {% if form.type == "natural" %}
-      {{ form.first_name.label }}
-      {{ form.first_name }}
-      <br/>
-      {% for error in form.first_name.errors %}
-        <small>{{ error }}</small>
-      {% endfor %}
-      <br/>
-      {{ form.last_name.label }}
-      {{ form.last_name }}
-      <br/>
-      {% for error in form.last_name.errors %}
-        <small>{{ error }}</small>
-      {% endfor %}
-      <br/>
-      {{ form.nin.label }}
-      {{ form.nin }}
-      <br/>
-      {% for error in form.nin.errors %}
-        <small>{{ error }}</small>
-      {% endfor %}
-      <br/>
-      {{ form.nationality.label }}
-      {{ form.nationality }}
-      <br/>
-      {% for error in form.nationality.errors %}
-        <small>{{ error }}</small>
-      {% endfor %}
-      <br/>
+      {{ render_field( form.first_name ) }}
+      {{ render_field( form.last_name ) }}
+      {{ render_field( form.nin ) }}
+      {{ render_field( form.nationality ) }}
     {% elif form.type == "juridical" %}
-      {{ form.name.label }}
-      {{ form.name }}
-      <br/>
-      {% for error in form.name.errors %}
-        <small>{{ error }}</small>
-      {% endfor %}
-      <br/>
-      {{ form.business_id.label }}
-      {{ form.business_id }}
-      <br/>
-      {% for error in form.business_id.errors %}
-        <small>{{ error }}</small>
-      {% endfor %}
-      <br/>
-      {{ form.contact_person.label }}
-      {{ form.contact_person }}
-      <br/>
-      {% for error in form.contact_person.errors %}
-        <small>{{ error }}</small>
-      {% endfor %}
-      <br/>
+      {{ render_field( form.name ) }}
+      {{ render_field( form.business_id ) }}
+      {{ render_field( form.contact_person ) }}
     {% endif %}
-    {{ form.street.label }}
-    {{ form.street }}
-    <br/>
-    {{ form.street_ext }}
-    <br/>
-    {% for error in form.street.errors %}
-      <small>{{ error }}</small>
-    {% endfor %}
-    <br/>
-    {{ form.zip_code.label }}
-    {{ form.zip_code }}
-    <br/>
-    {% for error in form.zip_code.errors %}
-      <small>{{ error }}</small>
-    {% endfor %}
-    <br/>
-    {{ form.city.label }}
-    {{ form.city }}
-    <br/>
-    {% for error in form.city.errors %}
-      <small>{{ error }}</small>
-    {% endfor %}
-    <br/>
-    {{ form.country.label }}
-    {{ form.country }}
-    <br/>
-    {% for error in form.country.errors %}
-      <small>{{ error }}</small>
-    {% endfor %}
-    <br/>
+    {% if form.street.errors %}
+      {% set street_class = "form-control is-invalid" %}
+    {% else %}
+      {% set street_class = "form-control" %}
+    {% endif %}
+    <div class = "form-group">
+      {{ form.street.label }}
+      {{ form.street(class = street_class) }}
+    </div>
+    <div class = "form-group">
+      {{ form.street_ext(class = street_class) }}
+      <div class = "invalid-feedback">
+        {% for error in form.street.errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    </div>
+    {{ render_field( form.zip_code ) }}
+    {{ render_field( form.city ) }}
+    {{ render_field( form.country ) }}
     <input
       hidden
       id = "type"
@@ -108,6 +45,7 @@
       value = "{{ form.type }}"
     />
     <input
+      class = "btn btn-secondary form-control"
       id = "submit"
       type = "submit"
       value = "Submit"

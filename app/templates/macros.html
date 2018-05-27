@@ -1,0 +1,27 @@
+{#
+    Renders an input field stylized with Bootstrap 4. Requires WTForm field as
+    parameter (field). Translates keyword arguments into html attributes as per
+    default WTForm behavior. If no "class" attribute is passed in kwargs,
+    defaults to "form-control".
+#}
+{% macro render_field(field) %}
+  {% if kwargs.get("class") == None %}
+    {% set class = "form-control" %}
+  {% else %}
+    {% set class = kwargs.pop("class", "") %}
+  {% endif %}
+  <div class = "form-group">
+    {{ field.label }}
+    {% if field.errors %}
+      {% set class = class + " is-invalid" %}
+      {{ field(class = class, **kwargs) }}
+      <div class = "invalid-feedback">
+        {% for error in field.errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% else %}
+      {{ field(class = class, **kwargs) }}
+    {% endif %}
+  </div>
+{% endmacro %}
