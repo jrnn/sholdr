@@ -66,8 +66,8 @@ class NaturalPerson(Shareholder):
         String(64),
         nullable = False
     )
-    nin = Column(   # National Identity Number
-        String(10),
+    nin = Column(   # National Identification Number
+        String(16),
         nullable = False
     )
     nationality = Column(

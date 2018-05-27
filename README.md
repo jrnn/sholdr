@@ -33,3 +33,8 @@ Documentation
 
  - [User stories](https://github.com/jrnn/sholdr/blob/master/docs/user_stories.md)
  - Database diagram (TBA)
+
+It runs on Heroku
+-----------------
+
+Click [here](https://sholdr.herokuapp.com/) to see it in action.
