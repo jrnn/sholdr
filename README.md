@@ -32,7 +32,7 @@ Documentation
 -------------
 
  - [User stories](https://github.com/jrnn/sholdr/blob/master/docs/user_stories.md)
- - Database diagram (TBA)
+ - [Database diagram](https://github.com/jrnn/sholdr/blob/master/docs/db_model.pdf)
 
 It runs on Heroku
 -----------------
