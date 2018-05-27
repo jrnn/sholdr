@@ -17,8 +17,12 @@ db = SQLAlchemy(
     app,
     model_class = CustomModel
 )
-from app.models.shareholder import Shareholder, NaturalPerson, JuridicalPerson
+from app.models.shareholder import Shareholder
 db.create_all()
+
+# register blueprints
+from app.views import shareholder
+app.register_blueprint(shareholder.bp)
 
 # temporary bullshit just for testing purposes
 @app.route("/")

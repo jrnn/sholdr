@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <form
+    action = "{{ url_for("shareholder.create") }}"
+    method = "POST"
+  >
+    <label for = "email">
+      Email
+    </label>
+    <input
+      id = "email"
+      name = "email"
+      placeholder = "local-part@domain.com"
+      type = "text"
+    />
+    <br/>
+    <label for = "password">
+      Password
+    </label>
+    <input
+      id = "password"
+      name = "password"
+      placeholder = "qwerty"
+      type = "password"
+    />
+    <br/>
+    {% block type_specific %}
+
+      Fields specific to shareholder type (natural vs. juridical person)
+
+    {% endblock %}
+    <label for = "street">
+      Street address
+    </label>
+    <input
+      id = "street"
+      name = "street"
+      placeholder = "301 Cobblestone Way"
+      type = "text"
+    />
+    <br/>
+    <input
+      id = "street_ext"
+      name = "street_ext"
+      type = "text"
+    />
+    <br/>
+    <label for = "zip_code">
+      Postal code
+    </label>
+    <input
+      id = "zip_code"
+      name = "zip_code"
+      placeholder = "70777"
+      type = "text"
+    />
+    <br/>
+    <label for = "city">
+      City
+    </label>
+    <input
+      id = "city"
+      name = "city"
+      placeholder = "Bedrock"
+      type = "text"
+    />
+    <br/>
+    <label for = "country">
+      Country
+    </label>
+    <input
+      id = "country"
+      name = "country"
+      placeholder = "United Chucks of Norris"
+      type = "text"
+    />
+    <br/>
+    <input
+      id = "submit"
+      type = "submit"
+      value = "Submit"
+    />
+  </form>
+{% endblock %}
