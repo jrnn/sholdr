@@ -17,7 +17,7 @@ db = SQLAlchemy(
     app,
     model_class = CustomModel
 )
-from app.models.shareholder import Shareholder
+from app.models.shareholder import Shareholder, NaturalPerson, JuridicalPerson
 db.create_all()
 
 # temporary bullshit just for testing purposes

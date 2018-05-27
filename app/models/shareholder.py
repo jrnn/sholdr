@@ -2,22 +2,101 @@ from . import UuidMixin
 from app import db
 from sqlalchemy import (
     Column,
+    ForeignKey,
     String
 )
 
 class Shareholder(UuidMixin, db.Model):
     """
-    Note that Shareholders are also users of the application.
+    Note that Shareholders are also users of the application. Email is used in
+    place of username when logging in, and also for verifying new users and/or
+    resetting password.
+
+    Shareholders can be either natural persons (i.e. human beings) or juridical
+    persons (i.e. organizations), with some differences in what information is
+    needed for each. Though these differences are minor, for sake of practice,
+    the two are treated as separate subclasses using joined table inheritance.
     """
-    username = Column(
-        String(16),
-        nullable = False
+    email = Column(
+        String(255),
+        nullable = False,
+        unique = True
     )
     pw_hash = Column(
         String(60),
         nullable = False
     )
+    street = Column(
+        String(255),
+        nullable = False
+    )
+    street_ext = Column(String(255))
+    zip_code = Column(
+        String(32),
+        nullable = False
+    )
+    city = Column(
+        String(64),
+        nullable = False
+    )
+    country = Column(
+        String(64),
+        nullable = False
+    )
+    # add later
+    #  - authority (basic vs. admin user)
+    #  - access rights (boolean)
+    type = Column(String(16))
+    __mapper_args__ = {
+        "polymorphic_identity" : "shareholder",
+        "polymorphic_on" : type
+    }
 
-    def __init__(self, username):
-        self.username = username
-        self.pw_hash = "kuha on varaani"
+class NaturalPerson(Shareholder):
+    id = Column(
+        String(32),
+        ForeignKey("shareholder.id"),
+        primary_key = True
+    )
+    first_name = Column(
+        String(64),
+        nullable = False
+    )
+    last_name = Column(
+        String(64),
+        nullable = False
+    )
+    nin = Column(   # National Identity Number
+        String(10),
+        nullable = False
+    )
+    nationality = Column(
+        String(64),
+        nullable = False
+    )
+    __mapper_args__ = {
+        "polymorphic_identity" : "natural_person"
+    }
+
+class JuridicalPerson(Shareholder):
+    id = Column(
+        String(32),
+        ForeignKey("shareholder.id"),
+        primary_key = True
+    )
+    name = Column(
+        String(128),
+        nullable = False
+    )
+    business_id = Column(
+        String(32),
+        nullable = False,
+        unique = True
+    )
+    contact_person = Column(
+        String(128),
+        nullable = False
+    )
+    __mapper_args__ = {
+        "polymorphic_identity" : "juridical_person"
+    }
