@@ -10,6 +10,7 @@ from app.models.shareholder import (
 )
 from flask import (
     Blueprint,
+    flash,
     redirect,
     render_template,
     request,
@@ -81,7 +82,10 @@ def form():
     elif type == "juridical":
         f = JuridicalPersonForm()
     else:
-        ## TO-DO : error message
+        flash(
+            "Incorrect shareholder type. Stop messing with the address bar!",
+            "alert-danger"
+        )
         return redirect(url_for("shareholder.list_all"))
 
     return render_template(
@@ -108,7 +112,10 @@ def create():
         s = JuridicalPerson()
 
     if not f.validate():
-        # TO-DO : error message
+        flash(
+            "Check your inputs, sahib. Something's not right.",
+            "alert-danger"
+        )
         return render_template(
             "shareholder/form.html",
             form = f,
@@ -121,7 +128,10 @@ def create():
     db.session.add(s)
     db.session.commit()
 
-    ## TO-DO : success message
+    flash(
+        "New shareholder successfully created, hooray!",
+        "alert-success"
+    )
     return redirect(url_for("shareholder.list_all"))
 
 @bp.route("/<id>", methods = ("POST",))
@@ -143,7 +153,10 @@ def update(id):
         f = JuridicalPersonForm(request.form)
 
     if not f.validate():
-        # TO-DO : error message
+        flash(
+            "Check your inputs, sahib. Something's not right.",
+            "alert-danger"
+        )
         return render_template(
             "shareholder/form.html",
             form = f,
@@ -153,5 +166,8 @@ def update(id):
     f.populate_obj(s)
     db.session.commit()
 
-    ## TO-DO : success message
+    flash(
+        "Shareholder information successfully updated!",
+        "alert-success"
+    )
     return redirect(url_for("shareholder.list_all"))
