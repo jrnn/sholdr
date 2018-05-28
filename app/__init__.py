@@ -1,4 +1,4 @@
-from app.models import CustomModel
+from .models import CustomModel
 from flask import (
     Flask,
     render_template
@@ -17,11 +17,11 @@ db = SQLAlchemy(
     app,
     model_class = CustomModel
 )
-from app.models.shareholder import Shareholder
+from .models.shareholder import Shareholder
 db.create_all()
 
 # register blueprints
-from app.views import shareholder
+from .views import shareholder
 app.register_blueprint(shareholder.bp)
 
 # temporary bullshit just for testing purposes

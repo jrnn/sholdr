@@ -1,15 +1,15 @@
+from . import CustomBaseForm
 from app.util.validation import (
     max_length,
     not_empty
 )
-from flask_wtf import FlaskForm
 from wtforms import (
     PasswordField,
     StringField,
     validators
 )
 
-class ShareholderForm(FlaskForm):
+class ShareholderForm(CustomBaseForm):
     email = StringField(
         "Email",
         [
@@ -60,8 +60,6 @@ class ShareholderForm(FlaskForm):
         ],
         render_kw = { "placeholder" : "United Chucks of Norris" }
     )
-    class Meta:
-        csrf = False
 
 class NaturalPersonForm(ShareholderForm):
     type = "natural"
