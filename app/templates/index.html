@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 
-{% block body %}
-<p>
-  Here's a link to the GitHub repo of this exercise project -->
-  <a href = "{{ url }}">
-    {{ url }}
-  </a>
-</p>
+{% block content %}
+  <p>
+    <a href = "{{ url_for("shareholder.list_all") }}">
+      Shareholder list
+    </a>
+  </p>
+  <p>
+    <a href = "{{ url }}">
+      GitHub
+    </a>
+  </p>
 {% endblock %}

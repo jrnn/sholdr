@@ -16,13 +16,15 @@
   </head>
 
   <body>
-    <div class = "container">
-      <h2>
-        sholdr
-      </h2>
-      {% block body %}
-      {% endblock %}
-    </div>
+    <section class = "bg-dark padded">
+      <h2 class = "container">sholdr</h2>
+    </section>
+    <section class = "padded">
+      <div class = "container">
+        {% block content %}
+        {% endblock %}
+      </div>
+    </section>
     <script
       crossorigin = "anonymous"
       integrity = "sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -38,5 +40,7 @@
       integrity = "sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
       src = "https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
     ></script>
+    {% block scripts %}
+    {% endblock %}
   </body>
 </html>

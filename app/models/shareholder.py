@@ -78,6 +78,12 @@ class NaturalPerson(Shareholder):
         "polymorphic_identity" : "natural_person"
     }
 
+    def get_name(self):
+        return self.last_name + ", " + self.first_name
+
+    def get_id(self):
+        return self.nin
+
 class JuridicalPerson(Shareholder):
     id = Column(
         String(32),
@@ -100,3 +106,9 @@ class JuridicalPerson(Shareholder):
     __mapper_args__ = {
         "polymorphic_identity" : "juridical_person"
     }
+
+    def get_name(self):
+        return self.name
+
+    def get_id(self):
+        return self.business_id

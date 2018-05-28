@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% from "macros.html" import render_field %}
 
-{% block body %}
+{% block content %}
   <form
     action = "{{ url_for("shareholder.create") }}"
     method = "POST"

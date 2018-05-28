@@ -5,19 +5,48 @@ from app.forms.shareholder import (
 )
 from app.models.shareholder import (
     JuridicalPerson,
-    NaturalPerson
+    NaturalPerson,
+    Shareholder
 )
 from flask import (
     Blueprint,
+    redirect,
     render_template,
-    request
+    request,
+    url_for
 )
+from sqlalchemy.orm import with_polymorphic
 
 bp = Blueprint(
     "shareholder",
     __name__,
     url_prefix = "/shareholder"
 )
+
+@bp.route("/", methods = ("GET",))
+def list_all():
+    """
+    Because shareholder has two subclasses and the data needed here is in those
+    subclasses, use with_polymorphic() to make an "eager" JOIN query, so that
+    needed data is all loaded up-front at once. This is to avoid a sequence of
+    pointless per-entity queries afterwards (i.e. the N+1 problem).
+
+    TO-DO : Replace ORM default with a manual, lightweight query?
+    """
+    shareholders = db.session.query(
+        with_polymorphic(
+            Shareholder,
+            [ JuridicalPerson, NaturalPerson ]
+        )).all()
+
+    return render_template(
+        "shareholder/list.html",
+        shareholders = shareholders
+    )
+
+@bp.route("/<id>", methods = ("GET",))
+def view_one(id):
+    return "render shareholder/form.html with prefilled form depending on type"
 
 @bp.route("/new", methods = ("GET",))
 def form():
@@ -37,7 +66,8 @@ def form():
             form = JuridicalPersonForm()
         )
     else:
-        return "throw back to list view with error message"
+        ## TO-DO : error message
+        return redirect(url_for("shareholder.list_all"))
 
 @bp.route("/", methods = ("POST",))
 def create():
@@ -62,6 +92,7 @@ def create():
         s.contact_person = f.contact_person.data.strip()
 
     if not f.validate():
+        # TO-DO : error message
         return render_template(
             "shareholder/form.html",
             form = f
@@ -78,4 +109,5 @@ def create():
     db.session().add(s)
     db.session().commit()
 
-    return "shareholder added, redirect to list view"
+    ## TO-DO : success message
+    return redirect(url_for("shareholder.list_all"))

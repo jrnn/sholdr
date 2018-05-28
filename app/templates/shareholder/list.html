@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <table
+    class = "table table-hover"
+    id = "shareholders"
+  >
+    <thead class = "thead-light">
+      <tr>
+        <th>Name</th>
+        <th>ID</th>
+        <th>Country</th>
+        <th>No. of shares</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for s in shareholders %}
+      <tr id = {{ s.id }}>
+        <td>{{ s.get_name() }}</td>
+        <td>{{ s.get_id() }}</td>
+        <td>{{ s.country }}</td>
+        <td>TBA</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p>
+    <a href = "{{ url_for("shareholder.form") + "?type=natural" }}">
+      Add new natural person
+    </a>
+  </p>
+  <p>
+    <a href = "{{ url_for("shareholder.form") + "?type=juridical" }}">
+      Add new juridical person
+    </a>
+  </p>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function() {
+      $("#shareholders").on("click", "tbody tr", function() {
+        window.location.href = "/shareholder/" + $(this).attr("id");
+      });
+    });
+  </script>
+{% endblock %}
