@@ -3,11 +3,10 @@
 
 {% block content %}
   <form
-    action = "{{ url_for("shareholder.create") }}"
+    action = "{{ form_action }}"
     method = "POST"
   >
     {{ render_field( form.email ) }}
-    {{ render_field( form.password ) }}
     {% if form.type == "natural" %}
       {{ render_field( form.first_name ) }}
       {{ render_field( form.last_name ) }}
