@@ -27,12 +27,14 @@ bp = Blueprint(
 @bp.route("/", methods = ("GET",))
 def list_all():
     """
+    Show all shareholders on a list.
+
     Because shareholder has two subclasses and the data needed here is on sub-
     class level, use with_polymorphic() to make an "eager" JOIN query, so that
     needed data is all loaded up-front at once. This is to avoid a sequence of
     pointless per-entity queries (i.e. the N+1 problem).
 
-    TO-DO : Replace ORM default with a manual, more lightweight query?
+    TO-DO : Replace ORM default with a manual, leaner query?
     """
     shareholders = db.session.query(
         with_polymorphic(
@@ -49,9 +51,11 @@ def list_all():
 def view_one(id):
     """
     Find one shareholder by primary key, then query for the correct subclass
-    entity by type, and prefill corresponding form with its data. The same form
-    template is used as when creating new shareholders, but the form action on
-    submit points at the 'update' route, singled by id.
+    entity by type, and prefill corresponding form with its data.
+
+    Whether looking at an existing shareholder or creating a new one, the same
+    html template is used in both cases. The function handling the submit can
+    tell the difference based on a 'hidden' id prop passed to the form.
     """
     s = Shareholder.query.get_or_404(id)
 
@@ -64,16 +68,18 @@ def view_one(id):
 
     return render_template(
         "shareholder/form.html",
-        form = f,
-        form_action = url_for("shareholder.create") + id
+        form = f
     )
 
 @bp.route("/new", methods = ("GET",))
-def form():
+def empty_form():
     """
-    Shareholder type must be given as query parameter, based on which the
-    correct form is passed to Jinja. Form action on submit is set to point at
-    'create' route.
+    Show empty form for creating a new shareholder. Shareholder type must be
+    given as query parameter so that the correct form class is passed to Jinja.
+
+    Whether looking at an existing shareholder or creating a new one, the same
+    html template is used in both cases. The function handling the submit can
+    tell the difference based on a 'hidden' id prop passed to the form.
     """
     type = request.args.get("type")
 
@@ -90,26 +96,31 @@ def form():
 
     return render_template(
         "shareholder/form.html",
-        form = f,
-        form_action = url_for("shareholder.create")
+        form = f
     )
 
 @bp.route("/", methods = ("POST",))
-def create():
+def create_or_update():
     """
-    Convert html form into corresponding WTForm and run validation. If errors,
-    throw back to form view. Otherwise populate a new shareholder object with
-    form data and save into db.
+    Either create a new shareholder or update existing one, depending on the
+    inbound form's id field (process is very similar in both cases). Validate
+    form data and, if errors, throw back to form view. Set password only when
+    creating new.
     """
+    id = request.form.get("id")
     type = request.form.get("type")
     assert type == "natural" or type == "juridical"
 
     if type == "natural":
         f = NaturalPersonForm(request.form)
-        s = NaturalPerson()
+        s = NaturalPerson.query.get(id)
+        if s is None:
+            s = NaturalPerson()
     else:
         f = JuridicalPersonForm(request.form)
-        s = JuridicalPerson()
+        s = JuridicalPerson.query.get(id)
+        if s is None:
+            s = JuridicalPerson()
 
     if not f.validate():
         flash(
@@ -118,56 +129,21 @@ def create():
         )
         return render_template(
             "shareholder/form.html",
-            form = f,
-            form_action = url_for("shareholder.create")
+            form = f
         )
 
+    del f.id  # avoid setting "new" as pk when creating new shareholder
     f.populate_obj(s)
-    s.pw_hash = "kuha_on_varaani"  ## TEMPORARY BULLSHIT
+    notification = "Shareholder information successfully updated!"
 
-    db.session.add(s)
+    if id == "new":
+        s.pw_hash = "kuha_on_varaani"  ## TEMPORARY BULLSHIT
+        db.session.add(s)
+        notification = "New shareholder successfully created, hooray!"
+
     db.session.commit()
-
     flash(
-        "New shareholder successfully created, hooray!",
-        "alert-success"
-    )
-    return redirect(url_for("shareholder.list_all"))
-
-@bp.route("/<id>", methods = ("POST",))
-def update(id):
-    """
-    Very similar to create() above, but instead of adding new shareholder, fetch
-    existing one from db, overwrite it with form data, and save changes.
-
-    TO-DO : maybe create() and update() should be integrated into one method?
-    """
-    type = request.form.get("type")
-    assert type == "natural" or type == "juridical"
-
-    if type == "natural":
-        s = NaturalPerson.query.get_or_404(id)
-        f = NaturalPersonForm(request.form)
-    else:
-        s = JuridicalPerson.query.get_or_404(id)
-        f = JuridicalPersonForm(request.form)
-
-    if not f.validate():
-        flash(
-            "Check your inputs, sahib. Something's not right.",
-            "alert-danger"
-        )
-        return render_template(
-            "shareholder/form.html",
-            form = f,
-            form_action = url_for("shareholder.create") + id
-        )
-
-    f.populate_obj(s)
-    db.session.commit()
-
-    flash(
-        "Shareholder information successfully updated!",
+        notification,
         "alert-success"
     )
     return redirect(url_for("shareholder.list_all"))

@@ -10,6 +10,7 @@ from wtforms import (
 )
 
 class ShareholderForm(CustomBaseForm):
+    id = StringField(default = "new")
     email = StringField(
         "Email",
         [
