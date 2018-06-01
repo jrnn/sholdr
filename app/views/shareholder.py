@@ -11,6 +11,7 @@ from app.models.shareholder import (
 from app.util import flash
 from .auth import hashPassword
 from flask import (
+    abort,
     Blueprint,
     redirect,
     render_template,
@@ -138,4 +139,24 @@ def create_or_update():
         flash.update_ok("shareholder")
 
     db.session.commit()
+    return redirect(url_for("shareholder.list_all"))
+
+@bp.route("/<id>/delete", methods = ("POST",))
+def delete(id):
+    """
+    Delete shareholder (including subclass) by primary key, if found. Otherwise
+    throw 404.
+
+    Unlike in the above method, shareholder id is given as a request parameter.
+    """
+    res = Shareholder.query.filter_by(id = id).delete()
+
+    if res > 0:
+        NaturalPerson.query.filter_by(id = id).delete()
+        JuridicalPerson.query.filter_by(id = id).delete()
+    else:
+        abort(404)
+
+    db.session.commit()
+    flash.delete_ok("shareholder")
     return redirect(url_for("shareholder.list_all"))

@@ -21,6 +21,12 @@ def create_ok(entity):
         success_class
     )
 
+def delete_ok(entity):
+    return flash(
+        "{} irreversibly obliterated, sayonara!".format(entity.capitalize()),
+        success_class
+    )
+
 def update_ok(entity):
     return flash(
         "{} information successfully updated!".format(entity.capitalize()),
