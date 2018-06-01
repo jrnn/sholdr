@@ -8,6 +8,7 @@ from app.models.shareholder import (
     NaturalPerson,
     Shareholder
 )
+from .auth import hashPassword
 from flask import (
     Blueprint,
     flash,
@@ -104,8 +105,8 @@ def create_or_update():
     """
     Either create a new shareholder or update existing one, depending on the
     inbound form's id field (process is very similar in both cases). Validate
-    form data and, if errors, throw back to form view. Set password only when
-    creating new.
+    form data and, if errors, throw back to form view. Hash and set password
+    only when creating new.
     """
     id = request.form.get("id")
     type = request.form.get("type")
@@ -137,7 +138,7 @@ def create_or_update():
     notification = "Shareholder information successfully updated!"
 
     if id == "new":
-        s.pw_hash = "kuha_on_varaani"  ## TEMPORARY BULLSHIT
+        s.pw_hash = hashPassword(f.password.data)
         db.session.add(s)
         notification = "New shareholder successfully created, hooray!"
 

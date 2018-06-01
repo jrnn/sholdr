@@ -11,6 +11,7 @@ app.config["SECRET_KEY"] = "AllYourBaseAreBelongToUs"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///sholdr.db"
 app.config["SQLALCHEMY_ECHO"] = True
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["BCRYPT_LOG_ROUNDS"] = 10
 
 # create and initialize instance of db
 db = SQLAlchemy(

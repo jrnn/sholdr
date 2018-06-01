@@ -6,8 +6,6 @@
     action = "{{ url_for("shareholder.create_or_update") }}"
     method = "POST"
   >
-    <h2>Form.id = {{ form.id.data }}</h2>
-
     {{ render_field( form.email ) }}
     {% if form.id.data == "new" %}
       {{ render_field( form.password ) }}
