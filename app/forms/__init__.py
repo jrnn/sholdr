@@ -1,3 +1,4 @@
+from app.util.util import apply_strip
 from flask_wtf import FlaskForm
 
 class CustomBaseForm(FlaskForm):
@@ -11,20 +12,11 @@ class CustomBaseForm(FlaskForm):
 
         def bind_field(self, form, unbound_field, options):
             filters = unbound_field.kwargs.get("filters", [])
-            if stripper not in filters:
-                filters.append(stripper)
+            if apply_strip not in filters:
+                filters.append(apply_strip)
 
             return unbound_field.bind(
                 filters = filters,
                 form = form,
                 **options
             )
-
-def stripper(s):
-    """
-    Apply .strip() to given value if applicable.
-    """
-    if s is not None and hasattr(s, "strip"):
-        return s.strip()
-    else:
-        return s

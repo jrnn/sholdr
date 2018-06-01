@@ -1,5 +1,37 @@
+# Utility functions needed here and there.
+
 import re
 import uuid
+
+# The several 'apply'-something functions below seem trivial, but they are
+# needed for WTForm transformations (passed into a field as 'filters').
+
+def apply_lower(s):
+    """
+    Apply .lower() to given value if applicable.
+    """
+    if s is not None and hasattr(s, "lower"):
+        return s.lower()
+    else:
+        return s
+
+def apply_strip(s):
+    """
+    Apply .strip() to given value if applicable.
+    """
+    if s is not None and hasattr(s, "strip"):
+        return s.strip()
+    else:
+        return s
+
+def apply_upper(s):
+    """
+    Apply .upper() to given value if applicable.
+    """
+    if s is not None and hasattr(s, "upper"):
+        return s.upper()
+    else:
+        return s
 
 def get_uuid():
     """
