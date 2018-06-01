@@ -1,7 +1,8 @@
 from . import CustomBaseForm
 from app.util.validation import (
     max_length,
-    not_empty
+    not_empty,
+    RequiredIf
 )
 from wtforms import (
     PasswordField,
@@ -23,6 +24,7 @@ class ShareholderForm(CustomBaseForm):
     password = PasswordField(
         "Password",
         ## TO-DO : custom validator for password requirements
+        [ RequiredIf(id = "new") ],
         render_kw = { "placeholder" : "qwerty" }
     )
     street = StringField(
