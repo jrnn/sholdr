@@ -8,10 +8,10 @@ from app.models.shareholder import (
     NaturalPerson,
     Shareholder
 )
+from app.util import flash
 from .auth import hashPassword
 from flask import (
     Blueprint,
-    flash,
     redirect,
     render_template,
     request,
@@ -89,10 +89,7 @@ def empty_form():
     elif type == "juridical":
         f = JuridicalPersonForm()
     else:
-        flash(
-            "Incorrect shareholder type. Stop messing with the address bar!",
-            "alert-danger"
-        )
+        flash.incorrect_type("shareholder")
         return redirect(url_for("shareholder.list_all"))
 
     return render_template(
@@ -124,10 +121,7 @@ def create_or_update():
             s = JuridicalPerson()
 
     if not f.validate():
-        flash(
-            "Check your inputs, sahib. Something's not right.",
-            "alert-danger"
-        )
+        flash.invalid_input()
         return render_template(
             "shareholder/form.html",
             form = f
@@ -135,16 +129,13 @@ def create_or_update():
 
     del f.id  # avoid setting "new" as pk when creating new shareholder
     f.populate_obj(s)
-    notification = "Shareholder information successfully updated!"
 
     if id == "new":
         s.pw_hash = hashPassword(f.password.data)
         db.session.add(s)
-        notification = "New shareholder successfully created, hooray!"
+        flash.create_ok("shareholder")
+    else:
+        flash.update_ok("shareholder")
 
     db.session.commit()
-    flash(
-        notification,
-        "alert-success"
-    )
     return redirect(url_for("shareholder.list_all"))
