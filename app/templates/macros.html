@@ -5,16 +5,11 @@
     defaults to "form-control".
 #}
 {% macro render_field(field) %}
-  {% if kwargs.get("class") == None %}
-    {% set class = "form-control" %}
-  {% else %}
-    {% set class = kwargs.pop("class", "") %}
-  {% endif %}
+  {% set class = kwargs.pop("class", "form-control") %}
   <div class = "form-group">
     {{ field.label }}
     {% if field.errors %}
-      {% set class = class + " is-invalid" %}
-      {{ field(class = class, **kwargs) }}
+      {{ field(class = class + " is-invalid", **kwargs) }}
       <div class = "invalid-feedback">
         {% for error in field.errors %}
           {{ error }}

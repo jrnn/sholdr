@@ -1,3 +1,9 @@
+"""
+    This module contains the blueprint for Shareholder management endpoints,
+    spanning the standard CRUD operations. Because Shareholders come in two
+    flavors (subclassing), the code is a bit bulkier than usual.
+"""
+
 from app import db
 from app.forms.shareholder import (
     JuridicalPersonForm,
@@ -18,6 +24,7 @@ from flask import (
     request,
     url_for
 )
+from flask_login import login_required
 from sqlalchemy.orm import with_polymorphic
 
 bp = Blueprint(
@@ -27,6 +34,7 @@ bp = Blueprint(
 )
 
 @bp.route("/", methods = ("GET",))
+@login_required
 def list_all():
     """
     Show all shareholders on a list.
@@ -50,14 +58,15 @@ def list_all():
     )
 
 @bp.route("/<id>", methods = ("GET",))
+@login_required
 def view_one(id):
     """
     Find one shareholder by primary key, then query for the correct subclass
     entity by type, and prefill corresponding form with its data.
 
     Whether looking at an existing shareholder or creating a new one, the same
-    html template is used in both cases. The function handling the submit can
-    tell the difference based on a 'hidden' id prop passed to the form.
+    html template is used. The function handling the submit can tell the
+    difference based on a hidden id prop passed to the form.
     """
     s = Shareholder.query.get_or_404(id)
 
@@ -74,14 +83,16 @@ def view_one(id):
     )
 
 @bp.route("/new", methods = ("GET",))
+@login_required
 def empty_form():
     """
     Show empty form for creating a new shareholder. Shareholder type must be
-    given as query parameter so that the correct form class is passed to Jinja.
+    given as query parameter so that the correct WTForm class is passed to
+    Jinja.
 
     Whether looking at an existing shareholder or creating a new one, the same
-    html template is used in both cases. The function handling the submit can
-    tell the difference based on a 'hidden' id prop passed to the form.
+    html template is used. The function handling the submit can tell the
+    difference based on a hidden id prop passed to the form.
     """
     type = request.args.get("type")
 
@@ -99,6 +110,7 @@ def empty_form():
     )
 
 @bp.route("/", methods = ("POST",))
+@login_required
 def create_or_update():
     """
     Either create a new shareholder or update existing one, depending on the
@@ -142,12 +154,12 @@ def create_or_update():
     return redirect(url_for("shareholder.list_all"))
 
 @bp.route("/<id>/delete", methods = ("POST",))
+@login_required
 def delete(id):
     """
     Delete shareholder (including subclass) by primary key, if found. Otherwise
-    throw 404.
-
-    Unlike in the above method, shareholder id is given as a request parameter.
+    throw 404. Unlike in the above method, shareholder id is given as a request
+    parameter.
     """
     res = Shareholder.query.filter_by(id = id).delete()
 

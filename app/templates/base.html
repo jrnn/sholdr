@@ -19,14 +19,25 @@
     <section class = "bg-dark padded">
       <h2 class = "container">sholdr</h2>
     </section>
+    <section class = "container">
+      {% if current_user.is_authenticated %}
+        <a href = "{{ url_for("auth.logout") }}">
+          Log out
+        </a>
+      {% else %}
+        <a href = "{{ url_for("auth.login") }}">
+          Log in
+        </a>
+      {% endif %}
+    </section>
     <section>
     {% with messages = get_flashed_messages(with_categories = true) %}
-      {% for c, m in messages %}
+      {% for category, message in messages %}
       <div
-        class = "container alert alert-dismissible {{ c }}"
+        class = "container alert alert-dismissible {{ category }}"
         role = "alert"
       >
-        {{ m }}
+        {{ message }}
         <button
           aria-label = "Close"
           class = "close"

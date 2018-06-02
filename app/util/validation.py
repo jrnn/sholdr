@@ -1,4 +1,9 @@
-# Custom validators for use in WTForm classes.
+"""
+    This module contains custom and configured validators for use in WTForm
+    classes. The "fully" customized validators are implemented as classes, while
+    the simpler configurations of out-of-the-box validators are implemented as
+    functions.
+"""
 
 import re
 
@@ -6,8 +11,8 @@ from app import db
 from sqlalchemy import and_
 from wtforms.validators import (
     DataRequired,
-    Optional,
     Length,
+    Optional,
     ValidationError
 )
 
@@ -19,8 +24,8 @@ def max_length(n = 255):
 
 class NinFormat(object):
     """
-    Check that field value either consists of six digits, or corresponds to a
-    Finnish HETU code.
+    Check that field value either consists of six digits, or matches the format
+    of a Finnish HETU code (= national identification number).
 
     This is a very limited implementation, which does not detect e.g. days
     beyond 31 or months beyond 12, nor calculate the HETU checksum.
@@ -43,9 +48,9 @@ def not_empty():
 
 class PasswordFormat(object):
     """
-    Check that field value only contains certain allowed characters; that it
-    has at least one of each: a capital letter, a small letter, and a number;
-    and that it is at least 8 characters long.
+    Check that field value only contains certain allowed characters; that it is
+    at least 8 characters long; and that it has at least one of each: a capital
+    letter, a small letter, and a number.
     """
     def __init__(self, message = None):
         if not message:

@@ -1,3 +1,13 @@
+"""
+    This module contains the WTForm classes that handle Shareholder forms: a
+    common base for shared fields, and one subform for each subclass. A tweaked
+    base class that trims surrounding whitespace from all fields is applied.
+
+    Shareholders are the heaviest entity in the app (in terms of number of
+    attributes), so the form classes are quite hefty too, with layers of
+    validation and customization.
+"""
+
 from . import CustomBaseForm
 from app.models.shareholder import (
     JuridicalPerson,
@@ -106,11 +116,7 @@ class NaturalPersonForm(ShareholderForm):
     )
     nin = StringField(
         "National ID / Date of birth",
-        [
-            max_length(11),
-            not_empty(),
-            NinFormat()
-        ],
+        [ NinFormat() ],
         filters = [ apply_upper ],
         render_kw = { "placeholder" : "070770-7071" }
     )

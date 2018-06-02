@@ -17,7 +17,7 @@
     {% for s in shareholders %}
       <tr id = {{ s.id }}>
         <td>{{ s.get_name() }}</td>
-        <td>{{ s.get_id() }}</td>
+        <td>{{ s.get_type_id() }}</td>
         <td>{{ s.country }}</td>
         <td>TBA</td>
       </tr>
