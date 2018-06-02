@@ -15,7 +15,7 @@ from app.models.shareholder import (
     Shareholder
 )
 from app.util import flash
-from .auth import hashPassword
+from app.util.auth import hashPassword
 from flask import (
     abort,
     Blueprint,
