@@ -40,7 +40,7 @@ def login():
     f = LoginForm(request.form)
     s = Shareholder.query.filter_by(email = f.email.data).first()
 
-    if not s or not checkPassword(f.password.data, s.pw_hash):
+    if not s or not checkPassword(f.password.data, s.pw_hash) or not s.has_access:
         flash.login_error()
         return render_template(
             "auth/login.html",

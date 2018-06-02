@@ -20,3 +20,15 @@
     {% endif %}
   </div>
 {% endmacro %}
+
+{#
+    Renders a checkbox field stylized with Bootstrap 4. Requires WTForm field as
+    parameter (field). Takes no other parameters, so does not allow stylizing
+    with kwargs ...
+#}
+{% macro render_checkbox(field) %}
+  <div class = "form-group form-check">
+    {{ field(class = "form-check-input") }}
+    {{ field.label(class = "form-check-label") }}
+  </div>
+{% endmacro %}

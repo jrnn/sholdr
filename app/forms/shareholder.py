@@ -26,6 +26,7 @@ from app.util.validation import (
     Unique
 )
 from wtforms import (
+    BooleanField,
     PasswordField,
     StringField,
     validators
@@ -35,8 +36,10 @@ class ShareholderForm(CustomBaseForm):
     id = StringField(default = "new")
 
     email = StringField(
-        "Email",
-        [
+        filters = [ apply_lower ],
+        label = "Email",
+        render_kw = { "placeholder" : "fred@flintstone.io" },
+        validators = [
             max_length(255),
             validators.Email("Invalid email format"),
             Unique(
@@ -44,105 +47,113 @@ class ShareholderForm(CustomBaseForm):
                 entity = Shareholder,
                 message = "Email already in use by another shareholder"
             )
-        ],
-        filters = [ apply_lower ],
-        render_kw = { "placeholder" : "fred@flintstone.io" }
+        ]
     )
     password = PasswordField(
-        "Password",
-        [
+        label = "Password",
+        render_kw = { "placeholder" : "qwerty" },
+        validators = [
             RequiredIf(
                 id = "new",
                 validator = PasswordFormat
             )
-        ],
-        render_kw = { "placeholder" : "qwerty" }
+        ]
     )
     street = StringField(
-        "Street address",
-        [
+        label = "Street address",
+        render_kw = { "placeholder" : "301 Cobblestone Way" },
+        validators = [
             max_length(255),
             not_empty()
-        ],
-        render_kw = { "placeholder" : "301 Cobblestone Way" }
+        ]
     )
     street_ext = StringField(
-        "Street address (optional)",
-        [ max_length(255) ]
+        label = "Street address (optional)",
+        validators = [ max_length(255) ]
     )
     zip_code = StringField(
-        "Postal code",
-        [
+        label = "Postal code",
+        render_kw = { "placeholder" : "70777" },
+        validators = [
             max_length(32),
             not_empty()
-        ],
-        render_kw = { "placeholder" : "70777" }
+        ]
     )
     city = StringField(
-        "City",
-        [
+        label = "City",
+        render_kw = { "placeholder" : "Bedrock" },
+        validators = [
             max_length(64),
             not_empty()
-        ],
-        render_kw = { "placeholder" : "Bedrock" }
+        ]
     )
     country = StringField(
-        "Country",
-        [
+        label = "Country",
+        render_kw = { "placeholder" : "United Chucks of Norris" },
+        validators = [
             max_length(64),
             not_empty()
-        ],
-        render_kw = { "placeholder" : "United Chucks of Norris" }
+        ]
+    )
+    has_access = BooleanField(
+        default = True,
+        label = "Access rights (can login to sholdr)"
+    )
+    is_admin = BooleanField(
+        default = False,
+        label = "Administrator (god-mode)"
     )
 
 class NaturalPersonForm(ShareholderForm):
     type = "natural"
 
     first_name = StringField(
-        "First name",
-        [
+        label = "First name",
+        render_kw = { "placeholder" : "Fred" },
+        validators = [
             max_length(64),
             not_empty()
-        ],
-        render_kw = { "placeholder" : "Fred" }
+        ]
     )
     last_name = StringField(
-        "Last name",
-        [
+        label = "Last name",
+        render_kw = { "placeholder" : "Flintstone" },
+        validators = [
             max_length(64),
             not_empty()
-        ],
-        render_kw = { "placeholder" : "Flintstone" }
+        ]
     )
     nin = StringField(
-        "National ID / Date of birth",
-        [ NinFormat() ],
         filters = [ apply_upper ],
-        render_kw = { "placeholder" : "070770-7071" }
+        label = "National ID / Date of birth",
+        render_kw = { "placeholder" : "070770-7071" },
+        validators = [ NinFormat() ]
     )
     nationality = StringField(
-        "Nationality",
-        [
+        label = "Nationality",
+        render_kw = { "placeholder" : "'Murican" },
+        validators = [
             max_length(64),
             not_empty()
-        ],
-        render_kw = { "placeholder" : "'Murican" }
+        ]
     )
 
 class JuridicalPersonForm(ShareholderForm):
     type = "juridical"
 
     name = StringField(
-        "Legal entity name",
-        [
+        label = "Legal entity name",
+        render_kw = { "placeholder" : "Slate Rock and Gravel Co." },
+        validators = [
             max_length(128),
             not_empty()
-        ],
-        render_kw = { "placeholder" : "Slate Rock and Gravel Co." }
+        ]
     )
     business_id = StringField(
-        "Business ID",
-        [
+        filters = [ apply_upper ],
+        label = "Business ID",
+        render_kw = { "placeholder" : "2345678-0" },
+        validators = [
             max_length(32),
             not_empty(),
             Unique(
@@ -150,15 +161,13 @@ class JuridicalPersonForm(ShareholderForm):
                 entity = JuridicalPerson,
                 message = "Business ID already in use by another shareholder"
             )
-        ],
-        filters = [ apply_upper ],
-        render_kw = { "placeholder" : "2345678-0" }
+        ]
     )
     contact_person = StringField(
-        "Contact person name",
-        [
+        label = "Contact person name",
+        render_kw = { "placeholder" : "Barney Rubble" },
+        validators = [
             max_length(128),
             not_empty()
-        ],
-        render_kw = { "placeholder" : "Barney Rubble" }
+        ]
     )

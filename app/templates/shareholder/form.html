@@ -1,14 +1,27 @@
 {% extends "base.html" %}
-{% from "macros.html" import render_field %}
+{% from "macros.html" import render_checkbox, render_field %}
 
 {% block content %}
   <form
-    action = "{{ url_for("shareholder.create_or_update") }}"
+    action = "{{ url_for('shareholder.create_or_update') }}"
     method = "POST"
   >
     {{ render_field( form.email ) }}
     {% if form.id.data == "new" %}
       {{ render_field( form.password ) }}
+      {% if form.password.errors %}
+        <div class = "alert-box">
+          <small>
+            Password must have:
+            <ul>
+              <li>at least 8 characters</li>
+              <li>at least one capital letter A-Z</li>
+              <li>at least one small letter a-z</li>
+              <li>at least one digit 0-9</li>
+            </ul>
+          </small>
+        </div>
+      {% endif %}
     {% endif %}
     {% if form.type == "natural" %}
       {{ render_field( form.first_name ) }}
@@ -40,6 +53,8 @@
     {{ render_field( form.zip_code ) }}
     {{ render_field( form.city ) }}
     {{ render_field( form.country ) }}
+    {{ render_checkbox( form.has_access ) }}
+    {{ render_checkbox( form.is_admin ) }}
     {{ form.id( hidden = True ) }}
     <input
       hidden
@@ -56,7 +71,7 @@
   </form>
   {% if form.id.data != "new" %}
     <form
-      action = "{{ url_for("shareholder.delete", id = form.data.id) }}"
+      action = "{{ url_for('shareholder.delete', id = form.data.id) }}"
       class = "padded"
       method = "POST"
       onSubmit = "return confirm('Are you sure? There\'s no going back.');"
