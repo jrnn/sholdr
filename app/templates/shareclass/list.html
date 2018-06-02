@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <table
+    class = "table table-hover"
+    id = "shareclasses"
+  >
+    <thead class = "thead-light">
+      <tr>
+        <th>Name</th>
+        <th>Votes per share</th>
+        <th>No. of shares</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for s in shareclasses %}
+      <tr id = {{ s.id }}>
+        <td>{{ s.name }}</td>
+        <td>{{ s.votes }}</td>
+        <td>TBA</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p>
+    <a href = "{{ url_for('shareclass.view_one', id = 'new') }}">
+      Add new share class
+    </a>
+  </p>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function() {
+      $("#shareclasses").on("click", "tbody tr", function() {
+        window.location.href = "/shareclass/" + $(this).attr("id");
+      });
+    });
+  </script>
+{% endblock %}

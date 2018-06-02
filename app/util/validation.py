@@ -43,8 +43,8 @@ class NinFormat(object):
         if not (re.match(dob, nin) or re.match(hetu, nin)):
             raise ValidationError(self.message)
 
-def not_empty():
-    return DataRequired("Cannot be empty")
+def not_empty(message = "Cannot be empty"):
+    return DataRequired(message)
 
 class PasswordFormat(object):
     """

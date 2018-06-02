@@ -157,9 +157,8 @@ def create_or_update():
 @login_required
 def delete(id):
     """
-    Delete shareholder (including subclass) by primary key, if found. Otherwise
-    throw 404. Unlike in the above method, shareholder id is given as a request
-    parameter.
+    Delete shareholder by primary key (given as path variable), if found.
+    Otherwise throw 404. Also subclass row is deleted.
     """
     res = Shareholder.query.filter_by(id = id).delete()
 

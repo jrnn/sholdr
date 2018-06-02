@@ -31,10 +31,13 @@ def create_db(app):
 
 def init_db(db):
     """
-    Fetch all models and create DB tables accordingly, if none exist. Also, add
-    one initial Shareholder to DB with which to handle the first login.
+    Fetch all models and create DB tables accordingly, if none exist. Also, if
+    needed, add one initial Shareholder to DB for handling the first login.
     """
-    from . import shareholder
+    from . import (
+        shareclass,
+        shareholder
+    )
 
     try:
         db.create_all()

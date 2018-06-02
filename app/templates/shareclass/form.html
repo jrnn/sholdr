@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "macros.html" import render_field %}
+
+{% block content %}
+  <form
+    action = "{{ url_for('shareclass.create_or_update') }}"
+    method = "POST"
+  >
+    {{ render_field( form.name ) }}
+    {{ render_field( form.votes ) }}
+    {{ render_field( form.remarks ) }}
+    {{ form.id( hidden = True ) }}
+    <input
+      class = "btn btn-secondary form-control"
+      id = "submit"
+      type = "submit"
+      value = "Submit"
+    />
+  </form>
+  {% if form.id.data != "new" %}
+    <form
+      action = "{{ url_for('shareclass.delete', id = form.data.id) }}"
+      class = "padded"
+      method = "POST"
+      onSubmit = "return confirm('Are you sure? There\'s no going back.');"
+    >
+      <input
+        class = "btn btn-danger form-control"
+        id = "delete"
+        type = "submit"
+        value = "Delete"
+      />
+    </form>
+  {% endif %}
+{% endblock %}

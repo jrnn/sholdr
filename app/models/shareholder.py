@@ -29,7 +29,7 @@ class Shareholder(UuidMixin, db.Model):
         unique = True
     )
     pw_hash = Column(
-        String(60),
+        String(64),
         nullable = False
     )
     street = Column(
