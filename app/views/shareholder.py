@@ -59,50 +59,40 @@ def list_all():
 
 @bp.route("/<id>", methods = ("GET",))
 @login_required
-def view_one(id):
+def form(id):
     """
-    Find one shareholder by primary key, then query for the correct subclass
-    entity by type, and prefill corresponding form with its data.
+    Find one shareholder by primary key (given as path variable), then query for
+    the correct subclass entity by type, and finally show corresponding form
+    prefilled with its data.
+
+    If the value "new" is given, show empty form instead. Shareholder type must
+    be given as query parameter, so that the correct WTForm class is passed to
+    Jinja. If an incorrect or no type is given, redirect to list view.
 
     Whether looking at an existing shareholder or creating a new one, the same
     html template is used. The function handling the submit can tell the
     difference based on a hidden id prop passed to the form.
     """
-    s = Shareholder.query.get_or_404(id)
+    if id == "new":
+        type = request.args.get("type")
 
-    if s.type == "natural_person":
-        s = NaturalPerson.query.get(id)
-        f = NaturalPersonForm(obj = s)
+        if type == "natural":
+            f = NaturalPersonForm()
+        elif type == "juridical":
+            f = JuridicalPersonForm()
+        else:
+            flash.incorrect_type("shareholder")
+            return redirect(url_for("shareholder.list_all"))
+
     else:
-        s = JuridicalPerson.query.get(id)
-        f = JuridicalPersonForm(obj = s)
+        s = Shareholder.query.get_or_404(id)
 
-    return render_template(
-        "shareholder/form.html",
-        form = f
-    )
-
-@bp.route("/new", methods = ("GET",))
-@login_required
-def empty_form():
-    """
-    Show empty form for creating a new shareholder. Shareholder type must be
-    given as query parameter so that the correct WTForm class is passed to
-    Jinja.
-
-    Whether looking at an existing shareholder or creating a new one, the same
-    html template is used. The function handling the submit can tell the
-    difference based on a hidden id prop passed to the form.
-    """
-    type = request.args.get("type")
-
-    if type == "natural":
-        f = NaturalPersonForm()
-    elif type == "juridical":
-        f = JuridicalPersonForm()
-    else:
-        flash.incorrect_type("shareholder")
-        return redirect(url_for("shareholder.list_all"))
+        if s.type == "natural_person":
+            s = NaturalPerson.query.get(id)
+            f = NaturalPersonForm(obj = s)
+        else:
+            s = JuridicalPerson.query.get(id)
+            f = JuridicalPersonForm(obj = s)
 
     return render_template(
         "shareholder/form.html",
