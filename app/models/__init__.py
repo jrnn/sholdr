@@ -4,6 +4,8 @@
     of the ORM model classes.
 """
 
+import os
+
 from app.util.util import get_uuid
 from flask_sqlalchemy import (
     Model,
@@ -20,8 +22,11 @@ def create_db(app):
     """
     Create and configure DB instance.
     """
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///sholdr.db"
-    app.config["SQLALCHEMY_ECHO"] = True
+    if os.environ.get("HEROKU"):
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+    else:
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///sholdr.db"
+        app.config["SQLALCHEMY_ECHO"] = True
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     return SQLAlchemy(

@@ -14,6 +14,7 @@ Jinja2==2.10
 MarkupSafe==1.0
 more-itertools==4.2.0
 pluggy==0.6.0
+psycopg2==2.7.4
 py==1.5.3
 pycparser==2.18
 pytest==3.6.0
