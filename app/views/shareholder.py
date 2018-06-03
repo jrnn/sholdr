@@ -35,7 +35,7 @@ bp = Blueprint(
 
 @bp.route("/", methods = ("GET",))
 @login_required
-def list_all():
+def list():
     """
     Show all shareholders on a list.
 
@@ -82,7 +82,7 @@ def form(id):
             f = JuridicalPersonForm()
         else:
             flash.incorrect_type("shareholder")
-            return redirect(url_for("shareholder.list_all"))
+            return redirect(url_for("shareholder.list"))
 
     else:
         s = Shareholder.query.get_or_404(id)
@@ -141,7 +141,7 @@ def create_or_update():
         flash.update_ok("shareholder")
 
     db.session.commit()
-    return redirect(url_for("shareholder.list_all"))
+    return redirect(url_for("shareholder.list"))
 
 @bp.route("/<id>/delete", methods = ("POST",))
 @login_required
@@ -160,4 +160,4 @@ def delete(id):
 
     db.session.commit()
     flash.delete_ok("shareholder")
-    return redirect(url_for("shareholder.list_all"))
+    return redirect(url_for("shareholder.list"))

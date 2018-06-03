@@ -25,7 +25,7 @@ bp = Blueprint(
 
 @bp.route("/", methods = ("GET",))
 @login_required
-def list_all():
+def list():
     """
     Show all share classes on a list.
     """
@@ -36,7 +36,7 @@ def list_all():
 
 @bp.route("/<id>", methods = ("GET",))
 @login_required
-def view_one(id):
+def form(id):
     """
     Find one share class by primary key (given as path variable), and show form
     prefilled with its data.
@@ -90,7 +90,7 @@ def create_or_update():
         flash.update_ok("share class")
 
     db.session.commit()
-    return redirect(url_for("shareclass.list_all"))
+    return redirect(url_for("shareclass.list"))
 
 @bp.route("/<id>/delete", methods = ("POST",))
 @login_required
@@ -106,4 +106,4 @@ def delete(id):
 
     db.session.commit()
     flash.delete_ok("share class")
-    return redirect(url_for("shareclass.list_all"))
+    return redirect(url_for("shareclass.list"))

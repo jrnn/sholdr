@@ -1,6 +1,6 @@
 """
-    This module registers all blueprints to the app instance, and defines the
-    base index route.
+    This module registers blueprints and error handlers to the app instance, and
+    defines the base index route.
 """
 
 from . import (
@@ -14,6 +14,10 @@ def init_views(app):
     app.register_blueprint(auth.bp)
     app.register_blueprint(shareclass.bp)
     app.register_blueprint(shareholder.bp)
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template("404.html"), 404
 
     @app.route("/")
     def index():
