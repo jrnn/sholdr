@@ -32,3 +32,37 @@
     {{ field.label(class = "form-check-label") }}
   </div>
 {% endmacro %}
+
+{#
+    A few simple button elements that recur throughout the app ...
+#}
+{% macro delete_button(label, action) %}
+  <form
+    action = "{{ action }}"
+    method = "POST"
+    onSubmit = "return confirm('Are you sure? There\'s no going back.');"
+  >
+    <input
+      class = "btn btn-danger form-control"
+      type = "submit"
+      value = "{{ label }}"
+    />
+  </form>
+{% endmacro %}
+
+{% macro link_button(label, url) %}
+  <a
+    class = "btn btn-secondary form-control"
+    href = "{{ url }}"
+  >
+    {{ label }}
+  </a>
+{% endmacro %}
+
+{% macro submit_button(label) %}
+  <input
+    class = "btn btn-secondary form-control"
+    type = "submit"
+    value = "{{ label }}"
+  />
+{% endmacro %}

@@ -17,7 +17,4 @@ def init_views(app):
 
     @app.route("/")
     def index():
-        return render_template(
-            "index.html",
-            url = "https://github.com/jrnn/sholdr"
-        )
+        return render_template("index.html")

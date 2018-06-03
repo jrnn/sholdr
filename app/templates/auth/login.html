@@ -1,4 +1,9 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
+{% from "macros.html" import submit_button %}
+
+{% block subheader %}
+  Please provide credentials
+{% endblock %}
 
 {% block content %}
   {% set class = "form-control" %}
@@ -6,7 +11,7 @@
     {% set class = class + " is-invalid" %}
   {% endif %}
   <form
-    action = "{{ url_for("auth.login") }}"
+    action = "{{ url_for('auth.login') }}"
     method = "POST"
   >
     <div class = "form-group">
@@ -22,11 +27,6 @@
         </div>
       {% endif %}
     </div>
-    <input
-      class = "btn btn-secondary form-control"
-      id = "submit"
-      type = "submit"
-      value = "Login"
-    />
+    {{ submit_button("Let me in!") }}
   </form>
 {% endblock %}

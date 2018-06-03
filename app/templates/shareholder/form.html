@@ -1,5 +1,11 @@
-{% extends "base.html" %}
-{% from "macros.html" import render_checkbox, render_field %}
+{% extends "layout.html" %}
+{% from "macros.html" import
+  delete_button, link_button, render_checkbox, render_field, submit_button
+%}
+
+{% block subheader %}
+  Add/edit shareholder
+{% endblock %}
 
 {% block content %}
   <form
@@ -33,10 +39,9 @@
       {{ render_field( form.business_id ) }}
       {{ render_field( form.contact_person ) }}
     {% endif %}
+    {% set street_class = "form-control" %}
     {% if form.street.errors %}
-      {% set street_class = "form-control is-invalid" %}
-    {% else %}
-      {% set street_class = "form-control" %}
+      {% set street_class = street_class + " is-invalid" %}
     {% endif %}
     <div class = "form-group">
       {{ form.street.label }}
@@ -58,30 +63,19 @@
     {{ form.id( hidden = True ) }}
     <input
       hidden
-      id = "type"
       name = "type"
       value = "{{ form.type }}"
     />
-    <input
-      class = "btn btn-secondary form-control"
-      id = "submit"
-      type = "submit"
-      value = "Submit"
-    />
+    {{ submit_button( "Submit" ) }}
+    {{ link_button(
+      "Cancel",
+      url_for('shareholder.list_all')
+    ) }}
   </form>
   {% if form.id.data != "new" %}
-    <form
-      action = "{{ url_for('shareholder.delete', id = form.data.id) }}"
-      class = "padded"
-      method = "POST"
-      onSubmit = "return confirm('Are you sure? There\'s no going back.');"
-    >
-      <input
-        class = "btn btn-danger form-control"
-        id = "delete"
-        type = "submit"
-        value = "Delete"
-      />
-    </form>
+    {{ delete_button(
+      "Delete",
+      url_for('shareholder.delete', id = form.data.id)
+    ) }}
   {% endif %}
 {% endblock %}

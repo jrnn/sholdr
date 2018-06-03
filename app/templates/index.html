@@ -1,19 +1,21 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
+
+{% block subheader %}
+  Welcome!
+{% endblock %}
 
 {% block content %}
   <p>
-    <a href = "{{ url_for("shareholder.list_all") }}">
-      Shareholders
-    </a>
+    You've landed on <strong>sholdr</strong> index page, bawse.
   </p>
   <p>
-    <a href = "{{ url_for("shareclass.list_all") }}">
-      Share classes
-    </a>
+    This page is pointless. It will probably be replaced with redirects either
+    to the login page or some list view once logged in.
   </p>
   <p>
-    <a href = "{{ url }}">
-      GitHub
-    </a>
+    ...
+  </p>
+  <p>
+    For now, please refer to your options in the navigation bar above.
   </p>
 {% endblock %}

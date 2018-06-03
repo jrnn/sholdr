@@ -2,10 +2,22 @@
  *  custom global styling
  */
 body {
+    background-color : #ffffff;
+    color : #17171f;
+    cursor : default;
+    font-family : "Source Sans Pro", sans-serif !important;
     margin-bottom : 8rem;
 }
-table {
-    cursor : default !important;
+footer {
+    font-size : 80%;
+    padding : 0.5rem 0px;
+    text-align : center;
+}
+nav {
+    font-size : 90%;
+}
+tbody tr {
+    cursor : pointer !important;
 }
 
 /*
@@ -17,10 +29,16 @@ table {
     margin-bottom : 1rem;
     padding : 0rem 1rem;
 }
-.bg-dark {
-    background-color : #2b2d2f;
+.bg-black {
+    background-color : #17171f;
     color : #ffffff;
-    text-align : center;
+}
+.bg-dark {
+    background-color : #35474f;
+    color : #ffffff;
+}
+.bg-shallow {
+    background-color : #dfe3e9;
 }
 .padded {
     padding : 1rem 0rem;
@@ -32,6 +50,30 @@ table {
 * {
     border-radius : 0 !important;
 }
+.alert {
+    border : none;
+    color : #ffffff;
+    margin-bottom : 0 !important;
+}
+.alert-danger {
+    background-color : #dc3545;
+}
+.alert-success {
+    background-color : #28a745;
+}
+.btn {
+    margin-top : 1rem;
+}
 .container {
     max-width : 800px !important;
+}
+.form-control::placeholder {
+    color : #c1c7cd;
+}
+.nav-link, footer a:link, footer a:visited {
+    color : #ffffff;
+}
+.nav-link:hover, .nav-link:active, footer a:hover, footer a:active {
+    color : #95c7e9;
+    text-decoration : none;
 }
