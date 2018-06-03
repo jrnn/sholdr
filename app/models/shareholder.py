@@ -60,6 +60,7 @@ class Shareholder(UuidMixin, db.Model):
         nullable = False
     )
     type = Column(String(16))
+
     __mapper_args__ = {
         "polymorphic_identity" : "shareholder",
         "polymorphic_on" : type
@@ -99,6 +100,7 @@ class NaturalPerson(Shareholder):
         String(64),
         nullable = False
     )
+
     __mapper_args__ = {
         "polymorphic_identity" : "natural_person"
     }
@@ -128,6 +130,7 @@ class JuridicalPerson(Shareholder):
         String(128),
         nullable = False
     )
+
     __mapper_args__ = {
         "polymorphic_identity" : "juridical_person"
     }

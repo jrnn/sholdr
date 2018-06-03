@@ -1,10 +1,13 @@
-# Utility functions needed here and there.
+"""
+    This module contains generic utility functions that are needed here and
+    there.
+
+    The several 'apply'-something functions below seem trivial, but they are
+    needed for WTForm transformations (passed into a field as 'filters').
+"""
 
 import re
 import uuid
-
-# The several 'apply'-something functions below seem trivial, but they are
-# needed for WTForm transformations (passed into a field as 'filters').
 
 def apply_lower(s):
     """

@@ -4,9 +4,9 @@ sholdr
 Description
 -----------
 
- - sholdr is (or rather will be) a pocket-size shareholder register, reduced to
-   just bare minimum features needed for keeping tabs on the ownership of a
-   small private company’s shares over time.
+ - **sholdr** is a pocket-size shareholder register, reduced to just bare
+   minimum features needed for keeping tabs on the ownership of a small private
+   company’s shares.
  - The two core concepts are **shares** and **shareholders**. The key point of
    interest is the relationship between the two – the ownership structure at a
    given point in time.
@@ -38,3 +38,6 @@ It runs on Heroku
 -----------------
 
 Click [here](https://sholdr.herokuapp.com/) to see it in action.
+You can log in with:
+ - email : celery@man.io
+ - password : Qwerty_123

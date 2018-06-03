@@ -4,11 +4,11 @@
 """
 
 from .flash import error_class
+from app.util.util import get_uuid
 from flask_login import LoginManager
-from os import urandom
 
 def init_auth(app, UserClass):
-    app.config["SECRET_KEY"] = urandom(32)
+    app.config["SECRET_KEY"] = get_uuid()
     app.config["BCRYPT_LOG_ROUNDS"] = 10
 
     login_manager = LoginManager()

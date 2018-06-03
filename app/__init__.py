@@ -23,6 +23,6 @@ init_db(db)
 from .views import init_views
 init_views(app)
 
-from .models.shareholder import Shareholder
+from .models.shareholder import Shareholder as UserClass
 from .util import init_auth
-init_auth(app, Shareholder)
+init_auth(app, UserClass)
