@@ -15,19 +15,25 @@
       href = "{{ url_for('static', filename = 'styles.css') }}"
       rel = "stylesheet"
     />
-    <meta charset = "utf-8" />
+    <meta
+      charset = "utf-8"
+    />
+    <meta
+      content="width = 576, initial-scale = 1, shrink-to-fit = no"
+      name="viewport"
+    >
     <title>
       sholdr
     </title>
   </head>
   <body>
-    <section class = "bg-dark padded">
+    <section class = "bgcolor-dark padded">
       <h2 class = "container" style = "text-align : center;">
         sholdr
       </h2>
     </section>
     <section class = "sticky-top">
-      <div class = "bg-black">
+      <div class = "bgcolor-black">
         {% block nav %}
         {% endblock %}
       </div>
@@ -36,7 +42,7 @@
         {% endblock %}
       </div>
     </section>
-    <section class = "bg-shallow padded">
+    <section class = "bgcolor-shallow padded">
       <h5 class = "container" style = "padding-left : 0;">
         {% block subheader %}
         {% endblock %}
@@ -46,7 +52,7 @@
       {% block content %}
       {% endblock %}
     </section>
-    <section class = "bg-black fixed-bottom">
+    <section class = "bgcolor-black fixed-bottom">
       <footer class = "container">
         © 2018 Juho Juurinen&nbsp;&nbsp;|&nbsp;&nbsp;
         <a href = "https://github.com/jrnn/sholdr">

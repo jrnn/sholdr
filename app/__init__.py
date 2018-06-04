@@ -13,6 +13,9 @@
 from flask import Flask
 app = Flask(__name__)
 
+from .sql import get_queries
+queries = get_queries()
+
 from .models import (
     create_db,
     init_db

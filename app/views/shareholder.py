@@ -25,7 +25,6 @@ from flask import (
     url_for
 )
 from flask_login import login_required
-from sqlalchemy.orm import with_polymorphic
 
 bp = Blueprint(
     "shareholder",
@@ -40,21 +39,13 @@ def list():
     Show all shareholders on a list.
 
     Because shareholder has two subclasses and the data needed here is on sub-
-    class level, use with_polymorphic() to make an "eager" JOIN query, so that
-    needed data is all loaded up-front at once. This is to avoid a sequence of
-    pointless per-entity queries (i.e. the N+1 problem).
-
-    TO-DO : Replace ORM default with a manual, leaner query?
+    class level, make an "eager" JOIN query so that needed data is all loaded
+    up-front at once. This is to avoid a sequence of pointless per-entity
+    queries (i.e. the N+1 problem).
     """
-    shareholders = db.session.query(
-        with_polymorphic(
-            Shareholder,
-            [ JuridicalPerson, NaturalPerson ]
-        )).all()
-
     return render_template(
         "shareholder/list.html",
-        shareholders = shareholders
+        shareholders = Shareholder.find_all_for_list()
     )
 
 @bp.route("/<id>", methods = ("GET",))

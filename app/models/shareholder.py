@@ -1,6 +1,7 @@
 """
     This module contains the Shareholder model. A custom Mixin that generates
-    UUIDs as primary keys is applied.
+    UUIDs as primary keys is applied. There are custom DB queries as static
+    methods.
 
     Shareholders can be either natural persons (i.e. human beings) or juridical
     persons (i.e. organizations), with some differences in what information is
@@ -14,7 +15,10 @@
 """
 
 from . import UuidMixin
-from app import db
+from app import (
+    db,
+    queries
+)
 from sqlalchemy import (
     Boolean,
     Column,
@@ -77,6 +81,41 @@ class Shareholder(UuidMixin, db.Model):
 
     def is_authenticated(self):
         return True
+
+    @staticmethod
+    def count_all():
+        """
+        Simply check the number of rows in Shareholder table ... (SQLAlchemy
+        default query.count() is ridiculously heavy)
+        """
+        q = queries["SHAREHOLDER"]["COUNT_ALL"]
+        rs = db.engine.execute(q).fetchone()
+
+        return rs["count"]
+
+    @staticmethod
+    def find_all_for_list():
+        """
+        Fetch all shareholders with only the fields needed on the list view.
+        """
+        q = queries["SHAREHOLDER"]["FIND_ALL_FOR_LIST"]
+        rs = db.engine.execute(q)
+
+        coll = []
+        for row in rs:
+            if row["type"] == "natural_person":
+                s = NaturalPerson()
+                s.first_name = row["first_name"]
+                s.last_name = row["last_name"]
+                s.nin = row["nin"]
+            else:
+                s = JuridicalPerson()
+                s.business_id = row["business_id"]
+                s.name = row["name"]
+            s.country = row["country"]
+            s.id = row["id"]
+            coll.append(s)
+        return coll
 
 class NaturalPerson(Shareholder):
     id = Column(

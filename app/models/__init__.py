@@ -93,7 +93,7 @@ def create_initial_user(db):
         Shareholder
     )
 
-    if db.session.query(Shareholder).count() == 0:
+    if Shareholder.count_all() == 0:
         s = NaturalPerson()
 
         s.city = "Tayneville"

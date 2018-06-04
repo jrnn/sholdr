@@ -29,15 +29,15 @@ tbody tr {
     margin-bottom : 1rem;
     padding : 0rem 1rem;
 }
-.bg-black {
+.bgcolor-black {
     background-color : #17171f;
     color : #ffffff;
 }
-.bg-dark {
-    background-color : #35474f;
+.bgcolor-dark {
+    background-color : #2b3b43;
     color : #ffffff;
 }
-.bg-shallow {
+.bgcolor-shallow {
     background-color : #dfe3e9;
 }
 .padded {
@@ -64,9 +64,6 @@ tbody tr {
 .btn {
     margin-top : 1rem;
 }
-.container {
-    max-width : 800px !important;
-}
 .form-control::placeholder {
     color : #c1c7cd;
 }
@@ -76,4 +73,14 @@ tbody tr {
 .nav-link:hover, .nav-link:active, footer a:hover, footer a:active {
     color : #95c7e9;
     text-decoration : none;
+}
+@media (min-width : 992px) {
+    .container {
+        max-width : 840px
+    }
+}
+@media (min-width : 1200px) {
+    .container {
+        max-width : 840px
+    }
 }
