@@ -3,7 +3,10 @@
     spanning the standard CRUD operations.
 """
 
-from app import db
+from app import (
+    cache,
+    db
+)
 from app.forms.shareclass import ShareClassForm
 from app.models.shareclass import ShareClass
 from app.util import flash
@@ -25,6 +28,7 @@ bp = Blueprint(
 
 @bp.route("/", methods = ("GET",))
 @login_required
+@cache.cached()
 def list():
     """
     Show all share classes on a list.
@@ -90,6 +94,7 @@ def create_or_update():
         flash.update_ok("share class")
 
     db.session.commit()
+    cache.clear()
     return redirect(url_for("shareclass.list"))
 
 @bp.route("/<id>/delete", methods = ("POST",))
@@ -105,5 +110,6 @@ def delete(id):
         abort(404)
 
     db.session.commit()
+    cache.clear()
     flash.delete_ok("share class")
     return redirect(url_for("shareclass.list"))

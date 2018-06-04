@@ -23,9 +23,13 @@ from .models import (
 db = create_db(app)
 init_db(db)
 
+from .models.shareholder import Shareholder as UserClass
+from .util import (
+    init_auth,
+    init_cache
+)
+cache = init_cache(app)
+init_auth(app, UserClass, cache)
+
 from .views import init_views
 init_views(app)
-
-from .models.shareholder import Shareholder as UserClass
-from .util import init_auth
-init_auth(app, UserClass)

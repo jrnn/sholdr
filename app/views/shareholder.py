@@ -4,7 +4,10 @@
     flavors (subclassing), the code is a bit bulkier than usual.
 """
 
-from app import db
+from app import (
+    cache,
+    db
+)
 from app.forms.shareholder import (
     JuridicalPersonForm,
     NaturalPersonForm
@@ -34,6 +37,7 @@ bp = Blueprint(
 
 @bp.route("/", methods = ("GET",))
 @login_required
+@cache.cached()
 def list():
     """
     Show all shareholders on a list.
@@ -132,6 +136,7 @@ def create_or_update():
         flash.update_ok("shareholder")
 
     db.session.commit()
+    cache.clear()
     return redirect(url_for("shareholder.list"))
 
 @bp.route("/<id>/delete", methods = ("POST",))
@@ -150,5 +155,6 @@ def delete(id):
         abort(404)
 
     db.session.commit()
+    cache.clear()
     flash.delete_ok("shareholder")
     return redirect(url_for("shareholder.list"))
