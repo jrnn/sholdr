@@ -37,7 +37,6 @@ bp = Blueprint(
 
 @bp.route("/", methods = ("GET",))
 @login_required
-@cache.cached()
 def list():
     """
     Show all shareholders on a list.

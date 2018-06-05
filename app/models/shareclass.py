@@ -8,7 +8,10 @@
 """
 
 from . import UuidMixin
-from app import db
+from app import (
+    cache,
+    db
+)
 from sqlalchemy import (
     Column,
     Integer,
@@ -27,3 +30,13 @@ class ShareClass(UuidMixin, db.Model):
         nullable = False
     )
     remarks = Column(String(255))
+
+    @staticmethod
+    @cache.cached(key_prefix = "share_class_list")
+    def find_all_for_list():
+        """
+        Probably no need to use manual query... This is here only so that query
+        result can be cached without also caching other view-related effects
+        (e.g. flashed messages).
+        """
+        return db.session.query(ShareClass).all()

@@ -1,38 +1,16 @@
 """
-    This module handles creation and configuration of the database connection;
-    possible initialization of the database itself; and some base customization
-    of the ORM model classes.
+    This module handles (possible) initialization of the database, and some base
+    customization of the ORM model classes.
 """
 
-import os
-
 from app.util.util import get_uuid
-from flask_sqlalchemy import (
-    Model,
-    SQLAlchemy
-)
+from flask_sqlalchemy import Model
 from sqlalchemy import (
     Column,
     DateTime,
     func,
     String
 )
-
-def create_db(app):
-    """
-    Create and configure DB instance.
-    """
-    if os.environ.get("HEROKU"):
-        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
-    else:
-        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///sholdr.db"
-        app.config["SQLALCHEMY_ECHO"] = True
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-    return SQLAlchemy(
-        app,
-        model_class = CustomModel
-    )
 
 def init_db(db):
     """

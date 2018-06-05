@@ -1,35 +1,43 @@
 """
-    This module creates instances of the Flask app and database connection, for
-    global access and use by other modules.
-
-    In an attempt to follow a kind of functional division of responsibilities,
-    further configuration and initialization of these instances is spread out
-    elsewhere, and carried out at call of this module.
-
-    This is just to avoid stuffing all configuration into one bloated and messy
-    file as the application grows.
+    This module creates and configures instances of the Flask app, cache, and
+    database connection, for global access and use by other modules. View
+    blueprints and models are registered in their respective __init__ modules.
 """
 
-from flask import Flask
-app = Flask(__name__)
+import os
 
-from .sql import get_queries
-queries = get_queries()
-
+from .config import (
+    cache,
+    config
+)
 from .models import (
-    create_db,
+    CustomModel,
     init_db
 )
-db = create_db(app)
+from .sql import get_queries
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+if os.environ.get("HEROKU"):
+    config = config.HerokuConfig
+else:
+    config = config.BaseConfig
+
+app = Flask(__name__)
+app.config.from_object(config)
+
+cache = cache.create_cache(app)
+queries = get_queries()
+
+db = SQLAlchemy(
+    app,
+    model_class = CustomModel
+)
 init_db(db)
 
+from .config import auth
 from .models.shareholder import Shareholder as UserClass
-from .util import (
-    init_auth,
-    init_cache
-)
-cache = init_cache(app)
-init_auth(app, UserClass, cache)
+auth.init_auth(app, UserClass)
 
 from .views import init_views
 init_views(app)

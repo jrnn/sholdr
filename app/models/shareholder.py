@@ -17,6 +17,7 @@
 from . import UuidMixin
 from app import (
     db,
+    cache,
     queries
 )
 from sqlalchemy import (
@@ -94,6 +95,7 @@ class Shareholder(UuidMixin, db.Model):
         return rs["count"]
 
     @staticmethod
+    @cache.cached(key_prefix = "shareholder_list")
     def find_all_for_list():
         """
         Fetch all shareholders with only the fields needed on the list view.

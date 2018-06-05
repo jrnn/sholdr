@@ -28,14 +28,13 @@ bp = Blueprint(
 
 @bp.route("/", methods = ("GET",))
 @login_required
-@cache.cached()
 def list():
     """
     Show all share classes on a list.
     """
     return render_template(
         "shareclass/list.html",
-        shareclasses = ShareClass.query.all()
+        shareclasses = ShareClass.find_all_for_list()
     )
 
 @bp.route("/<id>", methods = ("GET",))
