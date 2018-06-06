@@ -31,6 +31,15 @@ class ShareClass(UuidMixin, db.Model):
     )
     remarks = Column(String(255))
 
+    shares = db.relationship(
+        "Share",
+        backref = db.backref(
+            "share_class",
+            lazy = True
+        ),
+        lazy = True
+    )
+
     @staticmethod
     @cache.cached(key_prefix = "share_class_list")
     def find_all_for_list():

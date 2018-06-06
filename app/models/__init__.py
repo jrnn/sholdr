@@ -7,6 +7,7 @@ from app.util.util import get_uuid
 from flask_sqlalchemy import Model
 from sqlalchemy import (
     Column,
+    Date,
     DateTime,
     func,
     String
@@ -18,6 +19,8 @@ def init_db(db):
     needed, add one initial Shareholder to DB for handling the first login.
     """
     from . import (
+        certificate,
+        share,
         shareclass,
         shareholder
     )
@@ -44,14 +47,21 @@ class CustomModel(Model):
         onupdate = func.current_timestamp()
     )
 
+class IssuableMixin(object):
+    """
+    Simply add columns for issuance and cancellation dates.
+    """
+    issued_on = Column(
+        Date,
+        nullable = False
+    )
+    canceled_on = Column(Date)
+
 class UuidMixin(object):
     """
     Use randomly generated UUIDs as primary key for models to which this is
     applied (chance of conflicts is infinitesimal). Not applied to all models,
     because it makes sense to identify e.g. Shares with sequential integers.
-
-    Pass to affected models as constructor parameter alongside the default
-    SQLAlchemy Model class (or its derivative).
     """
     id = Column(
         String(32),

@@ -1,7 +1,6 @@
 """
     This module contains the Shareholder model. A custom Mixin that generates
-    UUIDs as primary keys is applied. There are custom DB queries as static
-    methods.
+    UUIDs as primary keys is applied.
 
     Shareholders can be either natural persons (i.e. human beings) or juridical
     persons (i.e. organizations), with some differences in what information is
@@ -65,6 +64,15 @@ class Shareholder(UuidMixin, db.Model):
         nullable = False
     )
     type = Column(String(16))
+
+    certificates = db.relationship(
+        "Certificate",
+        backref = db.backref(
+            "shareholder",
+            lazy = True
+        ),
+        lazy = True
+    )
 
     __mapper_args__ = {
         "polymorphic_identity" : "shareholder",
