@@ -15,8 +15,8 @@
 
 from . import UuidMixin
 from app import (
-    db,
     cache,
+    db,
     queries
 )
 from sqlalchemy import (
@@ -100,7 +100,7 @@ class Shareholder(UuidMixin, db.Model):
         q = queries["SHAREHOLDER"]["COUNT_ALL"]
         rs = db.engine.execute(q).fetchone()
 
-        return rs["count"]
+        return rs.count
 
     @staticmethod
     @cache.cached(key_prefix = "shareholder_list")
@@ -113,17 +113,17 @@ class Shareholder(UuidMixin, db.Model):
 
         coll = []
         for row in rs:
-            if row["type"] == "natural_person":
+            if row.type == "natural_person":
                 s = NaturalPerson()
-                s.first_name = row["first_name"]
-                s.last_name = row["last_name"]
-                s.nin = row["nin"]
+                s.first_name = row.first_name
+                s.last_name = row.last_name
+                s.nin = row.nin
             else:
                 s = JuridicalPerson()
-                s.business_id = row["business_id"]
-                s.name = row["name"]
-            s.country = row["country"]
-            s.id = row["id"]
+                s.business_id = row.business_id
+                s.name = row.name
+            s.country = row.country
+            s.id = row.id
             coll.append(s)
         return coll
 

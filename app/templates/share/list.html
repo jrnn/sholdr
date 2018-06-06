@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% from "macros.html" import link_button %}
+
+{% block subheader %}
+  Shares
+{% endblock %}
+
+{% block content %}
+  <p>
+    Shares issued up to {{ last_share_number }}
+  </p>
+  <p>
+    Unbound shares:
+    <ul>
+      {% for (a, b) in unbound_ranges %}
+      <li>
+        {{ a }}—{{ b }}
+      </li>
+      {% endfor %}
+    </ul>
+  </p>
+  {{ link_button(
+    "Issue shares",
+    url_for('share.issue')
+  ) }}
+{% endblock %}

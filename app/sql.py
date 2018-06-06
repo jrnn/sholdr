@@ -8,6 +8,20 @@ from sqlalchemy.sql import text
 
 def get_queries():
     return {
+        "SHARE" : {
+            "FIND_ALL_UNBOUND" : text(
+                "SELECT"
+                " id AS id"
+                " FROM share"
+                " WHERE is_bound = 0"
+                " ORDER BY id ASC"
+            ),
+            "LAST_SHARE_NUMBER" : text(
+                "SELECT"
+                " MAX(id) AS max"
+                " FROM share"
+            )
+        },
         "SHARE_CLASS" : {},
         "SHAREHOLDER" : {
             "COUNT_ALL" : text(

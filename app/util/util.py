@@ -36,6 +36,25 @@ def apply_upper(s):
     else:
         return s
 
+def get_consecutive_ranges(ns):
+    """
+    Find all ranges of consecutive numbers from an integer array. Return the
+    first and last numbers of each range as tuples. Note: expectation is that
+    given array is sorted.
+    """
+    res = []
+    prev = start = ns[0] - 2
+
+    for n in ns:
+        if n != prev + 1:
+            if prev != ns[0] - 2:
+                res.append( (start, prev,) )
+            start = n
+        prev = n
+
+    res.append( (start, prev,) )
+    return res
+
 def get_uuid():
     """
     Returns a v4 UUID as string without dashes in the middle.

@@ -19,7 +19,11 @@
 """
 
 from . import IssuableMixin
-from app import db
+from app import (
+    cache,
+    db,
+    queries
+)
 from sqlalchemy import (
     BigInteger,
     Boolean,
@@ -44,3 +48,25 @@ class Share(IssuableMixin, db.Model):
         nullable = False
     )
     ## possibly add 'nominal_value' ?
+
+    @staticmethod
+    @cache.cached(key_prefix = "last_share_number")
+    def last_share_number():
+        """
+        Return the number up to which shares have been issued (i.e. max id).
+        """
+        q = queries["SHARE"]["LAST_SHARE_NUMBER"]
+        rs = db.engine.execute(q).fetchone()
+
+        return rs.max
+
+    @staticmethod
+    @cache.cached(key_prefix = "find_all_unbound")
+    def find_all_unbound():
+        """
+        Return numbers of shares currently not bound to a certificate.
+        """
+        q = queries["SHARE"]["FIND_ALL_UNBOUND"]
+        rs = db.engine.execute(q)
+
+        return [ r.id for r in rs ]

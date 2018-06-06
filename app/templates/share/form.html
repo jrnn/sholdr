@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% from "macros.html" import
+  link_button, render_field, submit_button
+%}
+
+{% block subheader %}
+  Issue new shares
+{% endblock %}
+
+{% block content %}
+  <form
+    action = "{{ url_for('share.issue') }}"
+    method = "POST"
+  >
+    {{ render_field( form.lower_bound ) }}
+    {{ render_field( form.upper_bound ) }}
+    {{ render_field( form.issued_on ) }}
+    {{ render_field( form.share_class_id ) }}
+    {{ submit_button( "Submit" ) }}
+    {{ link_button(
+      "Cancel",
+      url_for('share.list')
+    ) }}
+  </form>
+{% endblock %}
