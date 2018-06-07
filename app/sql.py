@@ -30,11 +30,22 @@ def get_queries(dialect = None):
             )
         },
         "SHARE_CLASS" : {
-            "FIND_ALL_FOR_LIST" : text(
+            "FIND_ALL_FOR_DROPDOWN" : text(
                 "SELECT"
                 " id, name, votes"
                 " FROM share_class"
                 " ORDER BY name ASC"
+            ),
+            "FIND_ALL_FOR_LIST" : text(
+                "SELECT"
+                " share_class.id AS id,"
+                " share_class.name AS name,"
+                " share_class.votes AS votes,"
+                " COUNT(share.id) AS count"
+                " FROM share_class"
+                " LEFT JOIN share"
+                " ON share_class.id = share.share_class_id"
+                " GROUP BY name"
             )
         },
         "SHAREHOLDER" : {

@@ -53,10 +53,7 @@ def issue():
     l = Share.last_share_number() + 1
 
     f.lower_bound.data = l
-    f.share_class_id.choices = [
-        (s.id, "%s (%s votes / share)" % (s.name, s.votes),)
-        for s in ShareClass.find_all_for_list()
-    ]
+    f.share_class_id.choices = ShareClass.find_all_for_dropdown()
 
     if f.validate_on_submit():
         for i in range(l, f.upper_bound.data + 1):

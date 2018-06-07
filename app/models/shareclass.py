@@ -42,13 +42,25 @@ class ShareClass(UuidMixin, db.Model):
     )
 
     @staticmethod
+    @cache.cached(key_prefix = "share_class_dropdown")
+    def find_all_for_dropdown():
+        """
+        Fetch all share classes (simple query) and return an array of (value,
+        label) tuples for use as dropdown options.
+        """
+        q = queries["SHARE_CLASS"]["FIND_ALL_FOR_DROPDOWN"]
+
+        return [
+            (s.id, "%s (%s votes / share)" % (s.name, s.votes),)
+            for s in db.engine.execute(q)
+        ]
+
+    @staticmethod
     @cache.cached(key_prefix = "share_class_list")
     def find_all_for_list():
         """
-        Fetch all share classes with only the fields needed on the list view.
-
-        This is here only so that just the query result can be cached, without
-        also caching view-related effects such as flashed messages.
+        Fetch all share classes for the list view. Use a custom aggregate join
+        query to include number of shares per class in the result set.
         """
         q = queries["SHARE_CLASS"]["FIND_ALL_FOR_LIST"]
         rs = db.engine.execute(q)
@@ -56,6 +68,7 @@ class ShareClass(UuidMixin, db.Model):
         coll = []
         for r in rs:
             s = ShareClass()
+            s.count = r.count
             s.id = r.id
             s.name = r.name
             s.votes = r.votes
