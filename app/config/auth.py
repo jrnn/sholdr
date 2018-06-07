@@ -3,10 +3,15 @@
 """
 
 from app import cache
+from app.models.shareholder import Shareholder
 from app.util.flash import error_class
-from flask_login import LoginManager
+from flask_login import (
+    current_user,
+    LoginManager,
+    logout_user
+)
 
-def init_auth(app, UserClass):
+def init_auth(app):
     login_manager = LoginManager()
     login_manager.init_app(app)
 
@@ -16,6 +21,17 @@ def init_auth(app, UserClass):
     login_manager.session_protection = "strong"
 
     @login_manager.user_loader
-    @cache.memoize()
     def load_user(user_id):
-        return UserClass.query.get(user_id)
+        return load_user_memoized(user_id)
+
+@cache.memoize()
+def load_user_memoized(user_id):
+    """
+    Little dipshit hack to expose LoginManager's user loader method, so that it
+    can be passed to 'cache.delete_memoized()' as parameter on logout.
+    """
+    return Shareholder.query.get(user_id)
+
+def logout_user_memoized():
+    cache.delete_memoized(load_user_memoized, current_user.id)
+    logout_user()

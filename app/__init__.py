@@ -30,7 +30,6 @@ app = Flask(__name__)
 app.config.from_object(config)
 
 cache = cache.create_cache(app)
-
 db = SQLAlchemy(
     app,
     model_class = CustomModel,
@@ -39,8 +38,14 @@ db = SQLAlchemy(
 init_db(db)
 
 from .config import auth
-from .models.shareholder import Shareholder as UserClass
-auth.init_auth(app, UserClass)
+auth.init_auth(app)
 
 from .views import init_views
 init_views(app)
+
+# Finally, flush cache whenever a database commit occurs, by defining a 'cache
+# clear + DB commit' method and monkey patching it to DB instance ( ... :D )
+def commit_and_flush_cache():
+    cache.clear()
+    db.session.commit()
+db.commit_and_flush_cache = commit_and_flush_cache

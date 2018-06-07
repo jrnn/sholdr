@@ -3,10 +3,7 @@
     spanning the standard CRUD operations.
 """
 
-from app import (
-    cache,
-    db
-)
+from app import db
 from app.forms.shareclass import ShareClassForm
 from app.models.shareclass import ShareClass
 from app.util import flash
@@ -66,8 +63,7 @@ def form(id):
 def create_or_update():
     """
     Either create a new share class or update existing one, depending on the
-    inbound form's id field (process is very similar in both cases). Validate
-    form data and, if errors, throw back to form view.
+    inbound form's id field (process is very similar in both cases).
     """
     id = request.form.get("id")
 
@@ -89,8 +85,7 @@ def create_or_update():
     else:
         flash.update_ok("share class")
 
-    db.session.commit()
-    cache.clear()
+    db.commit_and_flush_cache()
     return redirect(url_for("shareclass.list"))
 
 @bp.route("/<id>/delete", methods = ("POST",))
@@ -103,7 +98,6 @@ def delete(id):
     if not ShareClass.query.filter_by(id = id).delete():
         abort(404)
 
-    db.session.commit()
-    cache.clear()
+    db.commit_and_flush_cache()
     flash.delete_ok("share class")
     return redirect(url_for("shareclass.list"))

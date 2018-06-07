@@ -1,11 +1,9 @@
 """
     This module contains the blueprint for user session management endpoints,
     i.e. login and logout operations.
-
-    TO-DO : Figure out how to remove only session-related cache key on logout.
 """
 
-from app import cache
+from app.config.auth import logout_user_memoized
 from app.forms.auth import LoginForm
 from app.models.shareholder import Shareholder
 from app.util import flash
@@ -19,8 +17,7 @@ from flask import (
 )
 from flask_login import (
     login_required,
-    login_user,
-    logout_user
+    login_user
 )
 
 bp = Blueprint(
@@ -58,7 +55,6 @@ def login():
 @bp.route("/logout")
 @login_required
 def logout():
-    cache.clear() # need to clear whole cache because can't import the load_user function from inside init_auth ...
-    logout_user()
+    logout_user_memoized()
     flash.logout_ok()
     return redirect(url_for("index"))

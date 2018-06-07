@@ -7,7 +7,11 @@
 
 {% block content %}
   <p>
-    Shares issued up to {{ last_share_number }}
+    {% if not last_share_number %}
+      No shares issued yet!
+    {% else %}
+      Shares issued up to {{ last_share_number }}
+    {% endif %}
   </p>
   <p>
     Unbound shares:

@@ -3,10 +3,7 @@
     are funky so the views and operations are not vanilla CRUD.
 """
 
-from app import (
-    cache,
-    db
-)
+from app import db
 from app.forms.share import ShareIssueForm
 from app.models.share import Share
 from app.models.shareclass import ShareClass
@@ -46,13 +43,11 @@ def issue():
     """
     Depending on request type, either (1) show blank form for issuing new
     shares; or (2) create new shares numbered X to Y, where X is the next 'free'
-    integer in sequence and Y the given upper bound. If errors, throw back to
-    form view.
+    integer in sequence and Y the given upper bound.
 
     The form needs some data from DB (dynamic options for dropdown, current max
     share number). WTForms cannot handle these properly 'in-class', so the
-    relevant queries are done here and filled in on each request. Also, GET and
-    POST can in this case be handled neatly in a single function.
+    relevant queries are done here and filled in on each request.
     """
     f = ShareIssueForm(request.form)
     l = Share.last_share_number() + 1
@@ -70,8 +65,7 @@ def issue():
             s.id = i
             db.session.add(s)
 
-        db.session.commit()
-        cache.clear()
+        db.commit_and_flush_cache()
         flash.create_ok("shares")
         return redirect(url_for("share.list"))
 

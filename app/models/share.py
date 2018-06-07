@@ -53,18 +53,22 @@ class Share(IssuableMixin, db.Model):
     @cache.cached(key_prefix = "last_share_number")
     def last_share_number():
         """
-        Return the number up to which shares have been issued (i.e. max id).
+        Return the id number up to which shares have been issued, or zero if no
+        shares have been issued.
         """
         q = queries["SHARE"]["LAST_SHARE_NUMBER"]
         rs = db.engine.execute(q).fetchone()
 
-        return rs.max
+        if not rs.max:
+            return 0
+        else:
+            return rs.max
 
     @staticmethod
     @cache.cached(key_prefix = "find_all_unbound")
     def find_all_unbound():
         """
-        Return numbers of shares currently not bound to a certificate.
+        Return list of numbers of shares currently not bound to a certificate.
         """
         q = queries["SHARE"]["FIND_ALL_UNBOUND"]
         rs = db.engine.execute(q)

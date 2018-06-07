@@ -4,10 +4,7 @@
     flavors (subclassing), the code is a bit bulkier than usual.
 """
 
-from app import (
-    cache,
-    db
-)
+from app import db
 from app.forms.shareholder import (
     JuridicalPersonForm,
     NaturalPersonForm
@@ -43,8 +40,7 @@ def list():
 
     Because shareholder has two subclasses and the data needed here is on sub-
     class level, make an "eager" JOIN query so that needed data is all loaded
-    up-front at once. This is to avoid a sequence of pointless per-entity
-    queries (i.e. the N+1 problem).
+    up-front at once.
     """
     return render_template(
         "shareholder/list.html",
@@ -98,9 +94,8 @@ def form(id):
 def create_or_update():
     """
     Either create a new shareholder or update existing one, depending on the
-    inbound form's id field (process is very similar in both cases). Validate
-    form data and, if errors, throw back to form view. Hash and set password
-    only when creating new.
+    inbound form's id field (process is very similar in both cases). Hash and
+    store password only when creating new.
     """
     id = request.form.get("id")
     type = request.form.get("type")
@@ -130,8 +125,7 @@ def create_or_update():
     else:
         flash.update_ok("shareholder")
 
-    db.session.commit()
-    cache.clear()
+    db.commit_and_flush_cache()
     return redirect(url_for("shareholder.list"))
 
 @bp.route("/<id>/delete", methods = ("POST",))
@@ -139,7 +133,7 @@ def create_or_update():
 def delete(id):
     """
     Delete shareholder by primary key (given as path variable), if found.
-    Otherwise throw 404. Also subclass row is deleted.
+    Otherwise throw 404. Delete also subclass row.
     """
     if Shareholder.query.filter_by(id = id).delete():
         NaturalPerson.query.filter_by(id = id).delete()
@@ -147,7 +141,6 @@ def delete(id):
     else:
         abort(404)
 
-    db.session.commit()
-    cache.clear()
+    db.commit_and_flush_cache()
     flash.delete_ok("shareholder")
     return redirect(url_for("shareholder.list"))
