@@ -1,10 +1,9 @@
 """
     This module contains custom and configured validators for use in WTForm
-    classes. The "fully" customized validators are implemented as classes, while
-    the simpler configurations of out-of-the-box validators are implemented as
-    functions.
+    classes.
 """
 
+import datetime
 import re
 
 from app import db
@@ -45,6 +44,21 @@ class NinFormat(object):
 
 def not_empty(message = "Cannot be empty"):
     return DataRequired(message)
+
+class NotFuture(object):
+    """
+    Check that field value is not a future date.
+    """
+    def __init__(self, message = None):
+        if not message:
+            message = "Cannot be a future date"
+        self.message = message
+
+    def __call__(self, form, field):
+        if not isinstance(field.data, datetime.date):
+            raise ValidationError()
+        if field.data > datetime.date.today():
+            raise ValidationError("Cannot be in the future")
 
 class PasswordFormat(object):
     """

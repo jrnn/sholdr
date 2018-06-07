@@ -79,10 +79,7 @@ def create_or_update():
             form = f
         )
 
-    s = ShareClass.query.get(id)
-    if s is None:
-        s = ShareClass()
-
+    s = ShareClass.query.get_or_default(id, ShareClass())
     del f.id  # avoid setting "new" as pk when creating new share class
     f.populate_obj(s)
 
@@ -103,9 +100,7 @@ def delete(id):
     Delete share class by primary key (given as path variable), if found.
     Otherwise throw 404.
     """
-    res = ShareClass.query.filter_by(id = id).delete()
-
-    if res == 0:
+    if not ShareClass.query.filter_by(id = id).delete():
         abort(404)
 
     db.session.commit()

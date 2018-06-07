@@ -1,11 +1,10 @@
 """
     This module contains the WTForm class that handles the form for issuing new
-    Shares. It uses the standard Flask-WTForm base class. It's a simple form but
-    requires some custom validation.
+    Shares. It uses the standard Flask-WTForm base class. Some custom validation
+    is required.
 """
 
-import datetime
-
+from app.util.validation import NotFuture
 from flask_wtf import FlaskForm
 from wtforms import (
     DateField,
@@ -28,7 +27,8 @@ class ShareIssueForm(FlaskForm):
         render_kw = {
             "placeholder" : "Pick a date",
             "type" : "date"
-        }
+        },
+        validators = [ NotFuture() ]
     )
     share_class_id = SelectField(
         label = "Share class",
@@ -48,13 +48,6 @@ class ShareIssueForm(FlaskForm):
         ## TEMPORARY SAFEGUARD FOR PRODUCTION (DB IS VERY LIMITED)
         if u > 100:
             raise ValidationError("Sorry but free trial supports only up to 100 shares. GIVE ME MONEY")
-
-    def validate_issued_on(form, field):
-        if not isinstance(field.data, datetime.date):
-            raise ValidationError()
-
-        if field.data > datetime.date.today():
-            raise ValidationError("Cannot be in the future")
 
     class Meta:
         csrf = False

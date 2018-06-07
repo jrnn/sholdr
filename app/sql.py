@@ -1,20 +1,27 @@
 """
-    This module contains all custom SQL statements. This is just to help
-    declutter the code in model classes. Also possible to define different
-    statement dictionaries for development vs. production, if the need arises.
+    This module contains all custom SQL statements. The returned 'query
+    dictionary' accounts for the minor differences between SQLite in development
+    vs. PostgreSQL in production.
 """
 
 from sqlalchemy.sql import text
 
-def get_queries():
+def get_queries(dialect = None):
+    if dialect == "postgresql":
+        FALSE = "false"
+        TRUE = "true"
+    else:
+        FALSE = 0
+        TRUE = 1
+
     return {
         "SHARE" : {
             "FIND_ALL_UNBOUND" : text(
                 "SELECT"
                 " id AS id"
                 " FROM share"
-                " WHERE is_bound = 0"
-                " ORDER BY id ASC"
+                " WHERE is_bound = %s"
+                " ORDER BY id ASC" % FALSE
             ),
             "LAST_SHARE_NUMBER" : text(
                 "SELECT"
@@ -22,7 +29,14 @@ def get_queries():
                 " FROM share"
             )
         },
-        "SHARE_CLASS" : {},
+        "SHARE_CLASS" : {
+            "FIND_ALL_FOR_LIST" : text(
+                "SELECT"
+                " id, name, votes"
+                " FROM share_class"
+                " ORDER BY name ASC"
+            )
+        },
         "SHAREHOLDER" : {
             "COUNT_ALL" : text(
                 "SELECT"

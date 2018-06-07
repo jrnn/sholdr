@@ -1,8 +1,7 @@
 """
     This module contains the WTForm class that handles the Share Class form. A
     tweaked base class that trims surrounding whitespace from all fields is
-    applied. Share Class is a simple entity, however some custom validation is
-    needed.
+    applied. Some custom validation is needed.
 """
 
 from . import CustomBaseForm

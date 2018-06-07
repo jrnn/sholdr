@@ -38,26 +38,27 @@ def apply_upper(s):
 
 def get_consecutive_ranges(ns):
     """
-    Find all ranges of consecutive numbers from an integer array. Return the
-    first and last numbers of each range as tuples. Note: expectation is that
-    given array is sorted.
+    Find all ranges of consecutive numbers from a _SORTED_ integer array. Return
+    the first and last numbers of each range as a tuple (first, last).
     """
     res = []
-    prev = start = ns[0] - 2
+    if not ns:
+        return res
 
+    prev = first = ns[0] - 2
     for n in ns:
         if n != prev + 1:
             if prev != ns[0] - 2:
-                res.append( (start, prev,) )
-            start = n
+                res.append( (first, prev,) )
+            first = n
         prev = n
 
-    res.append( (start, prev,) )
+    res.append( (first, prev,) )
     return res
 
 def get_uuid():
     """
-    Returns a v4 UUID as string without dashes in the middle.
+    Return a v4 UUID as string without dashes in the middle.
     """
     return re.sub(
         "-",

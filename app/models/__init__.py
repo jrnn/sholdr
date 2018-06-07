@@ -4,7 +4,10 @@
 """
 
 from app.util.util import get_uuid
-from flask_sqlalchemy import Model
+from flask_sqlalchemy import (
+    BaseQuery,
+    Model
+)
 from sqlalchemy import (
     Column,
     Date,
@@ -46,6 +49,13 @@ class CustomModel(Model):
         default = func.current_timestamp(),
         onupdate = func.current_timestamp()
     )
+
+class GetOrDefaultQuery(BaseQuery):
+    """
+    This should be self-explanatory.
+    """
+    def get_or_default(self, id, default = None):
+        return self.get(id) or default
 
 class IssuableMixin(object):
     """

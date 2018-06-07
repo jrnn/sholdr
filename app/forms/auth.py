@@ -16,15 +16,15 @@ from wtforms import (
 
 class LoginForm(FlaskForm):
     email = StringField(
-        "Email",
         filters = [
             apply_lower,
             apply_strip
         ],
+        label = "Email",
         render_kw = { "placeholder" : "fred@flintstone.io" }
     )
     password = PasswordField(
-        "Password",
+        label = "Password",
         render_kw = { "placeholder" : "qwerty" }
     )
 

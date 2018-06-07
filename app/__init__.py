@@ -12,6 +12,7 @@ from .config import (
 )
 from .models import (
     CustomModel,
+    GetOrDefaultQuery,
     init_db
 )
 from .sql import get_queries
@@ -20,18 +21,20 @@ from flask_sqlalchemy import SQLAlchemy
 
 if os.environ.get("HEROKU"):
     config = config.HerokuConfig
+    queries = get_queries("postgresql")
 else:
     config = config.BaseConfig
+    queries = get_queries()
 
 app = Flask(__name__)
 app.config.from_object(config)
 
 cache = cache.create_cache(app)
-queries = get_queries()
 
 db = SQLAlchemy(
     app,
-    model_class = CustomModel
+    model_class = CustomModel,
+    query_class = GetOrDefaultQuery
 )
 init_db(db)
 

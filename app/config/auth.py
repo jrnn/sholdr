@@ -4,7 +4,6 @@
 
 from app import cache
 from app.util.flash import error_class
-from app.util.util import get_uuid
 from flask_login import LoginManager
 
 def init_auth(app, UserClass):

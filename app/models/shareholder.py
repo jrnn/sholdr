@@ -65,15 +65,6 @@ class Shareholder(UuidMixin, db.Model):
     )
     type = Column(String(16))
 
-    certificates = db.relationship(
-        "Certificate",
-        backref = db.backref(
-            "shareholder",
-            lazy = True
-        ),
-        lazy = True
-    )
-
     __mapper_args__ = {
         "polymorphic_identity" : "shareholder",
         "polymorphic_on" : type

@@ -17,8 +17,8 @@
 
     The collection of Shares connected to a Certificate is fixed: therefore,
     Certificates memorize some key points about that relationship (first_share,
-    last_share, share_count) to avoid having to query the DB over and over again
-    for the same unchanging information.
+    last_share, share_count) to avoid having to query the DB over and again for
+    the same unchanging information.
 """
 
 from . import (
@@ -59,11 +59,6 @@ class Certificate(IssuableMixin, UuidMixin, db.Model):
     )
     share_count = Column(
         BigInteger,
-        nullable = False
-    )
-    shareholder_id = Column(
-        String(32),
-        ForeignKey("shareholder.id"),
         nullable = False
     )
 

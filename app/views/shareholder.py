@@ -108,14 +108,10 @@ def create_or_update():
 
     if type == "natural":
         f = NaturalPersonForm(request.form)
-        s = NaturalPerson.query.get(id)
-        if s is None:
-            s = NaturalPerson()
+        s = NaturalPerson.query.get_or_default(id, NaturalPerson())
     else:
         f = JuridicalPersonForm(request.form)
-        s = JuridicalPerson.query.get(id)
-        if s is None:
-            s = JuridicalPerson()
+        s = JuridicalPerson.query.get_or_default(id, JuridicalPerson())
 
     if not f.validate():
         flash.invalid_input()
@@ -145,9 +141,7 @@ def delete(id):
     Delete shareholder by primary key (given as path variable), if found.
     Otherwise throw 404. Also subclass row is deleted.
     """
-    res = Shareholder.query.filter_by(id = id).delete()
-
-    if res > 0:
+    if Shareholder.query.filter_by(id = id).delete():
         NaturalPerson.query.filter_by(id = id).delete()
         JuridicalPerson.query.filter_by(id = id).delete()
     else:

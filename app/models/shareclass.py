@@ -10,7 +10,8 @@
 from . import UuidMixin
 from app import (
     cache,
-    db
+    db,
+    queries
 )
 from sqlalchemy import (
     Column,
@@ -44,8 +45,19 @@ class ShareClass(UuidMixin, db.Model):
     @cache.cached(key_prefix = "share_class_list")
     def find_all_for_list():
         """
-        Probably no need to use manual query... This is here only so that query
-        result can be cached without also caching other view-related effects
-        (e.g. flashed messages).
+        Fetch all share classes with only the fields needed on the list view.
+
+        This is here only so that just the query result can be cached, without
+        also caching view-related effects such as flashed messages.
         """
-        return db.session.query(ShareClass).all()
+        q = queries["SHARE_CLASS"]["FIND_ALL_FOR_LIST"]
+        rs = db.engine.execute(q)
+
+        coll = []
+        for r in rs:
+            s = ShareClass()
+            s.id = r.id
+            s.name = r.name
+            s.votes = r.votes
+            coll.append(s)
+        return coll
