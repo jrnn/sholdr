@@ -93,8 +93,13 @@ def create_or_update():
 def delete(id):
     """
     Delete share class by primary key (given as path variable), if found.
-    Otherwise throw 404.
+    Otherwise throw 404. Refuse to delete share class that is bound to at least
+    one share.
     """
+    if ShareClass.count_shares_for(id):
+        flash.delete_error("share class", "share")
+        return redirect(url_for("shareclass.list"))
+
     if not ShareClass.query.filter_by(id = id).delete():
         abort(404)
 

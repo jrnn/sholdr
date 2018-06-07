@@ -21,15 +21,15 @@ from flask_sqlalchemy import SQLAlchemy
 
 if os.environ.get("HEROKU"):
     config = config.HerokuConfig
-    queries = get_queries("postgresql")
 else:
     config = config.BaseConfig
-    queries = get_queries()
 
 app = Flask(__name__)
 app.config.from_object(config)
 
 cache = cache.create_cache(app)
+queries = get_queries(os.environ.get("HEROKU"))
+
 db = SQLAlchemy(
     app,
     model_class = CustomModel,
@@ -43,8 +43,10 @@ auth.init_auth(app)
 from .views import init_views
 init_views(app)
 
-# Finally, flush cache whenever a database commit occurs, by defining a 'cache
-# clear + DB commit' method and monkey patching it to DB instance ( ... :D )
+"""
+Finally, flush cache whenever a database commit occurs, by defining a 'cache
+clear + DB commit' method and monkey patching it to DB instance ( ... :D )
+"""
 def commit_and_flush_cache():
     cache.clear()
     db.session.commit()

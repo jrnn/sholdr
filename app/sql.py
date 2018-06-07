@@ -6,8 +6,8 @@
 
 from sqlalchemy.sql import text
 
-def get_queries(dialect = None):
-    if dialect == "postgresql":
+def get_queries(heroku = None):
+    if heroku:
         FALSE = "false"
         TRUE = "true"
     else:
@@ -17,9 +17,7 @@ def get_queries(dialect = None):
     return {
         "SHARE" : {
             "FIND_ALL_UNBOUND" : text(
-                "SELECT"
-                " id AS id"
-                " FROM share"
+                "SELECT id FROM share"
                 " WHERE is_bound = %s"
                 " ORDER BY id ASC" % FALSE
             ),
@@ -30,6 +28,12 @@ def get_queries(dialect = None):
             )
         },
         "SHARE_CLASS" : {
+            "COUNT_SHARES_FOR" : text(
+                "SELECT"
+                " COUNT(*) AS count"
+                " FROM share"
+                " WHERE share_class_id = :id"
+            ),
             "FIND_ALL_FOR_DROPDOWN" : text(
                 "SELECT"
                 " id, name, votes"
@@ -38,14 +42,16 @@ def get_queries(dialect = None):
             ),
             "FIND_ALL_FOR_LIST" : text(
                 "SELECT"
-                " share_class.id AS id,"
-                " share_class.name AS name,"
-                " share_class.votes AS votes,"
-                " COUNT(share.id) AS count"
-                " FROM share_class"
-                " LEFT JOIN share"
-                " ON share_class.id = share.share_class_id"
-                " GROUP BY name"
+                " sc.id, sc.name, sc.votes, s.count"
+                " FROM share_class sc"
+                " JOIN ( SELECT"
+                " sc.id, COUNT(s.id) AS count"
+                " FROM share_class sc"
+                " LEFT JOIN share s"
+                " ON sc.id = s.share_class_id"
+                " GROUP BY sc.id ) s"
+                " ON sc.id = s.id"
+                " ORDER BY sc.name ASC"
             )
         },
         "SHAREHOLDER" : {
@@ -56,19 +62,13 @@ def get_queries(dialect = None):
             ),
             "FIND_ALL_FOR_LIST" : text(
                 "SELECT"
-                " juridical_person.business_id,"
-                " juridical_person.name,"
-                " natural_person.first_name,"
-                " natural_person.last_name,"
-                " natural_person.nin,"
-                " shareholder.country,"
-                " shareholder.id,"
-                " shareholder.type"
-                " FROM shareholder"
-                " LEFT JOIN natural_person"
-                " ON shareholder.id = natural_person.id"
-                " LEFT JOIN juridical_person"
-                " ON shareholder.id = juridical_person.id"
+                " j.business_id, j.name, n.first_name, n.last_name,"
+                " n.nin, s.country, s.id, s.type"
+                " FROM shareholder s"
+                " LEFT JOIN natural_person n"
+                " ON s.id = n.id"
+                " LEFT JOIN juridical_person j"
+                " ON s.id = j.id"
             )
         }
     }

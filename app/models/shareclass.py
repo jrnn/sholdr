@@ -42,6 +42,13 @@ class ShareClass(UuidMixin, db.Model):
     )
 
     @staticmethod
+    def count_shares_for(id):
+        q = queries["SHARE_CLASS"]["COUNT_SHARES_FOR"].params(id = id)
+        rs = db.engine.execute(q).fetchone()
+
+        return rs.count
+
+    @staticmethod
     @cache.cached(key_prefix = "share_class_dropdown")
     def find_all_for_dropdown():
         """

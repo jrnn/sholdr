@@ -1,7 +1,6 @@
 """
-    This module collects all flashed messages in one place. The rationale for
-    doing so is that many of the messages are recyclable in several places, and
-    also that it helps simplify the code in blueprints a little bit.
+    This module collects all flashed messages in one place, most of which are
+    recyclable in several places.
 """
 
 from flask import flash
@@ -11,19 +10,25 @@ success_class = "alert-success"
 
 def create_ok(entity):
     return flash(
-        "New {} successfully created, long may they live!".format(entity),
+        "New %s successfully created, long may they live!" % entity,
         success_class
     )
 
 def delete_ok(entity):
     return flash(
-        "{} irreversibly obliterated, sayonara!".format(entity.capitalize()),
+        "%s irreversibly obliterated, sayonara!" % entity.capitalize(),
         success_class
+    )
+
+def delete_error(entity, tied_to):
+    return flash(
+        "This %s is tied to a %s and cannot be deleted!" % (entity, tied_to),
+        error_class
     )
 
 def incorrect_type(entity):
     return flash(
-        "Incorrect {} type. Stop messing with the address bar!".format(entity),
+        "Incorrect %s type. Stop messing with the address bar!" % entity,
         error_class
     )
 
@@ -53,6 +58,6 @@ def logout_ok():
 
 def update_ok(entity):
     return flash(
-        "{} information successfully updated, hooray!".format(entity.capitalize()),
+        "%s information successfully updated, hooray!" % entity.capitalize(),
         success_class
     )
