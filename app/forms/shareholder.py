@@ -18,9 +18,9 @@ from app.util.util import (
     apply_upper
 )
 from app.util.validation import (
-    max_length,
+    MaxLength,
     NinFormat,
-    not_empty,
+    NotEmpty,
     PasswordFormat,
     RequiredIf,
     Unique
@@ -40,7 +40,7 @@ class ShareholderForm(CustomBaseForm):
         label = "Email",
         render_kw = { "placeholder" : "fred@flintstone.io" },
         validators = [
-            max_length(255),
+            MaxLength(255),
             validators.Email("Invalid email format"),
             Unique(
                 column = "email",
@@ -63,36 +63,36 @@ class ShareholderForm(CustomBaseForm):
         label = "Street address",
         render_kw = { "placeholder" : "301 Cobblestone Way" },
         validators = [
-            max_length(255),
-            not_empty()
+            MaxLength(255),
+            NotEmpty()
         ]
     )
     street_ext = StringField(
         label = "Street address (optional)",
-        validators = [ max_length(255) ]
+        validators = [ MaxLength(255) ]
     )
     zip_code = StringField(
         label = "Postal code",
         render_kw = { "placeholder" : "70777" },
         validators = [
-            max_length(32),
-            not_empty()
+            MaxLength(32),
+            NotEmpty()
         ]
     )
     city = StringField(
         label = "City",
         render_kw = { "placeholder" : "Bedrock" },
         validators = [
-            max_length(64),
-            not_empty()
+            MaxLength(64),
+            NotEmpty()
         ]
     )
     country = StringField(
         label = "Country",
         render_kw = { "placeholder" : "United Chucks of Norris" },
         validators = [
-            max_length(64),
-            not_empty()
+            MaxLength(64),
+            NotEmpty()
         ]
     )
     has_access = BooleanField(
@@ -111,16 +111,16 @@ class NaturalPersonForm(ShareholderForm):
         label = "First name",
         render_kw = { "placeholder" : "Fred" },
         validators = [
-            max_length(64),
-            not_empty()
+            MaxLength(64),
+            NotEmpty()
         ]
     )
     last_name = StringField(
         label = "Last name",
         render_kw = { "placeholder" : "Flintstone" },
         validators = [
-            max_length(64),
-            not_empty()
+            MaxLength(64),
+            NotEmpty()
         ]
     )
     nin = StringField(
@@ -133,8 +133,8 @@ class NaturalPersonForm(ShareholderForm):
         label = "Nationality",
         render_kw = { "placeholder" : "'Murican" },
         validators = [
-            max_length(64),
-            not_empty()
+            MaxLength(64),
+            NotEmpty()
         ]
     )
 
@@ -145,8 +145,8 @@ class JuridicalPersonForm(ShareholderForm):
         label = "Legal entity name",
         render_kw = { "placeholder" : "Slate Rock and Gravel Co." },
         validators = [
-            max_length(128),
-            not_empty()
+            MaxLength(128),
+            NotEmpty()
         ]
     )
     business_id = StringField(
@@ -154,8 +154,8 @@ class JuridicalPersonForm(ShareholderForm):
         label = "Business ID",
         render_kw = { "placeholder" : "2345678-0" },
         validators = [
-            max_length(32),
-            not_empty(),
+            MaxLength(32),
+            NotEmpty(),
             Unique(
                 column = "business_id",
                 entity = JuridicalPerson,
@@ -167,7 +167,7 @@ class JuridicalPersonForm(ShareholderForm):
         label = "Contact person name",
         render_kw = { "placeholder" : "Barney Rubble" },
         validators = [
-            max_length(128),
-            not_empty()
+            MaxLength(128),
+            NotEmpty()
         ]
     )

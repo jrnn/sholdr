@@ -4,12 +4,12 @@
     is required.
 """
 
-from app.util.validation import NotFuture
+from app.util.validation import NotFutureDate
 from flask_wtf import FlaskForm
 from wtforms import (
-    DateField,
     IntegerField,
     SelectField,
+    StringField,
     ValidationError
 )
 
@@ -22,13 +22,14 @@ class ShareIssueForm(FlaskForm):
         label = "... up to number",
         render_kw = {"placeholder" : "Give a positive integer" }
     )
-    issued_on = DateField(
+#    issued_on = DateField(
+    issued_on = StringField(
         label = "Issued on",
         render_kw = {
             "placeholder" : "Pick a date",
             "type" : "date"
         },
-        validators = [ NotFuture() ]
+        validators = [ NotFutureDate() ]
     )
     share_class_id = SelectField(
         label = "Share class",

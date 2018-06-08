@@ -7,8 +7,8 @@
 from . import CustomBaseForm
 from app.models.shareclass import ShareClass
 from app.util.validation import (
-    max_length,
-    not_empty,
+    MaxLength,
+    NotEmpty,
     Unique
 )
 from wtforms import (
@@ -25,8 +25,8 @@ class ShareClassForm(CustomBaseForm):
         label = "Class name",
         render_kw = { "placeholder" : "e.g. A, B, C ..." },
         validators = [
-            max_length(32),
-            not_empty(),
+            MaxLength(32),
+            NotEmpty(),
             Unique(
                 column = "name",
                 entity = ShareClass,
@@ -48,5 +48,5 @@ class ShareClassForm(CustomBaseForm):
     remarks = TextAreaField(
         label = "Remarks",
         render_kw = { "placeholder" : "E.g. description of ownership rules or privileges other than number of votes" },
-        validators = [ max_length(255) ]
+        validators = [ MaxLength(255) ]
     )

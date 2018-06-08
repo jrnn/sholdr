@@ -1,6 +1,7 @@
 """
     This module contains custom and configured validators for use in WTForm
-    classes.
+    classes. Explanations are not given in cases where the class name is self-
+    explanatory.
 """
 
 import datetime
@@ -10,24 +11,29 @@ from app import db
 from sqlalchemy import and_
 from wtforms.validators import (
     DataRequired,
-    Length,
     Optional,
     ValidationError
 )
 
-def max_length(n = 255):
-    return Length(
-        max = n,
-        message = "Max {} characters".format(n)
-    )
+class MaxLength(object):
+    def __init__(self, max, message = None):
+        if not message:
+            message = "Maximum %s characters" % max
+        self.max = max
+        self.message = message
+
+    def __call__(self, form, field):
+        s = field.data.strip()
+        if len(s) > self.max:
+            raise ValidationError(self.message)
 
 class NinFormat(object):
     """
-    Check that field value either consists of six digits, or matches the format
+    Check that field value either is a valid date DDMMYY, or matches the format
     of a Finnish HETU code (= national identification number).
 
-    This is a very limited implementation, which does not detect e.g. days
-    beyond 31 or months beyond 12, nor calculate the HETU checksum.
+    Impossible dates are detected, however without accounting for leap years.
+    HETU part is validated for format only, i.e. checksum is not calculated.
     """
     def __init__(self, message = None):
         if not message:
@@ -35,29 +41,27 @@ class NinFormat(object):
         self.message = message
 
     def __call__(self, form, field):
-        nin = field.data
-        dob = "^\d{6}$"
-        hetu = "^\d{6}[A+-]\d{3}[0-9A-FHJ-NPR-Y]$"
+        s = field.data.strip()
+        ddmmyy = "^(31(0[13578]|1[02]))|(30(0[13-9]|1[012]))|((0[1-9]|[12][0-9])(0[1-9]|1[012]))\d\d$"
+        hetu = "^[A+-]\d{3}[0-9A-FHJ-NPR-Y]$"
 
-        if not (re.match(dob, nin) or re.match(hetu, nin)):
-            raise ValidationError(self.message)
+        if len(s) == 6 and re.match(ddmmyy, s):
+            return
+        elif re.match(ddmmyy, s[:6]) and re.match(hetu, s[6:]):
+            return
+        raise ValidationError(self.message)
 
-def not_empty(message = "Cannot be empty"):
-    return DataRequired(message)
-
-class NotFuture(object):
-    """
-    Check that field value is not a future date.
-    """
-    def __init__(self, message = None):
-        if not message:
-            message = "Cannot be a future date"
-        self.message = message
-
+class NotEmpty(object):
     def __call__(self, form, field):
-        if not isinstance(field.data, datetime.date):
-            raise ValidationError()
-        if field.data > datetime.date.today():
+        DataRequired("Cannot be empty")(form, field)
+
+class NotFutureDate(object):
+    def __call__(self, form, field):
+        try:
+            d = datetime.datetime.strptime(field.data.strip(), "%Y-%m-%d").date()
+        except:
+            raise ValidationError("Not a valid date")
+        if d > datetime.date.today():
             raise ValidationError("Cannot be in the future")
 
 class PasswordFormat(object):

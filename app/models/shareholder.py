@@ -19,7 +19,6 @@ from app import (
     db,
     queries
 )
-from app.util.util import rs_to_dict
 from sqlalchemy import (
     Boolean,
     Column,
