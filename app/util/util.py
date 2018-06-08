@@ -38,7 +38,7 @@ def apply_upper(s):
 
 def get_consecutive_ranges(ns):
     """
-    Find all ranges of consecutive numbers from a _SORTED_ integer array. Return
+    Find all ranges of consecutive numbers from a _SORTED_ integer list. Return
     the first and last numbers of each range as a tuple (first, last).
     """
     res = []
@@ -65,3 +65,13 @@ def get_uuid():
         "",
         str(uuid.uuid4())
     )
+
+def rs_to_dict(rs):
+    """
+    Iterate through a ResultProxy, translate each row into a dictionary with the
+    exact same keys as the ResultProxy, and return the dictionaries as a list.
+    """
+    res = []
+    for r in rs:
+        res.append({ key : r[key] for key in rs.keys() })
+    return res

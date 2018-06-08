@@ -13,6 +13,7 @@ from app import (
     db,
     queries
 )
+from app.util.util import rs_to_dict
 from sqlalchemy import (
     Column,
     Integer,
@@ -72,12 +73,4 @@ class ShareClass(UuidMixin, db.Model):
         q = queries["SHARE_CLASS"]["FIND_ALL_FOR_LIST"]
         rs = db.engine.execute(q)
 
-        coll = []
-        for r in rs:
-            s = ShareClass()
-            s.count = r.count
-            s.id = r.id
-            s.name = r.name
-            s.votes = r.votes
-            coll.append(s)
-        return coll
+        return rs_to_dict(rs)

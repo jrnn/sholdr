@@ -19,6 +19,7 @@ from app import (
     db,
     queries
 )
+from app.util.util import rs_to_dict
 from sqlalchemy import (
     Boolean,
     Column,
@@ -103,18 +104,18 @@ class Shareholder(UuidMixin, db.Model):
         rs = db.engine.execute(q)
 
         coll = []
-        for row in rs:
-            if row.type == "natural_person":
+        for r in rs:
+            if r.type == "natural_person":
                 s = NaturalPerson()
-                s.first_name = row.first_name
-                s.last_name = row.last_name
-                s.nin = row.nin
+                s.first_name = r.first_name
+                s.last_name = r.last_name
+                s.nin = r.nin
             else:
                 s = JuridicalPerson()
-                s.business_id = row.business_id
-                s.name = row.name
-            s.country = row.country
-            s.id = row.id
+                s.business_id = r.business_id
+                s.name = r.name
+            s.country = r.country
+            s.id = r.id
             coll.append(s)
         return coll
 
