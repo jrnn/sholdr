@@ -73,4 +73,4 @@ class Certificate(IssuableMixin, UuidMixin, db.Model):
     )
 
     def get_name(self):
-        return self.first_share + "—" + self.last_share
+        return str(self.first_share) + "—" + str(self.last_share)

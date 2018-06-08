@@ -7,6 +7,12 @@
 
 {% block content %}
   <p>
+    List certificates here ('name' | owner | # of share | # of votes)
+  </p>
+  <p>
+    -------- (some kind of divider element) --------
+  </p>
+  <p>
     {% if not last_share_number %}
       No shares issued yet!
     {% else %}
@@ -24,7 +30,11 @@
     </ul>
   </p>
   {{ link_button(
-    "Issue shares",
+    "Bundle new share certificate",
+    url_for('certificate.bundle')
+  ) }}
+  {{ link_button(
+    "Issue more shares",
     url_for('share.issue')
   ) }}
 {% endblock %}

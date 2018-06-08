@@ -15,7 +15,21 @@ def get_queries(heroku = None):
         TRUE = 1
 
     return {
+        "CERTIFICATE" : {
+            "BUNDLE_JOIN" : text(
+                "INSERT INTO"
+                " certificate_share (share_id, certificate_id)"
+                " SELECT s.id, :id"
+                " FROM share s"
+                " WHERE s.id >= :l AND s.id <= :u"
+            )
+        },
         "SHARE" : {
+            "BIND_RANGE" : text(
+                "UPDATE share"
+                " SET is_bound = %s"
+                " WHERE id >= :l AND id <= :u" % TRUE
+            ),
             "FIND_ALL_UNBOUND" : text(
                 "SELECT id FROM share"
                 " WHERE is_bound = %s"

@@ -5,6 +5,7 @@
 
 from . import (
     auth,
+    certificate,
     share,
     shareclass,
     shareholder
@@ -13,6 +14,7 @@ from flask import render_template
 
 def init_views(app):
     app.register_blueprint(auth.bp)
+    app.register_blueprint(certificate.bp)
     app.register_blueprint(share.bp)
     app.register_blueprint(shareclass.bp)
     app.register_blueprint(shareholder.bp)

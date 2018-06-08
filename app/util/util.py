@@ -66,6 +66,17 @@ def get_uuid():
         str(uuid.uuid4())
     )
 
+def is_within_range(t, ts):
+    """
+    Check whether the given integer pair (t) is within at least one of the given
+    ranges (ts). t must be a tuple, and ts a list of tuples.
+    """
+    (a, b,) = t
+    for (l, u,) in ts:
+        if l <= a and b <= u:
+            return True
+    return False
+
 def rs_to_dict(rs):
     """
     Iterate through a ResultProxy, translate each row into a dictionary with the

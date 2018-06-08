@@ -8,6 +8,11 @@ import datetime
 import re
 
 from app import db
+from app.models.share import Share
+from app.util.util import (
+    get_consecutive_ranges,
+    is_within_range
+)
 from sqlalchemy import and_
 from wtforms.validators import (
     DataRequired,
@@ -57,11 +62,9 @@ class NotEmpty(object):
 
 class NotFutureDate(object):
     def __call__(self, form, field):
-        try:
-            d = datetime.datetime.strptime(field.data.strip(), "%Y-%m-%d").date()
-        except:
-            raise ValidationError("Not a valid date")
-        if d > datetime.date.today():
+        if not isinstance(field.data, datetime.date):
+            raise ValidationError()
+        elif field.data > datetime.date.today():
             raise ValidationError("Cannot be in the future")
 
 class PasswordFormat(object):
@@ -121,3 +124,29 @@ class Unique(object):
             )
         ).first():
             raise ValidationError(self.message)
+
+class WithinBounds(object):
+    """
+    This validator is only meant to be used by the Certificate form. It does a
+    number of checks on given integer pair, ensuring that they are within bounds
+    of issued shares, and that all the shares within that range currently are
+    not bound to another Certificate.
+    """
+    def __call__(self, form, field):
+        l = form.first_share.data
+        u = field.data
+
+        if type(l) != int or type(u) != int:
+            raise ValidationError()
+        if u < l:
+            raise ValidationError("Upper bound must be greater than lower bound (idiot...)")
+
+        m = Share.last_share_number()
+        if u > m:
+            raise ValidationError("Shares have only been issued up to %s" % m)
+        if l < 1:
+            raise ValidationError("Numbering of shares starts from 1")
+
+        unbound_ranges = get_consecutive_ranges(Share.find_all_unbound())
+        if not is_within_range( (l,u,), unbound_ranges):
+            raise ValidationError("One or more shares within this range is already bound to a certificate")
