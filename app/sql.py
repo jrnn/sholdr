@@ -79,8 +79,9 @@ def get_statements(heroku = None):
             ),
             "FIND_ALL_FOR_LIST" : text(
                 "SELECT"
-                " j.business_id, j.name, n.first_name, n.last_name,"
-                " n.nin, s.country, s.id, s.type"
+                " j.business_id, j.name,"
+                " n.first_name, n.last_name, n.nin,"
+                " s.country, s.id, s.type"
                 " FROM shareholder s"
                 " LEFT JOIN natural_person n"
                 " ON s.id = n.id"

@@ -19,6 +19,7 @@ from app import (
     db,
     sql
 )
+from app.util.util import rs_to_dict
 from sqlalchemy import (
     Boolean,
     Column,
@@ -103,22 +104,14 @@ class Shareholder(UuidMixin, db.Model):
         """
         stmt = sql["SHAREHOLDER"]["FIND_ALL_FOR_LIST"]
         rs = db.engine.execute(stmt)
+        ss = rs_to_dict(rs)
 
-        coll = []
-        for r in rs:
-            if r.type == "natural_person":
-                s = NaturalPerson()
-                s.first_name = r.first_name
-                s.last_name = r.last_name
-                s.nin = r.nin
-            else:
-                s = JuridicalPerson()
-                s.business_id = r.business_id
-                s.name = r.name
-            s.country = r.country
-            s.id = r.id
-            coll.append(s)
-        return coll
+        for s in ss:
+            s["type_id"] = s["business_id"]
+            if s["type"] == "natural_person":
+                s["name"] = "%s, %s" % (s["last_name"], s["first_name"],)
+                s["type_id"] = s["nin"]
+        return ss
 
 
 
@@ -149,12 +142,6 @@ class NaturalPerson(Shareholder):
         "polymorphic_identity" : "natural_person"
     }
 
-    def get_name(self):
-        return self.last_name + ", " + self.first_name
-
-    def get_type_id(self):
-        return self.nin
-
 
 
 class JuridicalPerson(Shareholder):
@@ -180,9 +167,3 @@ class JuridicalPerson(Shareholder):
     __mapper_args__ = {
         "polymorphic_identity" : "juridical_person"
     }
-
-    def get_name(self):
-        return self.name
-
-    def get_type_id(self):
-        return self.business_id
