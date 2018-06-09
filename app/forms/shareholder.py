@@ -32,9 +32,10 @@ from wtforms import (
     validators
 )
 
+
+
 class ShareholderForm(CustomBaseForm):
     id = StringField(default = "new")
-
     email = StringField(
         filters = [ apply_lower ],
         label = "Email",
@@ -104,9 +105,10 @@ class ShareholderForm(CustomBaseForm):
         label = "Administrator (god-mode)"
     )
 
+
+
 class NaturalPersonForm(ShareholderForm):
     type = "natural"
-
     first_name = StringField(
         label = "First name",
         render_kw = { "placeholder" : "Fred" },
@@ -138,9 +140,10 @@ class NaturalPersonForm(ShareholderForm):
         ]
     )
 
+
+
 class JuridicalPersonForm(ShareholderForm):
     type = "juridical"
-
     name = StringField(
         label = "Legal entity name",
         render_kw = { "placeholder" : "Slate Rock and Gravel Co." },

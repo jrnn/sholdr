@@ -5,6 +5,8 @@
 
 import os
 
+
+
 class BaseConfig(object):
     BCRYPT_LOG_ROUNDS = 10
     DEBUG = True
@@ -12,6 +14,8 @@ class BaseConfig(object):
     SQLALCHEMY_DATABASE_URI = "sqlite:///sholdr.db"
     SQLALCHEMY_ECHO = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
 
 class HerokuConfig(BaseConfig):
     DEBUG = False

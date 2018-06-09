@@ -13,7 +13,7 @@
     Certificates are not fixed over time (if they were, this would be soooo much
     simpler...) i.e. one Share can over time "move" between Certificates.
 
-    Shares are a temporal entity -- they are valid only between their dates of
+    Shares are a temporal entity: they are valid only between their dates of
     issuance and cancellation. Once canceled, a Share no longer can be bound to
     a Certificate.
 """
@@ -22,8 +22,9 @@ from . import IssuableMixin
 from app import (
     cache,
     db,
-    queries
+    sql
 )
+from app.util.util import get_consecutive_ranges
 from sqlalchemy import (
     BigInteger,
     Boolean,
@@ -31,6 +32,8 @@ from sqlalchemy import (
     ForeignKey,
     String
 )
+
+
 
 class Share(IssuableMixin, db.Model):
     id = Column(
@@ -50,27 +53,29 @@ class Share(IssuableMixin, db.Model):
     ## possibly add 'nominal_value' ?
 
     @staticmethod
+    @cache.cached(key_prefix = "find_all_unbound")
+    def get_unbound_ranges():
+        """
+        Return ranges of shares currently not bound to a certificate. The ranges
+        are indicated as a list of tuples (a, b) where a = number of first and
+        b = number of last share in range.
+        """
+        stmt = sql["SHARE"]["FIND_ALL_UNBOUND"]
+        rs = db.engine.execute(stmt)
+
+        return get_consecutive_ranges([ r.id for r in rs ])
+
+    @staticmethod
     @cache.cached(key_prefix = "last_share_number")
     def last_share_number():
         """
         Return the id number up to which shares have been issued, or zero if no
         shares have been issued.
         """
-        q = queries["SHARE"]["LAST_SHARE_NUMBER"]
-        rs = db.engine.execute(q).fetchone()
+        stmt = sql["SHARE"]["LAST_SHARE_NUMBER"]
+        rs = db.engine.execute(stmt).fetchone()
 
         if not rs.max:
             return 0
         else:
             return rs.max
-
-    @staticmethod
-    @cache.cached(key_prefix = "find_all_unbound")
-    def find_all_unbound():
-        """
-        Return list of numbers of shares currently not bound to a certificate.
-        """
-        q = queries["SHARE"]["FIND_ALL_UNBOUND"]
-        rs = db.engine.execute(q)
-
-        return [ r.id for r in rs ]

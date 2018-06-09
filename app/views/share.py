@@ -8,7 +8,6 @@ from app.forms.share import ShareIssueForm
 from app.models.share import Share
 from app.models.shareclass import ShareClass
 from app.util import flash
-from app.util.util import get_consecutive_ranges
 from flask import (
     Blueprint,
     redirect,
@@ -24,6 +23,8 @@ bp = Blueprint(
     url_prefix = "/share"
 )
 
+
+
 @bp.route("/", methods = ("GET",))
 @login_required
 def list():
@@ -34,8 +35,10 @@ def list():
     return render_template(
         "share/list.html",
         last_share_number = Share.last_share_number(),
-        unbound_ranges = get_consecutive_ranges(Share.find_all_unbound())
+        unbound_ranges = Share.get_unbound_ranges()
     )
+
+
 
 @bp.route("/new", methods = ("GET", "POST",))
 @login_required
@@ -53,7 +56,7 @@ def issue():
     l = Share.last_share_number() + 1
 
     f.lower_bound.data = l
-    f.share_class_id.choices = ShareClass.find_all_for_dropdown()
+    f.share_class_id.choices = ShareClass.get_dropdown_options()
 
     if f.validate_on_submit():
         for i in range(l, f.upper_bound.data + 1):

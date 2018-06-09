@@ -9,6 +9,8 @@
 import re
 import uuid
 
+
+
 def apply_lower(s):
     """
     Apply .lower() to given value if applicable.
@@ -17,6 +19,8 @@ def apply_lower(s):
         return s.lower()
     else:
         return s
+
+
 
 def apply_strip(s):
     """
@@ -27,6 +31,8 @@ def apply_strip(s):
     else:
         return s
 
+
+
 def apply_upper(s):
     """
     Apply .upper() to given value if applicable.
@@ -35,6 +41,8 @@ def apply_upper(s):
         return s.upper()
     else:
         return s
+
+
 
 def get_consecutive_ranges(ns):
     """
@@ -56,6 +64,8 @@ def get_consecutive_ranges(ns):
     res.append( (first, prev,) )
     return res
 
+
+
 def get_uuid():
     """
     Return a v4 UUID as string without dashes in the middle.
@@ -65,6 +75,8 @@ def get_uuid():
         "",
         str(uuid.uuid4())
     )
+
+
 
 def is_within_range(t, ts):
     """
@@ -76,6 +88,8 @@ def is_within_range(t, ts):
         if l <= a and b <= u:
             return True
     return False
+
+
 
 def rs_to_dict(rs):
     """

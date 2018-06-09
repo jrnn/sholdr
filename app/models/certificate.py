@@ -48,6 +48,8 @@ shares = db.Table(
     )
 )
 
+
+
 class Certificate(IssuableMixin, UuidMixin, db.Model):
     first_share = Column(
         BigInteger,

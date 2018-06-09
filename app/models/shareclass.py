@@ -11,7 +11,7 @@ from . import UuidMixin
 from app import (
     cache,
     db,
-    queries
+    sql
 )
 from app.util.util import rs_to_dict
 from sqlalchemy import (
@@ -19,6 +19,8 @@ from sqlalchemy import (
     Integer,
     String
 )
+
+
 
 class ShareClass(UuidMixin, db.Model):
     name = Column(
@@ -44,33 +46,31 @@ class ShareClass(UuidMixin, db.Model):
 
     @staticmethod
     def count_shares_for(id):
-        q = queries["SHARE_CLASS"]["COUNT_SHARES_FOR"].params(id = id)
-        rs = db.engine.execute(q).fetchone()
+        stmt = sql["SHARE_CLASS"]["COUNT_SHARES_FOR"].params(id = id)
+        rs = db.engine.execute(stmt).fetchone()
 
         return rs.count
-
-    @staticmethod
-    @cache.cached(key_prefix = "share_class_dropdown")
-    def find_all_for_dropdown():
-        """
-        Fetch all share classes (simple query) and return an array of (value,
-        label) tuples for use as dropdown options.
-        """
-        q = queries["SHARE_CLASS"]["FIND_ALL_FOR_DROPDOWN"]
-
-        return [
-            (s.id, "%s (%s votes / share)" % (s.name, s.votes),)
-            for s in db.engine.execute(q)
-        ]
 
     @staticmethod
     @cache.cached(key_prefix = "share_class_list")
     def find_all_for_list():
         """
-        Fetch all share classes for the list view. Use a custom aggregate join
+        Fetch all share classes for the list view. Use a custom aggregate JOIN
         query to include number of shares per class in the result set.
         """
-        q = queries["SHARE_CLASS"]["FIND_ALL_FOR_LIST"]
-        rs = db.engine.execute(q)
+        stmt = sql["SHARE_CLASS"]["FIND_ALL_FOR_LIST"]
+        rs = db.engine.execute(stmt)
 
         return rs_to_dict(rs)
+
+    @staticmethod
+    @cache.cached(key_prefix = "share_class_dropdown")
+    def get_dropdown_options():
+        """
+        Fetch all share classes with a simple query, and return an array of
+        (value, label) tuples for use as dropdown options.
+        """
+        return [
+            (s.id, "%s (%s votes / share)" % (s.name, s.votes),)
+            for s in db.engine.execute(sql["SHARE_CLASS"]["FIND_ALL"])
+        ]

@@ -11,6 +11,8 @@ from flask_login import (
     logout_user
 )
 
+
+
 def init_auth(app):
     login_manager = LoginManager()
     login_manager.init_app(app)
@@ -24,14 +26,21 @@ def init_auth(app):
     def load_user(user_id):
         return load_user_memoized(user_id)
 
+
+
 @cache.memoize()
 def load_user_memoized(user_id):
     """
-    Little dipshit hack to expose LoginManager's user loader method, so that it
-    can be passed to 'cache.delete_memoized()' as parameter on logout.
+    Expose LoginManager's user loader method, so that it can be passed to
+    'cache.delete_memoized()' as parameter on logout.
     """
     return Shareholder.query.get(user_id)
 
+
+
 def logout_user_memoized():
-    cache.delete_memoized(load_user_memoized, current_user.id)
+    cache.delete_memoized(
+        load_user_memoized,
+        current_user.id
+    )
     logout_user()

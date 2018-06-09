@@ -1,7 +1,6 @@
 """
     This module contains the WTForm class that handles the Certificate form. It
-    uses the standard Flask-WTForm base class. Some custom validation is
-    required.
+    uses the standard Flask-WTForm base class. Some custom validation is needed.
 """
 
 from app.util.validation import (
@@ -14,6 +13,8 @@ from wtforms import (
     IntegerField,
     SelectField
 )
+
+
 
 class CertificateForm(FlaskForm):
     first_share = IntegerField(

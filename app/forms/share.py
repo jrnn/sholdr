@@ -1,7 +1,7 @@
 """
     This module contains the WTForm class that handles the form for issuing new
     Shares. It uses the standard Flask-WTForm base class. Some custom validation
-    is required.
+    is needed.
 """
 
 from app.util.validation import NotFutureDate
@@ -12,6 +12,8 @@ from wtforms import (
     SelectField,
     ValidationError
 )
+
+
 
 class ShareIssueForm(FlaskForm):
     lower_bound = IntegerField(

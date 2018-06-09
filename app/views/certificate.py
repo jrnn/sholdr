@@ -5,7 +5,7 @@
 
 from app import (
     db,
-    queries
+    sql
 )
 from app.forms.certificate import CertificateForm
 from app.models.certificate import Certificate
@@ -24,6 +24,8 @@ bp = Blueprint(
     __name__,
     url_prefix = "/certificate"
 )
+
+
 
 @bp.route("/", methods = ("GET", "POST",))
 @login_required
@@ -44,17 +46,17 @@ def bundle():
         db.session.add(c)
         db.session.commit()
 
-        q1 = queries["CERTIFICATE"]["BUNDLE_JOIN"].params(
+        stmt1 = sql["CERTIFICATE"]["BUNDLE_JOIN"].params(
             id = c.id,
             l = c.first_share,
             u = c.last_share
         )
-        q2 = queries["SHARE"]["BIND_RANGE"].params(
+        stmt2 = sql["SHARE"]["BIND_RANGE"].params(
             l = c.first_share,
             u = c.last_share
         )
-        db.engine.execute(q1)
-        db.engine.execute(q2)
+        db.engine.execute(stmt1)
+        db.engine.execute(stmt2)
         db.commit_and_flush_cache()
 
         flash.create_ok("certificate")

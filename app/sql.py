@@ -1,18 +1,21 @@
 """
-    This module contains all custom SQL statements. The returned 'query
-    dictionary' accounts for the minor differences between SQLite in development
-    vs. PostgreSQL in production.
+    This module collects all custom SQL statements into one dictionary, indexed
+    by model. Statements are accessed with relevant model name as 1st key, and
+    reference to desired statement as 2nd key, e.g. sql["SHARE"]["BIND_RANGE"].
+    Minor differences between SQLite in development vs. PostgreSQL in production
+    are accounted for.
 """
 
 from sqlalchemy.sql import text
 
-def get_queries(heroku = None):
+
+
+def get_statements(heroku = None):
+    FALSE = 0
+    TRUE = 1
     if heroku:
         FALSE = "false"
         TRUE = "true"
-    else:
-        FALSE = 0
-        TRUE = 1
 
     return {
         "CERTIFICATE" : {
@@ -48,7 +51,7 @@ def get_queries(heroku = None):
                 " FROM share"
                 " WHERE share_class_id = :id"
             ),
-            "FIND_ALL_FOR_DROPDOWN" : text(
+            "FIND_ALL" : text(
                 "SELECT"
                 " id, name, votes"
                 " FROM share_class"

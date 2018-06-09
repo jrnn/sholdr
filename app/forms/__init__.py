@@ -1,10 +1,12 @@
 """
     This module defines a customized WTForm base class that trims surrounding
-    whitespace from all fields. It is applied to most WTForm classes in the app.
+    whitespace from all fields.
 """
 
 from app.util.util import apply_strip
 from flask_wtf import FlaskForm
+
+
 
 class CustomBaseForm(FlaskForm):
     class Meta:

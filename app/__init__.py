@@ -15,7 +15,7 @@ from .models import (
     GetOrDefaultQuery,
     init_db
 )
-from .sql import get_queries
+from .sql import get_statements
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -27,14 +27,14 @@ else:
 app = Flask(__name__)
 app.config.from_object(config)
 
-cache = cache.create_cache(app)
-queries = get_queries(os.environ.get("HEROKU"))
-
 db = SQLAlchemy(
     app,
     model_class = CustomModel,
     query_class = GetOrDefaultQuery
 )
+
+cache = cache.create_cache(app, db)
+sql = get_statements(os.environ.get("HEROKU"))
 init_db(db)
 
 from .config import auth
@@ -42,12 +42,3 @@ auth.init_auth(app)
 
 from .views import init_views
 init_views(app)
-
-"""
-Finally, flush cache whenever a database commit occurs, by defining a 'cache
-clear + DB commit' method and monkey patching it to DB instance ( ... :D )
-"""
-def commit_and_flush_cache():
-    cache.clear()
-    db.session.commit()
-db.commit_and_flush_cache = commit_and_flush_cache

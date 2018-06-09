@@ -18,9 +18,10 @@ from wtforms import (
     validators
 )
 
+
+
 class ShareClassForm(CustomBaseForm):
     id = StringField(default = "new")
-
     name = StringField(
         label = "Class name",
         render_kw = { "placeholder" : "e.g. A, B, C ..." },

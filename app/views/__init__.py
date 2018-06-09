@@ -12,6 +12,8 @@ from . import (
 )
 from flask import render_template
 
+
+
 def init_views(app):
     app.register_blueprint(auth.bp)
     app.register_blueprint(certificate.bp)

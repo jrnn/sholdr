@@ -14,6 +14,8 @@ from wtforms import (
     StringField
 )
 
+
+
 class LoginForm(FlaskForm):
     email = StringField(
         filters = [

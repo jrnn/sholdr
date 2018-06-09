@@ -23,6 +23,8 @@ bp = Blueprint(
     url_prefix = "/shareclass"
 )
 
+
+
 @bp.route("/", methods = ("GET",))
 @login_required
 def list():
@@ -33,6 +35,8 @@ def list():
         "shareclass/list.html",
         shareclasses = ShareClass.find_all_for_list()
     )
+
+
 
 @bp.route("/<id>", methods = ("GET",))
 @login_required
@@ -58,6 +62,8 @@ def form(id):
         form = f
     )
 
+
+
 @bp.route("/", methods = ("POST",))
 @login_required
 def create_or_update():
@@ -66,8 +72,8 @@ def create_or_update():
     inbound form's id field (process is very similar in both cases).
     """
     id = request.form.get("id")
-
     f = ShareClassForm(request.form)
+
     if not f.validate():
         flash.invalid_input()
         return render_template(
@@ -87,6 +93,8 @@ def create_or_update():
 
     db.commit_and_flush_cache()
     return redirect(url_for("shareclass.list"))
+
+
 
 @bp.route("/<id>/delete", methods = ("POST",))
 @login_required

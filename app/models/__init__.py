@@ -16,6 +16,8 @@ from sqlalchemy import (
     String
 )
 
+
+
 def init_db(db):
     """
     Fetch all models and create DB tables accordingly, if none exist. Also, if
@@ -34,6 +36,8 @@ def init_db(db):
     except:
         pass
 
+
+
 class CustomModel(Model):
     """
     Centrally define properties that are shared across all models: namely,
@@ -50,22 +54,22 @@ class CustomModel(Model):
         onupdate = func.current_timestamp()
     )
 
+
+
 class GetOrDefaultQuery(BaseQuery):
-    """
-    This should be self-explanatory.
-    """
     def get_or_default(self, id, default = None):
         return self.get(id) or default
 
+
+
 class IssuableMixin(object):
-    """
-    Simply add columns for issuance and cancellation dates.
-    """
     issued_on = Column(
         Date,
         nullable = False
     )
     canceled_on = Column(Date)
+
+
 
 class UuidMixin(object):
     """
@@ -81,10 +85,12 @@ class UuidMixin(object):
     def __init__(self):
         self.id = get_uuid()
 
+
+
 def create_initial_user(db):
     """
     If there are no Shareholders in DB, create a bullshit user just so that it
-    is possible to log in. (Looking to replace this with something less hacky.)
+    is possible to log in. (Should replace this with something less hacky.)
     """
     from .shareholder import (
         NaturalPerson,

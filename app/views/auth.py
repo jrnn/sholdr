@@ -25,6 +25,8 @@ bp = Blueprint(
     __name__
 )
 
+
+
 @bp.route("/login", methods = ("GET", "POST",))
 def login():
     """
@@ -51,6 +53,8 @@ def login():
     login_user(s)
     flash.login_ok()
     return redirect(url_for("index"))
+
+
 
 @bp.route("/logout")
 @login_required

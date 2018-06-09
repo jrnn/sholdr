@@ -9,16 +9,15 @@ import re
 
 from app import db
 from app.models.share import Share
-from app.util.util import (
-    get_consecutive_ranges,
-    is_within_range
-)
+from app.util.util import is_within_range
 from sqlalchemy import and_
 from wtforms.validators import (
     DataRequired,
     Optional,
     ValidationError
 )
+
+
 
 class MaxLength(object):
     def __init__(self, max, message = None):
@@ -31,6 +30,8 @@ class MaxLength(object):
         s = field.data.strip()
         if len(s) > self.max:
             raise ValidationError(self.message)
+
+
 
 class NinFormat(object):
     """
@@ -56,9 +57,13 @@ class NinFormat(object):
             return
         raise ValidationError(self.message)
 
+
+
 class NotEmpty(object):
     def __call__(self, form, field):
         DataRequired("Cannot be empty")(form, field)
+
+
 
 class NotFutureDate(object):
     def __call__(self, form, field):
@@ -66,6 +71,8 @@ class NotFutureDate(object):
             raise ValidationError()
         elif field.data > datetime.date.today():
             raise ValidationError("Cannot be in the future")
+
+
 
 class PasswordFormat(object):
     """
@@ -86,6 +93,8 @@ class PasswordFormat(object):
         if not (re.match(allowed, pw) and re.match(reqs, pw)):
             raise ValidationError(self.message)
 
+
+
 class RequiredIf(object):
     """
     Apply given validator only when some other field(s) have a certain value,
@@ -101,6 +110,8 @@ class RequiredIf(object):
             if other.data == data:
                 self.validator()(form, field)
             Optional()(form, field)
+
+
 
 class Unique(object):
     """
@@ -125,6 +136,8 @@ class Unique(object):
         ).first():
             raise ValidationError(self.message)
 
+
+
 class WithinBounds(object):
     """
     This validator is only meant to be used by the Certificate form. It does a
@@ -147,6 +160,5 @@ class WithinBounds(object):
         if l < 1:
             raise ValidationError("Numbering of shares starts from 1")
 
-        unbound_ranges = get_consecutive_ranges(Share.find_all_unbound())
-        if not is_within_range( (l,u,), unbound_ranges):
+        if not is_within_range((l,u,), Share.get_unbound_ranges()):
             raise ValidationError("One or more shares within this range is already bound to a certificate")

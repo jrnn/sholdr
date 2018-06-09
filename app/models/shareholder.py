@@ -17,7 +17,7 @@ from . import UuidMixin
 from app import (
     cache,
     db,
-    queries
+    sql
 )
 from sqlalchemy import (
     Boolean,
@@ -25,6 +25,8 @@ from sqlalchemy import (
     ForeignKey,
     String
 )
+
+
 
 class Shareholder(UuidMixin, db.Model):
     email = Column(
@@ -88,8 +90,8 @@ class Shareholder(UuidMixin, db.Model):
         Simply check the number of rows in Shareholder table ... (SQLAlchemy
         default query.count() is ridiculously heavy)
         """
-        q = queries["SHAREHOLDER"]["COUNT_ALL"]
-        rs = db.engine.execute(q).fetchone()
+        stmt = sql["SHAREHOLDER"]["COUNT_ALL"]
+        rs = db.engine.execute(stmt).fetchone()
 
         return rs.count
 
@@ -99,8 +101,8 @@ class Shareholder(UuidMixin, db.Model):
         """
         Fetch all shareholders with only the fields needed on the list view.
         """
-        q = queries["SHAREHOLDER"]["FIND_ALL_FOR_LIST"]
-        rs = db.engine.execute(q)
+        stmt = sql["SHAREHOLDER"]["FIND_ALL_FOR_LIST"]
+        rs = db.engine.execute(stmt)
 
         coll = []
         for r in rs:
@@ -117,6 +119,8 @@ class Shareholder(UuidMixin, db.Model):
             s.id = r.id
             coll.append(s)
         return coll
+
+
 
 class NaturalPerson(Shareholder):
     id = Column(
@@ -150,6 +154,8 @@ class NaturalPerson(Shareholder):
 
     def get_type_id(self):
         return self.nin
+
+
 
 class JuridicalPerson(Shareholder):
     id = Column(
