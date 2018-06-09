@@ -6,9 +6,27 @@
 {% endblock %}
 
 {% block content %}
-  <p>
-    List certificates here ('name' | owner | # of share | # of votes)
-  </p>
+  <table
+    class = "table table-hover"
+    id = "certificates"
+  >
+    <thead>
+      <tr>
+        <th>Certificate</th>
+        <th>Owner</th>
+        <th>Total votes</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for c in certificates %}
+      <tr id = {{ c.id }}>
+        <td>{{ "%s—%s (%s shares)" % (c.first_share, c.last_share, c.share_count,) }}</td>
+        <td>TBA</td>
+        <td>{{ c.votes }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
   <p>
     -------- (some kind of divider element) --------
   </p>
@@ -16,7 +34,7 @@
     {% if not last_share_number %}
       No shares issued yet!
     {% else %}
-      Shares issued up to {{ last_share_number }}
+      Shares issued up to <strong>{{ last_share_number }}</strong>
     {% endif %}
   </p>
   <p>

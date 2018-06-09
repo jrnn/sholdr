@@ -25,6 +25,22 @@ def get_statements(heroku = None):
                 " SELECT s.id, :id"
                 " FROM share s"
                 " WHERE s.id >= :l AND s.id <= :u"
+            ),
+            "FIND_ALL_FOR_LIST" : text(
+                "SELECT"
+                " c.id, c.first_share, c.last_share, c.share_count, _s.votes"
+                " FROM certificate c"
+                " JOIN ( SELECT"
+                " cs.certificate_id AS _id, SUM(sc.votes) AS votes"
+                " FROM certificate_share cs"
+                " JOIN share s"
+                " ON s.id = cs.share_id"
+                " JOIN share_class sc"
+                " ON sc.id = s.share_class_id"
+                " GROUP BY _id ) _s"
+                " ON c.id = _s._id"
+                " WHERE c.canceled_on IS NULL"
+                " ORDER BY c.first_share ASC"
             )
         },
         "SHARE" : {
@@ -59,15 +75,15 @@ def get_statements(heroku = None):
             ),
             "FIND_ALL_FOR_LIST" : text(
                 "SELECT"
-                " sc.id, sc.name, sc.votes, s.count"
+                " sc.id, sc.name, sc.votes, _s.count"
                 " FROM share_class sc"
                 " JOIN ( SELECT"
                 " sc.id, COUNT(s.id) AS count"
                 " FROM share_class sc"
                 " LEFT JOIN share s"
                 " ON sc.id = s.share_class_id"
-                " GROUP BY sc.id ) s"
-                " ON sc.id = s.id"
+                " GROUP BY sc.id ) _s"
+                " ON sc.id = _s.id"
                 " ORDER BY sc.name ASC"
             )
         },

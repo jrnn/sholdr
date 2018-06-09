@@ -5,6 +5,7 @@
 
 from app import db
 from app.forms.share import ShareIssueForm
+from app.models.certificate import Certificate
 from app.models.share import Share
 from app.models.shareclass import ShareClass
 from app.util import flash
@@ -34,6 +35,7 @@ def list():
     """
     return render_template(
         "share/list.html",
+        certificates = Certificate.find_all_for_list(),
         last_share_number = Share.last_share_number(),
         unbound_ranges = Share.get_unbound_ranges()
     )

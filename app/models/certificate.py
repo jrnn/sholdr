@@ -25,7 +25,12 @@ from . import (
     IssuableMixin,
     UuidMixin
 )
-from app import db
+from app import (
+    cache,
+    db,
+    sql
+)
+from app.util.util import rs_to_dict
 from sqlalchemy import (
     BigInteger,
     Column,
@@ -74,5 +79,14 @@ class Certificate(IssuableMixin, UuidMixin, db.Model):
         secondary = shares
     )
 
-    def get_name(self):
-        return str(self.first_share) + "—" + str(self.last_share)
+    @staticmethod
+    @cache.cached(key_prefix = "certificate_list")
+    def find_all_for_list():
+        """
+        Fetch all certificates for the list view. Use a custom aggregate JOIN
+        query to include sum of votes per certificate in the result set.
+        """
+        stmt = sql["CERTIFICATE"]["FIND_ALL_FOR_LIST"]
+        rs = db.engine.execute(stmt)
+
+        return rs_to_dict(rs)
