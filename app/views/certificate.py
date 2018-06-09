@@ -41,6 +41,9 @@ def bundle():
         f.populate_obj(c)
         c.share_count = c.last_share - c.first_share + 1
 
+        db.session.add(c)
+        db.session.commit()
+
         q1 = queries["CERTIFICATE"]["BUNDLE_JOIN"].params(
             id = c.id,
             l = c.first_share,
@@ -50,7 +53,6 @@ def bundle():
             l = c.first_share,
             u = c.last_share
         )
-        db.session.add(c)
         db.engine.execute(q1)
         db.engine.execute(q2)
         db.commit_and_flush_cache()
