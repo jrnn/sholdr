@@ -5,7 +5,6 @@
 """
 
 from . import CustomBaseForm
-from app.models.shareclass import ShareClass
 from app.util.validation import (
     MaxLength,
     NotEmpty,
@@ -21,17 +20,18 @@ from wtforms import (
 
 
 class ShareClassForm(CustomBaseForm):
+    id = StringField(default = "new")
     name = StringField(
         label = "Class name",
         render_kw = { "placeholder" : "e.g. A, B, C ..." },
         validators = [
             MaxLength(32),
             NotEmpty(),
-#            Unique(
-#                column = "name",
-#                entity = ShareClass,
-#                message = "Class name must be unique"
-#            )
+            Unique(
+                column = "name",
+                message = "Class name must be unique",
+                table = "share_class"
+            )
         ]
     )
     votes = IntegerField(

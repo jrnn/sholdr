@@ -35,6 +35,7 @@ from wtforms import (
 
 
 class ShareholderForm(CustomBaseForm):
+    id = StringField(default = "new")
     email = StringField(
         filters = [ apply_lower ],
         label = "Email",
@@ -42,11 +43,11 @@ class ShareholderForm(CustomBaseForm):
         validators = [
             MaxLength(255),
             validators.Email("Invalid email format"),
-#            Unique(
-#                column = "email",
-#                entity = Shareholder,
-#                message = "Email already in use by another shareholder"
-#            )
+            Unique(
+                column = "email",
+                message = "Email already in use by another shareholder",
+                table = "shareholder"
+            )
         ]
     )
     password = PasswordField(
@@ -54,7 +55,7 @@ class ShareholderForm(CustomBaseForm):
         render_kw = { "placeholder" : "qwerty" },
         validators = [
             RequiredIf(
-                is_new = True,
+                id = "new",
                 validator = PasswordFormat
             )
         ]
@@ -159,11 +160,11 @@ class JuridicalPersonForm(ShareholderForm):
         validators = [
             MaxLength(32),
             NotEmpty(),
-#            Unique(
-#                column = "business_id",
-#                entity = JuridicalPerson,
-#                message = "Business ID already in use by another shareholder"
-#            )
+            Unique(
+                column = "business_id",
+                message = "Business ID already in use by another shareholder",
+                table = "juridical_person"
+            )
         ]
     )
     contact_person = StringField(

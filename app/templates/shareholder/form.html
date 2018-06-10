@@ -9,11 +9,11 @@
 
 {% block content %}
   <form
-    action = "{{ url_for('shareholder.create_or_update', id = id) }}"
+    action = "{{ url_for('shareholder.create_or_update') }}"
     method = "POST"
   >
     {{ render_field( form.email ) }}
-    {% if id == "new" %}
+    {% if form.id.data == "new" %}
       {{ render_field( form.password ) }}
       {% if form.password.errors %}
         <div class = "alert-box">
@@ -60,7 +60,7 @@
     {{ render_field( form.country ) }}
     {{ render_checkbox( form.has_access ) }}
     {{ render_checkbox( form.is_admin ) }}
-    {{ form.is_new( hidden = True ) }}
+    {{ form.id( hidden = True ) }}
     <input
       hidden
       name = "type"
@@ -72,10 +72,10 @@
       url_for('shareholder.list')
     ) }}
   </form>
-  {% if id != "new" %}
+  {% if form.id.data != "new" %}
     {{ delete_button(
       "Delete",
-      url_for('shareholder.delete', id = id)
+      url_for('shareholder.delete', id = form.id.data)
     ) }}
   {% endif %}
 {% endblock %}

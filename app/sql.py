@@ -17,7 +17,23 @@ def get_statements(heroku = None):
         FALSE = "false"
         TRUE = "true"
 
+    """
+    Define statements with variable table and/or column references up front as
+    functions, so that parameters can be passed to them depending on context.
+    """
+    def check_if_unique(table_name, column_name):
+        return text(
+            "SELECT"
+            " COUNT(*) AS count"
+            " FROM %s"
+            " WHERE id != :id"
+            " AND %s = :unique_value" % (table_name, column_name,)
+        )
+
     return {
+        "_COMMON" : {
+            "CHECK_IF_UNIQUE" : check_if_unique
+        },
         "CERTIFICATE" : {
             "BUNDLE_JOIN" : text(
                 "INSERT INTO"

@@ -7,10 +7,12 @@
 import datetime
 import re
 
-from app import db
+from app import (
+    db,
+    sql
+)
 from app.models.share import Share
 from app.util.util import is_within_range
-from sqlalchemy import and_
 from wtforms.validators import (
     DataRequired,
     Optional,
@@ -119,21 +121,19 @@ class Unique(object):
     given column (excluding the current entity itself). For instance, check
     that given email address is not already reserved for any other user.
     """
-    def __init__(self, column, entity, message = None):
+    def __init__(self, column, table, message = None):
         if not message:
             message = "Value already in use"
-
-        self.entity = entity
         self.message = message
-        self.unique_attr = getattr(entity, column)
+        self.stmt = sql["_COMMON"]["CHECK_IF_UNIQUE"](table, column)
 
     def __call__(self, form, field):
-        if db.session.query(self.entity).filter(
-            and_(
-                self.entity.id != form.id.data,
-                self.unique_attr == field.data
-            )
-        ).first():
+        stmt = self.stmt.params(
+            id = form.id.data,
+            unique_value = field.data
+        )
+        rs = db.engine.execute(stmt).fetchone()
+        if rs.count:
             raise ValidationError(self.message)
 
 

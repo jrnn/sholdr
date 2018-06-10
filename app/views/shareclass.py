@@ -52,29 +52,29 @@ def form(id):
 
     return render_template(
         "shareclass/form.html",
-        form = f,
-        id = id
+        form = f
     )
 
 
 
-@bp.route("/<id>", methods = ("POST",))
+@bp.route("/", methods = ("POST",))
 @login_required
-def create_or_update(id):
+def create_or_update():
     """
     Either create a new share class or update existing one, depending on whether
-    there is a record in DB for given primary key (path variable).
+    there is a record in DB for given primary key (passed as hidden form field).
     """
     f = ShareClassForm(request.form)
+    id = f.id.data
 
     if not f.validate():
         flash.invalid_input()
         return render_template(
             "shareclass/form.html",
-            form = f,
-            id = id
+            form = f
         )
 
+    del f.id # otherwise overwrites id = 'new' when creating new
     s = ShareClass.query.get_or_default(id, ShareClass())
     f.populate_obj(s)
     s.save_or_update()

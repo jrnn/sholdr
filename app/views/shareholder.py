@@ -68,7 +68,6 @@ def form(id):
         else:
             flash.incorrect_type("shareholder")
             return redirect(url_for("shareholder.list"))
-        f.is_new.data = True
 
     else:
         s = Shareholder.query.get_or_404(id)
@@ -82,20 +81,21 @@ def form(id):
 
     return render_template(
         "shareholder/form.html",
-        form = f,
-        id = id
+        form = f
     )
 
 
 
-@bp.route("/<id>", methods = ("POST",))
+@bp.route("/", methods = ("POST",))
 @login_required
-def create_or_update(id):
+def create_or_update():
     """
     Either create a new shareholder or update existing one, depending on whether
-    there is a record in DB for given primary key (path variable). Hash and
-    store password only when creating new.
+    there is a record in DB for given primary key (passed as hidden form field).
+    Hash and store password only when creating new shareholder.
     """
+    id = request.form.get("id")
+
     if request.form.get("type") == "natural":
         f = NaturalPersonForm(request.form)
         s = NaturalPerson.query.get_or_default(id, NaturalPerson())
@@ -107,8 +107,7 @@ def create_or_update(id):
         flash.invalid_input()
         return render_template(
             "shareholder/form.html",
-            form = f,
-            id = id
+            form = f
         )
 
     if id == "new":
@@ -117,6 +116,7 @@ def create_or_update(id):
     else:
         flash.update_ok("shareholder")
 
+    del f.id # otherwise overwrites id = 'new' when creating new
     f.populate_obj(s)
     s.save_or_update()
     return redirect(url_for("shareholder.list"))
@@ -128,7 +128,7 @@ def create_or_update(id):
 def delete(id):
     """
     Delete shareholder by primary key (path variable), if found. Otherwise throw
-    404. Deletes also subclass row.
+    404.
     """
     if not Shareholder.query.get(id).delete_if_exists():
         abort(404)
