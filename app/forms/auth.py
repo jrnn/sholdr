@@ -29,6 +29,3 @@ class LoginForm(FlaskForm):
         label = "Password",
         render_kw = { "placeholder" : "qwerty" }
     )
-
-    class Meta:
-        csrf = False

@@ -66,6 +66,7 @@
       name = "type"
       value = "{{ form.type }}"
     />
+    {{ form.csrf_token }}
     {{ submit_button( "Submit" ) }}
     {{ link_button(
       "Go back",

@@ -50,6 +50,3 @@ class ShareForm(FlaskForm):
         ## TEMPORARY SAFEGUARD FOR PRODUCTION (DB IS VERY LIMITED)
         if u > 100:
             raise ValidationError("Sorry but free trial supports only up to 100 shares. GIVE ME MONEY")
-
-    class Meta:
-        csrf = False

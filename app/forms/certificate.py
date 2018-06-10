@@ -42,6 +42,3 @@ class CertificateForm(FlaskForm):
             "readonly" : True
         }
     )
-
-    class Meta:
-        csrf = False

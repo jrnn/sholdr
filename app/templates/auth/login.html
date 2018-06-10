@@ -27,6 +27,7 @@
         </div>
       {% endif %}
     </div>
+    {{ form.csrf_token }}
     {{ submit_button("Let me in!") }}
   </form>
 {% endblock %}

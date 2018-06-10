@@ -16,6 +16,7 @@
     {{ render_field( form.upper_bound ) }}
     {{ render_field( form.issued_on ) }}
     {{ render_field( form.share_class_id ) }}
+    {{ form.csrf_token }}
     {{ submit_button( "Submit" ) }}
     {{ link_button(
       "Cancel",

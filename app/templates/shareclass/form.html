@@ -16,6 +16,7 @@
     {{ render_field( form.votes ) }}
     {{ render_field( form.remarks ) }}
     {{ form.id( hidden = True ) }}
+    {{ form.csrf_token }}
     {{ submit_button( "Submit" ) }}
     {{ link_button(
       "Go back",

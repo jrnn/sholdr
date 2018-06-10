@@ -10,8 +10,6 @@ from flask_wtf import FlaskForm
 
 class CustomBaseForm(FlaskForm):
     class Meta:
-        csrf = False
-
         def bind_field(self, form, unbound_field, options):
             filters = unbound_field.kwargs.get("filters", [])
             if apply_strip not in filters:

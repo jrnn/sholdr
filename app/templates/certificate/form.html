@@ -31,6 +31,7 @@
     </div>
     {{ render_field( form.issued_on ) }}
     {{ render_field( form.shareholder_id ) }}
+    {{ form.csrf_token }}
     {{ submit_button( "Submit" ) }}
     {{ link_button(
       "Cancel",
