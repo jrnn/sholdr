@@ -36,7 +36,7 @@ def get_statements(heroku = None):
                 " ON s.id = cs.share_id"
                 " JOIN share_class sc"
                 " ON sc.id = s.share_class_id"
-                " WHERE cs.certificate_id = :id )"
+                " WHERE cs.certificate_id = :id ) _s"
                 " GROUP BY name"
             ),
             "FIND_ALL_FOR_LIST" : text(
