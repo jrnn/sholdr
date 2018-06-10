@@ -4,10 +4,8 @@
     blueprints and models are registered in their respective __init__ modules.
 """
 
-import os
-
-from .config import config
 from .config.cache import create_cache
+from .config.config import get_config
 from .models import (
     create_db,
     init_db
@@ -15,21 +13,15 @@ from .models import (
 from .sql import get_statements
 from flask import Flask
 
-if os.environ.get("HEROKU"):
-    config = config.HerokuConfig
-else:
-    config = config.BaseConfig
-
 app = Flask(__name__)
-app.config.from_object(config)
+app.config.from_object(get_config())
 
 db = create_db(app)
 cache = create_cache(app, db)
-sql = get_statements(os.environ.get("HEROKU"))
+sql = get_statements()
 init_db(db)
 
 from .config.auth import init_auth
-init_auth(app)
-
 from .views import init_views
+init_auth(app)
 init_views(app)

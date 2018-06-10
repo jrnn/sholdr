@@ -6,14 +6,15 @@
     are accounted for.
 """
 
+import os
 from sqlalchemy.sql import text
 
 
 
-def get_statements(heroku = None):
+def get_statements():
     FALSE = 0
     TRUE = 1
-    if heroku:
+    if os.environ.get("HEROKU"):
         FALSE = "false"
         TRUE = "true"
 

@@ -12,8 +12,7 @@ from flask import (
     Blueprint,
     redirect,
     render_template,
-    request,
-    url_for
+    request
 )
 from flask_login import (
     login_required,
@@ -52,7 +51,7 @@ def login():
 
     login_user(s)
     flash.login_ok()
-    return redirect(url_for("index"))
+    return redirect("/")
 
 
 
@@ -61,4 +60,4 @@ def login():
 def logout():
     logout_user_memoized()
     flash.logout_ok()
-    return redirect(url_for("index"))
+    return redirect("/")

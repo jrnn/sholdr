@@ -25,6 +25,14 @@ def init_views(app):
     def page_not_found(e):
         return render_template("404.html"), 404
 
-    @app.route("/")
-    def index():
-        return render_template("index.html")
+    @app.errorhandler(500)
+    def internal_server_error(e):
+        print(e)
+        return render_template("500.html"), 500
+
+    @app.errorhandler(Exception)
+    def unhandled_exception(e):
+        print(e)
+        return render_template("500.html"), 500
+
+    app.add_url_rule("/", "shareholder.list")

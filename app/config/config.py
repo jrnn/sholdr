@@ -22,3 +22,10 @@ class HerokuConfig(BaseConfig):
     SECRET_KEY = os.environ.get("SECRET_KEY")
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
     SQLALCHEMY_ECHO = False
+
+
+
+def get_config():
+    if os.environ.get("HEROKU"):
+        return HerokuConfig
+    return BaseConfig
