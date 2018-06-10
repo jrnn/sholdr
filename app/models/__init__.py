@@ -3,18 +3,29 @@
     customization of the ORM model classes.
 """
 
-from app.util.util import get_uuid
 from flask_sqlalchemy import (
     BaseQuery,
-    Model
+    Model,
+    SQLAlchemy
 )
 from sqlalchemy import (
     Column,
-    Date,
     DateTime,
-    func,
-    String
+    func
 )
+
+
+
+def create_db(app):
+    """
+    Create DB instance, passing in slightly customized base model and query
+    classes.
+    """
+    return SQLAlchemy(
+        app,
+        model_class = CustomModel,
+        query_class = GetOrDefaultQuery
+    )
 
 
 
@@ -42,7 +53,7 @@ class CustomModel(Model):
     """
     Centrally define properties that are shared across all models: namely,
     timestamps on creation and modification. Passed to SQLAlchemy when creating
-    DB instance (above).
+    DB instance.
     """
     created_on = Column(
         DateTime,
@@ -59,31 +70,6 @@ class CustomModel(Model):
 class GetOrDefaultQuery(BaseQuery):
     def get_or_default(self, id, default = None):
         return self.get(id) or default
-
-
-
-class IssuableMixin(object):
-    issued_on = Column(
-        Date,
-        nullable = False
-    )
-    canceled_on = Column(Date)
-
-
-
-class UuidMixin(object):
-    """
-    Use randomly generated UUIDs as primary key for models to which this is
-    applied (chance of conflicts is infinitesimal). Not applied to all models,
-    because it makes sense to identify e.g. Shares with sequential integers.
-    """
-    id = Column(
-        String(32),
-        primary_key = True
-    )
-
-    def __init__(self):
-        self.id = get_uuid()
 
 
 

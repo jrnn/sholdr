@@ -21,7 +21,7 @@
     the same unchanging information.
 """
 
-from . import (
+from .mixins import (
     IssuableMixin,
     UuidMixin
 )

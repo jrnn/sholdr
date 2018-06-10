@@ -18,7 +18,7 @@
     a Certificate.
 """
 
-from . import IssuableMixin
+from .mixins import IssuableMixin
 from app import (
     cache,
     db,

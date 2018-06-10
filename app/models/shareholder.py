@@ -13,7 +13,10 @@
     users and/or resetting passwords.
 """
 
-from . import UuidMixin
+from .mixins import (
+    BaseMixin,
+    UuidMixin
+)
 from app import (
     cache,
     db,
@@ -24,13 +27,12 @@ from sqlalchemy import (
     Boolean,
     Column,
     ForeignKey,
-    inspect,
     String
 )
 
 
 
-class Shareholder(UuidMixin, db.Model):
+class Shareholder(BaseMixin, UuidMixin, db.Model):
     email = Column(
         String(255),
         nullable = False,
@@ -85,28 +87,6 @@ class Shareholder(UuidMixin, db.Model):
 
     def is_authenticated(self):
         return True
-
-    def delete_if_exists(self):
-        """
-        Using SQLAlchemy state management, check 'object state' of instance. If
-        'persistent' (i.e. has record in DB), delete from DB and return True.
-        Otherwise return False.
-        """
-        if inspect(self).persistent:
-            db.session.delete(self)
-            db.commit_and_flush_cache()
-            return True
-        return False
-
-    def save_or_update(self):
-        """
-        Using SQLAlchemy state management, check 'object state' of instance, and
-        add it to session if 'transient' (roughly the same as 'isNew = true').
-        Then complete DB transaction.
-        """
-        if inspect(self).transient:
-            db.session.add(self)
-        db.commit_and_flush_cache()
 
     @staticmethod
     def count_all():

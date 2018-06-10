@@ -6,18 +6,14 @@
 
 import os
 
-from .config import (
-    cache,
-    config
-)
+from .config import config
+from .config.cache import create_cache
 from .models import (
-    CustomModel,
-    GetOrDefaultQuery,
+    create_db,
     init_db
 )
 from .sql import get_statements
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 
 if os.environ.get("HEROKU"):
     config = config.HerokuConfig
@@ -27,13 +23,8 @@ else:
 app = Flask(__name__)
 app.config.from_object(config)
 
-db = SQLAlchemy(
-    app,
-    model_class = CustomModel,
-    query_class = GetOrDefaultQuery
-)
-
-cache = cache.create_cache(app, db)
+db = create_db(app)
+cache = create_cache(app, db)
 sql = get_statements(os.environ.get("HEROKU"))
 init_db(db)
 

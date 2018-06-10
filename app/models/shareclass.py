@@ -7,7 +7,10 @@
     purposes of this app, Share Class just quantifies voting rights.
 """
 
-from . import UuidMixin
+from .mixins import (
+    BaseMixin,
+    UuidMixin
+)
 from app import (
     cache,
     db,
@@ -16,14 +19,13 @@ from app import (
 from app.util.util import rs_to_dict
 from sqlalchemy import (
     Column,
-    inspect,
     Integer,
     String
 )
 
 
 
-class ShareClass(UuidMixin, db.Model):
+class ShareClass(BaseMixin, UuidMixin, db.Model):
     name = Column(
         String(32),
         nullable = False,
@@ -44,28 +46,6 @@ class ShareClass(UuidMixin, db.Model):
         ),
         lazy = True
     )
-
-    def delete_if_exists(self):
-        """
-        Using SQLAlchemy state management, check 'object state' of instance. If
-        'persistent' (i.e. has record in DB), delete from DB and return True.
-        Otherwise return False.
-        """
-        if inspect(self).persistent:
-            db.session.delete(self)
-            db.commit_and_flush_cache()
-            return True
-        return False
-
-    def save_or_update(self):
-        """
-        Using SQLAlchemy state management, check 'object state' of instance, and
-        add it to session if 'transient' (roughly the same as 'isNew = true').
-        Then complete DB transaction.
-        """
-        if inspect(self).transient:
-            db.session.add(self)
-        db.commit_and_flush_cache()
 
     @staticmethod
     def count_shares_for(id):
