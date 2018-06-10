@@ -9,23 +9,22 @@
 
 {% block content %}
   <form
-    action = "{{ url_for('shareclass.create_or_update') }}"
+    action = "{{ url_for('shareclass.create_or_update', id = id) }}"
     method = "POST"
   >
     {{ render_field( form.name ) }}
     {{ render_field( form.votes ) }}
     {{ render_field( form.remarks ) }}
-    {{ form.id( hidden = True ) }}
     {{ submit_button( "Submit" ) }}
     {{ link_button(
-      "Cancel",
+      "Go back",
       url_for('shareclass.list')
     ) }}
   </form>
-  {% if form.id.data != "new" %}
+  {% if id != "new" %}
     {{ delete_button(
       "Delete",
-      url_for('shareclass.delete', id = form.data.id)
+      url_for('shareclass.delete', id = id)
     ) }}
   {% endif %}
 {% endblock %}

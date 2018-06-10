@@ -4,7 +4,6 @@
     flavors (subclassing), the code is a bit bulkier than usual.
 """
 
-from app import db
 from app.forms.shareholder import (
     JuridicalPersonForm,
     NaturalPersonForm
@@ -39,10 +38,6 @@ bp = Blueprint(
 def list():
     """
     Show all shareholders on a list.
-
-    Because shareholder has two subclasses and the data needed here is on sub-
-    class level, make an "eager" JOIN query so that needed data is all loaded
-    up-front at once.
     """
     return render_template(
         "shareholder/list.html",
@@ -55,17 +50,13 @@ def list():
 @login_required
 def form(id):
     """
-    Find one shareholder by primary key (given as path variable), then query for
-    the correct subclass entity by type, and finally show corresponding form
+    Find shareholder by given primary key (path variable), then query for the
+    correct subclass entity by type, and finally show corresponding form
     prefilled with its data.
 
-    If the value "new" is given, show empty form instead. Shareholder type must
-    be given as query parameter, so that the correct WTForm class is passed to
+    If value "new" is given, show empty form instead. Shareholder type must be
+    given as query parameter, so that the correct WTForm class is passed to
     Jinja. If an incorrect or no type is given, redirect to list view.
-
-    Whether looking at an existing shareholder or creating a new one, the same
-    html template is used. The function handling the submit can tell the
-    difference based on a hidden id prop passed to the form.
     """
     if id == "new":
         type = request.args.get("type")
@@ -77,6 +68,7 @@ def form(id):
         else:
             flash.incorrect_type("shareholder")
             return redirect(url_for("shareholder.list"))
+        f.is_new.data = True
 
     else:
         s = Shareholder.query.get_or_404(id)
@@ -90,24 +82,21 @@ def form(id):
 
     return render_template(
         "shareholder/form.html",
-        form = f
+        form = f,
+        id = id
     )
 
 
 
-@bp.route("/", methods = ("POST",))
+@bp.route("/<id>", methods = ("POST",))
 @login_required
-def create_or_update():
+def create_or_update(id):
     """
-    Either create a new shareholder or update existing one, depending on the
-    inbound form's id field (process is very similar in both cases). Hash and
+    Either create a new shareholder or update existing one, depending on whether
+    there is a record in DB for given primary key (path variable). Hash and
     store password only when creating new.
     """
-    id = request.form.get("id")
-    type = request.form.get("type")
-    assert type == "natural" or type == "juridical"
-
-    if type == "natural":
+    if request.form.get("type") == "natural":
         f = NaturalPersonForm(request.form)
         s = NaturalPerson.query.get_or_default(id, NaturalPerson())
     else:
@@ -118,20 +107,18 @@ def create_or_update():
         flash.invalid_input()
         return render_template(
             "shareholder/form.html",
-            form = f
+            form = f,
+            id = id
         )
-
-    del f.id  # avoid setting "new" as pk when creating new shareholder
-    f.populate_obj(s)
 
     if id == "new":
         s.pw_hash = hashPassword(f.password.data)
-        db.session.add(s)
         flash.create_ok("shareholder")
     else:
         flash.update_ok("shareholder")
 
-    db.commit_and_flush_cache()
+    f.populate_obj(s)
+    s.save_or_update()
     return redirect(url_for("shareholder.list"))
 
 
@@ -140,15 +127,10 @@ def create_or_update():
 @login_required
 def delete(id):
     """
-    Delete shareholder by primary key (given as path variable), if found.
-    Otherwise throw 404. Delete also subclass row.
+    Delete shareholder by primary key (path variable), if found. Otherwise throw
+    404. Deletes also subclass row.
     """
-    if Shareholder.query.filter_by(id = id).delete():
-        NaturalPerson.query.filter_by(id = id).delete()
-        JuridicalPerson.query.filter_by(id = id).delete()
-    else:
+    if not Shareholder.query.get(id).delete_if_exists():
         abort(404)
-
-    db.commit_and_flush_cache()
     flash.delete_ok("shareholder")
     return redirect(url_for("shareholder.list"))
