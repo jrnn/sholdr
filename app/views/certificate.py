@@ -69,3 +69,27 @@ def bundle():
         "certificate/form.html",
         form = f
     )
+
+
+
+@bp.route("/<id>", methods = ("GET",))
+def details(id):
+    """
+    Show page with certificate basic information, share composition breakdown by
+    share class, and transaction history.
+    """
+    c = Certificate.query.get_or_404(id)
+    sc = Certificate.get_share_composition_for(id)
+
+    return render_template(
+        "certificate/details.html",
+        certificate = c,
+        share_classes = sc,
+        total_votes = sum([ s["votes"] for s in sc ])
+    )
+
+
+
+@bp.route("/<id>", methods = ("POST",))
+def cancel(id):
+    return "not yet implemented, hefe"

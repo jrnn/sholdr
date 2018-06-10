@@ -40,6 +40,9 @@ tbody tr {
 .bgcolor-shallow {
     background-color : #dfe3e9;
 }
+.divider {
+    margin : 3rem 0rem;
+}
 .padded {
     padding : 1rem 0rem;
 }

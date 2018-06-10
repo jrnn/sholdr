@@ -6,6 +6,33 @@
 {% endblock %}
 
 {% block content %}
+  <p>
+    {% if not last_share_number %}
+      No shares issued yet!
+    {% else %}
+      Shares issued up to <strong>#{{ last_share_number }}</strong>
+    {% endif %}
+  </p>
+  {% if unbound_ranges %}
+  <p>
+    Unbound shares:
+    <ul>
+      {% for (a, b) in unbound_ranges %}
+      <li>
+        {{ a }}—{{ b }}
+      </li>
+      {% endfor %}
+    </ul>
+  </p>
+  {% endif %}
+  {{ link_button(
+    "Issue more shares",
+    url_for('share.issue')
+  ) }}
+  <div class = "divider"></div>
+  <h5 class = "padded">
+    Share certificates
+  </h5>
   <table
     class = "table table-hover"
     id = "certificates"
@@ -27,32 +54,18 @@
     {% endfor %}
     </tbody>
   </table>
-  <p>
-    -------- (some kind of divider element) --------
-  </p>
-  <p>
-    {% if not last_share_number %}
-      No shares issued yet!
-    {% else %}
-      Shares issued up to <strong>{{ last_share_number }}</strong>
-    {% endif %}
-  </p>
-  <p>
-    Unbound shares:
-    <ul>
-      {% for (a, b) in unbound_ranges %}
-      <li>
-        {{ a }}—{{ b }}
-      </li>
-      {% endfor %}
-    </ul>
-  </p>
   {{ link_button(
     "Bundle new share certificate",
     url_for('certificate.bundle')
   ) }}
-  {{ link_button(
-    "Issue more shares",
-    url_for('share.issue')
-  ) }}
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function() {
+      $("#certificates").on("click", "tbody tr", function() {
+        window.location.href = "/certificate/" + $(this).attr("id");
+      });
+    });
+  </script>
 {% endblock %}

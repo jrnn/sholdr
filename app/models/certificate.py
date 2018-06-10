@@ -79,6 +79,24 @@ class Certificate(IssuableMixin, UuidMixin, db.Model):
         secondary = shares
     )
 
+    def get_status(self):
+        if not self.canceled_on:
+            return "Valid"
+        else:
+            return "Canceled"
+
+    @staticmethod
+    @cache.memoize()
+    def get_share_composition_for(id):
+        """
+        Fetch the quantity and sum votes of shares bound to given certificate,
+        broken down by share class.
+        """
+        stmt = sql["CERTIFICATE"]["CALCULATE_SHARE_COMPOSITION_FOR"].params(id = id)
+        rs = db.engine.execute(stmt)
+
+        return rs_to_dict(rs)
+
     @staticmethod
     @cache.cached(key_prefix = "certificate_list")
     def find_all_for_list():

@@ -26,6 +26,19 @@ def get_statements(heroku = None):
                 " FROM share s"
                 " WHERE s.id >= :l AND s.id <= :u"
             ),
+            "CALCULATE_SHARE_COMPOSITION_FOR" : text(
+                "SELECT"
+                " name, COUNT(*) AS count, SUM(votes) AS votes"
+                " FROM ( SELECT"
+                " sc.name, sc.votes"
+                " FROM certificate_share cs"
+                " JOIN share s"
+                " ON s.id = cs.share_id"
+                " JOIN share_class sc"
+                " ON sc.id = s.share_class_id"
+                " WHERE cs.certificate_id = :id )"
+                " GROUP BY name"
+            ),
             "FIND_ALL_FOR_LIST" : text(
                 "SELECT"
                 " c.id, c.first_share, c.last_share, c.share_count, _s.votes"
