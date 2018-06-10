@@ -15,7 +15,7 @@ from wtforms import (
 
 
 
-class ShareIssueForm(FlaskForm):
+class ShareForm(FlaskForm):
     lower_bound = IntegerField(
         label = "Starting from number ...",
         render_kw = { "readonly" : True }

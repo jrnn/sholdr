@@ -3,10 +3,6 @@
     Certificates are funky so the views and operations are not vanilla CRUD.
 """
 
-from app import (
-    db,
-    sql
-)
 from app.forms.certificate import CertificateForm
 from app.models.certificate import Certificate
 from app.util import flash
@@ -33,31 +29,17 @@ def bundle():
     """
     Depending on request type, either (1) show blank form for bundling shares
     into certificates, or (2) create new certificate and bind its component
-    shares. The binding is done with two custom statements that handle several
-    rows in one query; one for the join table, and another for updating the
-    affected shares.
+    shares.
     """
     f = CertificateForm(request.form)
+
     if f.validate_on_submit():
         c = Certificate()
         f.populate_obj(c)
         c.share_count = c.last_share - c.first_share + 1
 
-        db.session.add(c)
-        db.session.commit()
-
-        stmt1 = sql["CERTIFICATE"]["BUNDLE_JOIN"].params(
-            id = c.id,
-            l = c.first_share,
-            u = c.last_share
-        )
-        stmt2 = sql["SHARE"]["BIND_RANGE"].params(
-            l = c.first_share,
-            u = c.last_share
-        )
-        db.engine.execute(stmt1)
-        db.engine.execute(stmt2)
-        db.commit_and_flush_cache()
+        c.save_or_update()
+        Certificate.bind_shares(c)
 
         flash.create_ok("certificate")
         return redirect(url_for("share.list"))

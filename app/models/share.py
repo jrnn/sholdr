@@ -50,7 +50,6 @@ class Share(IssuableMixin, db.Model):
         ForeignKey("share_class.id"),
         nullable = False
     )
-    ## possibly add 'nominal_value' ?
 
     @staticmethod
     @cache.cached(key_prefix = "find_all_unbound")
@@ -64,6 +63,23 @@ class Share(IssuableMixin, db.Model):
         rs = db.engine.execute(stmt)
 
         return get_consecutive_ranges([ r.id for r in rs ])
+
+    @staticmethod
+    def issue_from_form(f):
+        """
+        Create new shares numbered X to Y, as instructed by the ShareForm given
+        as parameter. Note that checking form validity is on method caller's
+        responsibility.
+        """
+        l = f.lower_bound.data
+        u = f.upper_bound.data + 1
+
+        for i in range(l, u):
+            s = Share()
+            f.populate_obj(s)
+            s.id = i
+            db.session.add(s)
+        db.commit_and_flush_cache()
 
     @staticmethod
     @cache.cached(key_prefix = "last_share_number")

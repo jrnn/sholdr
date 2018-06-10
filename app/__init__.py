@@ -28,8 +28,8 @@ cache = create_cache(app, db)
 sql = get_statements(os.environ.get("HEROKU"))
 init_db(db)
 
-from .config import auth
-auth.init_auth(app)
+from .config.auth import init_auth
+init_auth(app)
 
 from .views import init_views
 init_views(app)

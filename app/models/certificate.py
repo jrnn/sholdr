@@ -22,6 +22,7 @@
 """
 
 from .mixins import (
+    BaseMixin,
     IssuableMixin,
     UuidMixin
 )
@@ -55,7 +56,7 @@ shares = db.Table(
 
 
 
-class Certificate(IssuableMixin, UuidMixin, db.Model):
+class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
     first_share = Column(
         BigInteger,
         nullable = False
@@ -84,6 +85,28 @@ class Certificate(IssuableMixin, UuidMixin, db.Model):
             return "Valid"
         else:
             return "Canceled"
+
+    @staticmethod
+    def bind_shares(certificate):
+        """
+        Handle the binding of a new certificate's (given as parameter) shares.
+        This is done with two custom statements that process several rows in one
+        query: one for the join table, and another for updating the 'is_bound'
+        flag of all affected shares.
+        """
+        stmt1 = sql["CERTIFICATE"]["BUNDLE_JOIN"].params(
+            id = certificate.id,
+            l = certificate.first_share,
+            u = certificate.last_share
+        )
+        stmt2 = sql["SHARE"]["BIND_RANGE"].params(
+            l = certificate.first_share,
+            u = certificate.last_share
+        )
+
+        db.engine.execute(stmt1)
+        db.engine.execute(stmt2)
+        db.commit_and_flush_cache()
 
     @staticmethod
     @cache.memoize()

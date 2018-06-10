@@ -3,8 +3,7 @@
     are funky so the views and operations are not vanilla CRUD.
 """
 
-from app import db
-from app.forms.share import ShareIssueForm
+from app.forms.share import ShareForm
 from app.models.certificate import Certificate
 from app.models.share import Share
 from app.models.shareclass import ShareClass
@@ -54,20 +53,14 @@ def issue():
     share number). WTForms cannot handle these properly 'in-class', so the
     relevant queries are done here and filled in on each request.
     """
-    f = ShareIssueForm(request.form)
+    f = ShareForm(request.form)
     l = Share.last_share_number() + 1
 
     f.lower_bound.data = l
     f.share_class_id.choices = ShareClass.get_dropdown_options()
 
     if f.validate_on_submit():
-        for i in range(l, f.upper_bound.data + 1):
-            s = Share()
-            f.populate_obj(s)
-            s.id = i
-            db.session.add(s)
-
-        db.commit_and_flush_cache()
+        Share.issue_from_form(f)
         flash.create_ok("shares")
         return redirect(url_for("share.list"))
 
