@@ -3,41 +3,38 @@ sholdr
 
 Description
 -----------
-
- - **sholdr** is a pocket-size shareholder register, reduced to just bare
-   minimum features needed for keeping tabs on the ownership of a small private
-   company’s shares.
- - The two core concepts are **shares** and **shareholders**. The key point of
-   interest is the relationship between the two – the ownership structure at a
-   given point in time.
- - Shareholders are also users of the app, with varying rights and authority.
-   There will be a distinction at least between admin users and basic users with
-   limited rights.
- - Each share may at once be under ownership of no more than one shareholder.
-   Changes in the ownership of a share are tracked by recording **transactions**
-   where shares change hands.
- - Typically shares are owned and traded in large numbers. To avoid massive and
-   unnecessary data, ownership and transactions are not recorded for each share
-   individually, but rather for **share certificates**, which in practice are
-   just bundles of sequentially numbered shares.
- - Clearly, one share can be part of only one certificate at a time. However,
-   since certificates can be split up and/or merged together, _over time_ one
-   share can belong to several different certificates.
- - Finally, each share belongs to a **share class**, which can be used to
-   differentiate shares in terms of e.g. ownership rules or privileges. Share
-   class can also change throughout a share’s life cycle, typically in
-   conjunction with transactions.
+- **sholdr** is a pocket-size shareholder register, reduced to bare minimum
+  features needed for keeping tabs on a small private company’s shares.
+- The main purpose is to track ownership structure over time: who owns which
+  shares, how much voting power do those shares grant them, who has been selling
+  theirs and to whom, and how much money is involved in those transactions.
+- To achieve this, roughly, the following features are needed:
+  - Adding **shareholders** to the system. Shareholders are also users of the
+    app, with different access rights and privileges.
+  - Issuing **shares** in large quantities. Shares are a unit of capital that
+    quantify ownership between the issuing company and its shareholders.
+  - Declaring various **share classes**, which differentiate shares in terms of
+    e.g. voting power and other privileges.
+  - Bundling subsets of sequentially numbered shares into **share certificates**,
+    an instrument of trade and proof of ownership that simplifies bookkeeping.
+  - Recording **transactions** where share certificates change hands (for a
+    price).
+  - ...and finally, being able to handle and track the various changes these
+    entities go through over time: shares can be canceled, certificates can be
+    split up or merged, share classification can be changed e.g. in conjunction
+    with transactions, and so on.
 
 Documentation
 -------------
-
- - [User stories](https://github.com/jrnn/sholdr/blob/master/docs/user_stories.md)
- - [Database diagram](https://github.com/jrnn/sholdr/blob/master/docs/db_model.pdf)
+- [User stories](https://github.com/jrnn/sholdr/blob/master/docs/user_stories.md)
+- [Database diagram](https://github.com/jrnn/sholdr/blob/master/docs/db_model.pdf)
+- [Sorry excuse of a spec](https://github.com/jrnn/sholdr/blob/master/docs/specification.md)
 
 It runs on Heroku
 -----------------
-
-Click [here](https://sholdr.herokuapp.com/) to see it in action.
+Click [here](https://sholdr.herokuapp.com/) to see sholdr in action.
 You can log in with:
- - email : celery@man.io
- - password : Qwerty_123
+```
+email : celery@man.io
+password : Qwerty_123
+```
