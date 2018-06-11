@@ -8,7 +8,7 @@ from app.forms.certificate import (
     CertificateForm
 )
 from app.models.certificate import Certificate
-from app.util import flash
+from app.util import notify
 from flask import (
     Blueprint,
     redirect,
@@ -44,11 +44,11 @@ def bundle():
         c.save_or_update()
         Certificate.bind_shares(c)
 
-        flash.create_ok("certificate")
+        notify.create_ok("certificate")
         return redirect(url_for("share.list"))
 
-    if request.method == "POST":
-        flash.invalid_input()
+    elif request.method == "POST":
+        notify.invalid_input()
 
     return render_template(
         "certificate/form.html",
@@ -87,11 +87,12 @@ def cancel(id):
         c.canceled_on = f.canceled_on.data
         Certificate.release_shares(c)
 
-        flash.cancel_ok("certificate")
+        notify.cancel_ok("certificate")
         return redirect(url_for("share.list"))
 
-    if request.method == "POST":
-        flash.invalid_input()
+    elif request.method == "POST":
+        notify.invalid_input()
+
     else:
         f = CancellationForm(obj = c)
         f.shares.data = "%s—%s" % (c.first_share, c.last_share,)

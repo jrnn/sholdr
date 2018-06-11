@@ -1,10 +1,10 @@
 """
     This module contains the WTForm classes that handle the forms for bundling
     and unbundling (canceling) Certificates. Standard Flask-WTForm base class is
-    used, and there's nothing special apart from a little custom validation.
+    used, and there is nothing special apart from a little custom validation.
 """
 
-from app.util.validation import (
+from .validators import (
     NotEarlierThan,
     NotFutureDate,
     WithinBounds
@@ -49,7 +49,7 @@ class CertificateForm(FlaskForm):
 
 
 class CancellationForm(FlaskForm):
-    id = StringField()
+    id = StringField(render_kw = { "hidden" : True })
     shares = StringField(
         label = "Certificate",
         render_kw = { "readonly" : True }

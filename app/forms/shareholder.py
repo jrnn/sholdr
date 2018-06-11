@@ -9,21 +9,17 @@
 """
 
 from . import CustomBaseForm
-from app.models.shareholder import (
-    JuridicalPerson,
-    Shareholder
-)
-from app.util.util import (
-    apply_lower,
-    apply_upper
-)
-from app.util.validation import (
+from .validators import (
     MaxLength,
     NinFormat,
     NotEmpty,
     PasswordFormat,
     RequiredIf,
     Unique
+)
+from app.util.util import (
+    apply_lower,
+    apply_upper
 )
 from wtforms import (
     BooleanField,
@@ -35,7 +31,10 @@ from wtforms import (
 
 
 class ShareholderForm(CustomBaseForm):
-    id = StringField(default = "new")
+    id = StringField(
+        default = "new",
+        render_kw = { "hidden" : True }
+    )
     email = StringField(
         filters = [ apply_lower ],
         label = "Email",
@@ -104,7 +103,6 @@ class ShareholderForm(CustomBaseForm):
         default = False,
         label = "Administrator (god-mode)"
     )
-    is_new = BooleanField(default = False)
 
 
 

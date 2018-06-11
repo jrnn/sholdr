@@ -5,7 +5,7 @@
 
 from app.forms.shareclass import ShareClassForm
 from app.models.shareclass import ShareClass
-from app.util import flash
+from app.util import notify
 from flask import (
     abort,
     Blueprint,
@@ -68,21 +68,21 @@ def create_or_update():
     id = f.id.data
 
     if not f.validate():
-        flash.invalid_input()
+        notify.invalid_input()
         return render_template(
             "shareclass/form.html",
             form = f
         )
 
-    del f.id # otherwise overwrites id = 'new' when creating new
+    del f.id # avoid overwriting id = 'new' when creating new
     s = ShareClass.query.get_or_default(id, ShareClass())
     f.populate_obj(s)
     s.save_or_update()
 
     if id == "new":
-        flash.create_ok("share class")
+        notify.create_ok("share class")
     else:
-        flash.update_ok("share class")
+        notify.update_ok("share class")
     return redirect(url_for("shareclass.list"))
 
 
@@ -95,10 +95,10 @@ def delete(id):
     404. Refuse to delete share class that is bound to at least one share.
     """
     if ShareClass.count_shares_for(id):
-        flash.delete_error("share class", "share")
+        notify.delete_error("share class", "share")
         return redirect(url_for("shareclass.list"))
 
     if not ShareClass.query.get(id).delete_if_exists():
         abort(404)
-    flash.delete_ok("share class")
+    notify.delete_ok("share class")
     return redirect(url_for("shareclass.list"))

@@ -15,14 +15,14 @@
     {{ render_field( form.name ) }}
     {{ render_field( form.votes ) }}
     {{ render_field( form.remarks ) }}
-    {{ form.id( hidden = True ) }}
+    {{ form.id }}
     {{ form.csrf_token }}
     {{ submit_button( "Submit" ) }}
-    {{ link_button(
-      "Go back",
-      url_for('shareclass.list')
-    ) }}
   </form>
+  {{ link_button(
+    "Go back",
+    url_for('shareclass.list')
+  ) }}
   {% if form.id.data != "new" %}
     {{ delete_button(
       "Delete",

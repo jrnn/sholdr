@@ -18,9 +18,9 @@
     {{ render_field( form.share_class_id ) }}
     {{ form.csrf_token }}
     {{ submit_button( "Submit" ) }}
-    {{ link_button(
-      "Cancel",
-      url_for('share.list')
-    ) }}
   </form>
+  {{ link_button(
+    "Cancel",
+    url_for('share.list')
+  ) }}
 {% endblock %}

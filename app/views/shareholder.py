@@ -13,7 +13,7 @@ from app.models.shareholder import (
     NaturalPerson,
     Shareholder
 )
-from app.util import flash
+from app.util import notify
 from app.util.auth import hashPassword
 from flask import (
     abort,
@@ -66,7 +66,7 @@ def form(id):
         elif type == "juridical":
             f = JuridicalPersonForm()
         else:
-            flash.incorrect_type("shareholder")
+            notify.incorrect_type("shareholder")
             return redirect(url_for("shareholder.list"))
 
     else:
@@ -104,7 +104,7 @@ def create_or_update():
         s = JuridicalPerson.query.get_or_default(id, JuridicalPerson())
 
     if not f.validate():
-        flash.invalid_input()
+        notify.invalid_input()
         return render_template(
             "shareholder/form.html",
             form = f
@@ -112,11 +112,11 @@ def create_or_update():
 
     if id == "new":
         s.pw_hash = hashPassword(f.password.data)
-        flash.create_ok("shareholder")
+        notify.create_ok("shareholder")
     else:
-        flash.update_ok("shareholder")
+        notify.update_ok("shareholder")
 
-    del f.id # otherwise overwrites id = 'new' when creating new
+    del f.id # avoid overwriting id = 'new' when creating new
     f.populate_obj(s)
     s.save_or_update()
     return redirect(url_for("shareholder.list"))
@@ -132,5 +132,5 @@ def delete(id):
     """
     if not Shareholder.query.get(id).delete_if_exists():
         abort(404)
-    flash.delete_ok("shareholder")
+    notify.delete_ok("shareholder")
     return redirect(url_for("shareholder.list"))

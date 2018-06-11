@@ -60,19 +60,19 @@
     {{ render_field( form.country ) }}
     {{ render_checkbox( form.has_access ) }}
     {{ render_checkbox( form.is_admin ) }}
-    {{ form.id( hidden = True ) }}
     <input
       hidden
       name = "type"
       value = "{{ form.type }}"
     />
+    {{ form.id }}
     {{ form.csrf_token }}
     {{ submit_button( "Submit" ) }}
-    {{ link_button(
-      "Go back",
-      url_for('shareholder.list')
-    ) }}
   </form>
+  {{ link_button(
+    "Go back",
+    url_for('shareholder.list')
+  ) }}
   {% if form.id.data != "new" %}
     {{ delete_button(
       "Delete",

@@ -4,13 +4,13 @@
     blueprints and models are registered in their respective __init__ modules.
 """
 
-from .config.cache import create_cache
-from .config.config import get_config
+from .config import get_config
 from .models import (
     create_db,
     init_db
 )
 from .sql import get_statements
+from .util.cache import create_cache
 from flask import Flask
 
 app = Flask(__name__)
@@ -21,7 +21,5 @@ cache = create_cache(app, db)
 sql = get_statements()
 init_db(db)
 
-from .config.auth import init_auth
 from .views import init_views
-init_auth(app)
 init_views(app)

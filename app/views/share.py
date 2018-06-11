@@ -7,7 +7,7 @@ from app.forms.share import ShareForm
 from app.models.certificate import Certificate
 from app.models.share import Share
 from app.models.shareclass import ShareClass
-from app.util import flash
+from app.util import notify
 from flask import (
     Blueprint,
     redirect,
@@ -61,11 +61,11 @@ def issue():
 
     if f.validate_on_submit():
         Share.issue_from_form(f)
-        flash.create_ok("shares")
+        notify.create_ok("shares")
         return redirect(url_for("share.list"))
 
-    if request.method == "POST" and not f.validate():
-        flash.invalid_input()
+    elif request.method == "POST":
+        notify.invalid_input()
 
     return render_template(
         "share/form.html",

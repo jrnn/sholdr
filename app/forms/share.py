@@ -4,7 +4,7 @@
     is needed.
 """
 
-from app.util.validation import NotFutureDate
+from .validators import NotFutureDate
 from flask_wtf import FlaskForm
 from wtforms import (
     DateField,
@@ -22,7 +22,7 @@ class ShareForm(FlaskForm):
     )
     upper_bound = IntegerField(
         label = "... up to number",
-        render_kw = {"placeholder" : "Give a positive integer" }
+        render_kw = { "placeholder" : "Give a positive integer" }
     )
     issued_on = DateField(
         label = "Issued on",
@@ -48,5 +48,5 @@ class ShareForm(FlaskForm):
             raise ValidationError("Must be at least %s" % l)
 
         ## TEMPORARY SAFEGUARD FOR PRODUCTION (DB IS VERY LIMITED)
-        if u > 100:
-            raise ValidationError("Sorry but free trial supports only up to 100 shares. GIVE ME MONEY")
+        if u > 250:
+            raise ValidationError("Sorry but free trial supports only up to 250 shares. GIVE ME MONEY")

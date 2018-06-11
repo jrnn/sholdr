@@ -104,6 +104,8 @@ class Shareholder(BaseMixin, UuidMixin, db.Model):
     def find_all_for_list():
         """
         Fetch all shareholders with only the fields needed on the list view.
+        Need to do a bit of extra 'manual work' in translating query results
+        due to subclassing ...
         """
         stmt = sql["SHAREHOLDER"]["FIND_ALL_FOR_LIST"]
         rs = db.engine.execute(stmt)

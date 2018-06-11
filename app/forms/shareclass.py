@@ -5,7 +5,7 @@
 """
 
 from . import CustomBaseForm
-from app.util.validation import (
+from .validators import (
     MaxLength,
     NotEmpty,
     Unique
@@ -20,7 +20,10 @@ from wtforms import (
 
 
 class ShareClassForm(CustomBaseForm):
-    id = StringField(default = "new")
+    id = StringField(
+        default = "new",
+        render_kw = { "hidden" : True }
+    )
     name = StringField(
         label = "Class name",
         render_kw = { "placeholder" : "e.g. A, B, C ..." },

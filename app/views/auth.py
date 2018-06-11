@@ -3,11 +3,13 @@
     i.e. login and logout operations.
 """
 
-from app.config.auth import logout_user_memoized
 from app.forms.auth import LoginForm
 from app.models.shareholder import Shareholder
-from app.util import flash
-from app.util.auth import checkPassword
+from app.util import notify
+from app.util.auth import (
+    checkPassword,
+    logout_user_memoized
+)
 from flask import (
     Blueprint,
     redirect,
@@ -42,7 +44,7 @@ def login():
     s = Shareholder.query.filter_by(email = f.email.data).first()
 
     if not s or not checkPassword(f.password.data, s.pw_hash) or not s.has_access:
-        flash.login_error()
+        notify.login_error()
         return render_template(
             "auth/login.html",
             error = "Invalid credentials",
@@ -50,7 +52,7 @@ def login():
         )
 
     login_user(s)
-    flash.login_ok()
+    notify.login_ok()
     return redirect("/")
 
 
@@ -59,5 +61,5 @@ def login():
 @login_required
 def logout():
     logout_user_memoized()
-    flash.logout_ok()
+    notify.logout_ok()
     return redirect("/")

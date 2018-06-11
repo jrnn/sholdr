@@ -14,7 +14,7 @@
     {{ render_field( form.shares ) }}
     {{ render_field( form.issued_on ) }}
     {{ render_field( form.canceled_on ) }}
-    {{ form.id( hidden = True ) }}
+    {{ form.id }}
     {{ form.csrf_token }}
     {{ link_button(
       "Go back",
