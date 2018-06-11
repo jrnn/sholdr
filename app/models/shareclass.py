@@ -49,8 +49,8 @@ class ShareClass(BaseMixin, UuidMixin, db.Model):
 
     @staticmethod
     def count_shares_for(id):
-        stmt = sql["SHARE_CLASS"]["COUNT_SHARES_FOR"].params(id = id)
-        rs = db.engine.execute(stmt).fetchone()
+        stmt = sql["_COMMON"]["COUNT_WHERE"]("share", "share_class_id")
+        rs = db.engine.execute(stmt.params(value = id)).fetchone()
 
         return rs.count
 
@@ -75,5 +75,5 @@ class ShareClass(BaseMixin, UuidMixin, db.Model):
         """
         return [
             (s.id, "%s (%s votes / share)" % (s.name, s.votes),)
-            for s in db.engine.execute(sql["SHARE_CLASS"]["FIND_ALL"])
+            for s in db.engine.execute(sql["SHARE_CLASS"]["FIND_ALL_FOR_DROPDOWN"])
         ]

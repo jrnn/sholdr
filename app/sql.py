@@ -2,38 +2,47 @@
     This module collects all custom SQL statements into one dictionary, indexed
     by database entity. Statements are accessed with relevant entity name as
     first key, and reference to desired statement as second key, for example
-    sql["CERTIFICATE"]["FIND_ALL_FOR_LIST"]. Minor differences between SQLite in
-    development vs. PostgreSQL in production are accounted for.
+    sql["CERTIFICATE"]["FIND_ALL_FOR_LIST"].
+
+    Statements with variable table and/or column references are defined 'up
+    front' as functions and then passed into the statement dictionary, so that
+    the table/column names can be passed as parameters depending on context.
 """
 
-import os
 from sqlalchemy.sql import text
 
 
 
 def get_statements():
-    FALSE = 0
-    TRUE = 1
-    if os.environ.get("HEROKU"):
-        FALSE = "false"
-        TRUE = "true"
-
-    """
-    Define statements with variable table and/or column references up front as
-    functions, so that parameters can be passed to them depending on context.
-    """
-    def check_if_unique(table_name, column_name):
+    def check_if_unique(table, column):
         return text(
             "SELECT"
             " COUNT(*) AS count"
             " FROM %s"
             " WHERE id != :id"
-            " AND %s = :unique_value" % (table_name, column_name,)
+            " AND %s = :unique_value" % (table, column,)
+        )
+
+    def count_all(table):
+        return text(
+            "SELECT"
+            " COUNT(*) AS count"
+            " FROM %s" % table
+        )
+
+    def count_where(table, column):
+        return text(
+            "SELECT"
+            " COUNT(*) AS count"
+            " FROM %s"
+            " WHERE %s = :value" % (table, column,)
         )
 
     return {
         "_COMMON" : {
-            "CHECK_IF_UNIQUE" : check_if_unique
+            "CHECK_IF_UNIQUE" : check_if_unique,
+            "COUNT_ALL" : count_all,
+            "COUNT_WHERE" : count_where
         },
         "CERTIFICATE" : {
             "BUNDLE_JOIN" : text(
@@ -41,7 +50,7 @@ def get_statements():
                 " certificate_share (share_id, certificate_id)"
                 " SELECT s.id, :id"
                 " FROM share s"
-                " WHERE s.id >= :l AND s.id <= :u"
+                " WHERE s.id >= :lower AND s.id <= :upper"
             ),
             "CALCULATE_SHARE_COMPOSITION_FOR" : text(
                 "SELECT"
@@ -77,17 +86,12 @@ def get_statements():
             "BIND_OR_RELEASE_RANGE" : text(
                 "UPDATE share"
                 " SET is_bound = :is_bound"
-                " WHERE id >= :l AND id <= :u"
+                " WHERE id >= :lower AND id <= :upper"
             ),
-#            "BIND_RANGE" : text(
-#                "UPDATE share"
-#                " SET is_bound = %s"
-#                " WHERE id >= :l AND id <= :u" % TRUE
-#            ),
-            "FIND_ALL_UNBOUND" : text(
+            "FIND_ALL_BOUND_OR_UNBOUND" : text(
                 "SELECT id FROM share"
-                " WHERE is_bound = %s"
-                " ORDER BY id ASC" % FALSE
+                " WHERE is_bound = :is_bound"
+                " ORDER BY id ASC"
             ),
             "LAST_SHARE_NUMBER" : text(
                 "SELECT"
@@ -96,13 +100,7 @@ def get_statements():
             )
         },
         "SHARE_CLASS" : {
-            "COUNT_SHARES_FOR" : text(
-                "SELECT"
-                " COUNT(*) AS count"
-                " FROM share"
-                " WHERE share_class_id = :id"
-            ),
-            "FIND_ALL" : text(
+            "FIND_ALL_FOR_DROPDOWN" : text(
                 "SELECT"
                 " id, name, votes"
                 " FROM share_class"
@@ -123,11 +121,6 @@ def get_statements():
             )
         },
         "SHAREHOLDER" : {
-            "COUNT_ALL" : text(
-                "SELECT"
-                " COUNT(*) AS count"
-                " FROM shareholder"
-            ),
             "FIND_ALL_FOR_LIST" : text(
                 "SELECT"
                 " j.business_id, j.name,"

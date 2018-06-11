@@ -90,11 +90,7 @@ class Shareholder(BaseMixin, UuidMixin, db.Model):
 
     @staticmethod
     def count_all():
-        """
-        Simply check the number of rows in Shareholder table ... (SQLAlchemy
-        default query.count() is ridiculously heavy)
-        """
-        stmt = sql["SHAREHOLDER"]["COUNT_ALL"]
+        stmt = sql["_COMMON"]["COUNT_ALL"]("shareholder")
         rs = db.engine.execute(stmt).fetchone()
 
         return rs.count

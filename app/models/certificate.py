@@ -96,13 +96,13 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         """
         stmt1 = sql["CERTIFICATE"]["BUNDLE_JOIN"].params(
             id = certificate.id,
-            l = certificate.first_share,
-            u = certificate.last_share
+            lower = certificate.first_share,
+            upper = certificate.last_share
         )
         stmt2 = sql["SHARE"]["BIND_OR_RELEASE_RANGE"].params(
             is_bound = True,
-            l = certificate.first_share,
-            u = certificate.last_share
+            lower = certificate.first_share,
+            upper = certificate.last_share
         )
         db.engine.execute(stmt1)
         db.engine.execute(stmt2)
@@ -140,8 +140,8 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         """
         stmt = sql["SHARE"]["BIND_OR_RELEASE_RANGE"].params(
             is_bound = False,
-            l = certificate.first_share,
-            u = certificate.last_share
+            lower = certificate.first_share,
+            upper = certificate.last_share
         )
         db.engine.execute(stmt)
         db.commit_and_flush_cache()

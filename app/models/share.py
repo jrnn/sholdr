@@ -59,8 +59,8 @@ class Share(IssuableMixin, db.Model):
         are indicated as a list of tuples (a, b) where a = number of first and
         b = number of last share in range.
         """
-        stmt = sql["SHARE"]["FIND_ALL_UNBOUND"]
-        rs = db.engine.execute(stmt)
+        stmt = sql["SHARE"]["FIND_ALL_BOUND_OR_UNBOUND"]
+        rs = db.engine.execute(stmt.params(is_bound = False))
 
         return get_consecutive_ranges([ r.id for r in rs ])
 
