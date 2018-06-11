@@ -61,6 +61,21 @@ class NinFormat(object):
 
 
 
+class NotEarlierThan(object):
+    def __init__(self, earlier, message = None):
+        if not message:
+            message = "Cannot be earlier than %s" % earlier.lower()
+        self.earlier = earlier
+        self.message = message
+
+    def __call__(self, form, field):
+        if not isinstance(field.data, datetime.date):
+            raise ValidationError()
+        elif field.data < form._fields.get(self.earlier).data:
+            raise ValidationError(self.message)
+
+
+
 class NotEmpty(object):
     def __call__(self, form, field):
         DataRequired("Cannot be empty")(form, field)

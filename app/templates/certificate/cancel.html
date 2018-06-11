@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% from "macros.html" import link_button, render_field %}
+
+{% block subheader %}
+  Cancel share certificate
+{% endblock %}
+
+{% block content %}
+  <form
+    action = "{{ url_for('certificate.cancel', id = form.id.data) }}"
+    method = "POST"
+    onSubmit = "return confirm('Are you sure? There\'s no going back.');"
+  >
+    {{ render_field( form.shares ) }}
+    {{ render_field( form.issued_on ) }}
+    {{ render_field( form.canceled_on ) }}
+    {{ form.id( hidden = True ) }}
+    {{ form.csrf_token }}
+    {{ link_button(
+      "Go back",
+      url_for('certificate.details', id = form.id.data)
+    ) }}
+    <input
+      class = "btn btn-danger form-control"
+      type = "submit"
+      value = "Cancel certificate"
+    />
+  </form>
+  <p>TO-DO : change "issued_on" to "latest transaction" when transactions have been implemented</p>
+  <p>TO-DO : is an additional "remarks/reason of cancellation" field needed...?</p>
+{% endblock %}

@@ -8,6 +8,12 @@ from flask import flash
 error_class = "alert-danger"
 success_class = "alert-success"
 
+def cancel_ok(entity):
+    return flash(
+        "%s put out of commission permanently, happy retirement!" % entity.capitalize(),
+        success_class
+    )
+
 def create_ok(entity):
     return flash(
         "New %s successfully created, long may they live!" % entity,

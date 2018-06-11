@@ -1,9 +1,9 @@
 """
     This module collects all custom SQL statements into one dictionary, indexed
-    by model. Statements are accessed with relevant model name as 1st key, and
-    reference to desired statement as 2nd key, e.g. sql["SHARE"]["BIND_RANGE"].
-    Minor differences between SQLite in development vs. PostgreSQL in production
-    are accounted for.
+    by database entity. Statements are accessed with relevant entity name as
+    first key, and reference to desired statement as second key, for example
+    sql["CERTIFICATE"]["FIND_ALL_FOR_LIST"]. Minor differences between SQLite in
+    development vs. PostgreSQL in production are accounted for.
 """
 
 import os
@@ -74,11 +74,16 @@ def get_statements():
             )
         },
         "SHARE" : {
-            "BIND_RANGE" : text(
+            "BIND_OR_RELEASE_RANGE" : text(
                 "UPDATE share"
-                " SET is_bound = %s"
-                " WHERE id >= :l AND id <= :u" % TRUE
+                " SET is_bound = :is_bound"
+                " WHERE id >= :l AND id <= :u"
             ),
+#            "BIND_RANGE" : text(
+#                "UPDATE share"
+#                " SET is_bound = %s"
+#                " WHERE id >= :l AND id <= :u" % TRUE
+#            ),
             "FIND_ALL_UNBOUND" : text(
                 "SELECT id FROM share"
                 " WHERE is_bound = %s"

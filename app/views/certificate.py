@@ -3,7 +3,10 @@
     Certificates are funky so the views and operations are not vanilla CRUD.
 """
 
-from app.forms.certificate import CertificateForm
+from app.forms.certificate import (
+    CancellationForm,
+    CertificateForm
+)
 from app.models.certificate import Certificate
 from app.util import flash
 from flask import (
@@ -44,7 +47,7 @@ def bundle():
         flash.create_ok("certificate")
         return redirect(url_for("share.list"))
 
-    if request.method == "POST" and not f.validate():
+    if request.method == "POST":
         flash.invalid_input()
 
     return render_template(
@@ -72,6 +75,28 @@ def details(id):
 
 
 
-@bp.route("/<id>", methods = ("POST",))
+@bp.route("/<id>/cancel", methods = ("GET", "POST",))
 def cancel(id):
-    return "not yet implemented, hefe"
+    """
+    Practically the opposite of 'bundle()' above.
+    """
+    c = Certificate.query.get_or_404(id)
+    f = CancellationForm(request.form)
+
+    if f.validate_on_submit():
+        c.canceled_on = f.canceled_on.data
+        Certificate.release_shares(c)
+
+        flash.cancel_ok("certificate")
+        return redirect(url_for("share.list"))
+
+    if request.method == "POST":
+        flash.invalid_input()
+    else:
+        f = CancellationForm(obj = c)
+        f.shares.data = "%s—%s" % (c.first_share, c.last_share,)
+
+    return render_template(
+        "certificate/cancel.html",
+        form = f
+    )

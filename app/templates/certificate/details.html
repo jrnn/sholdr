@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "macros.html" import delete_button, link_button %}
+{% from "macros.html" import link_button %}
 
 {% block subheader %}
   Certificate details
@@ -88,7 +88,7 @@
     "Go back",
     url_for('share.list')
   ) }}
-  {{ delete_button(
+  {{ link_button(
     "Cancel certificate",
     url_for('certificate.cancel', id = certificate.id)
   ) }}

@@ -12,7 +12,7 @@
 
     Like Shares, Certificates are also a temporal entity, i.e. they can only be
     acted on between their dates of issuance and cancellation. Once canceled, a
-    Certificate's Shares are unbound, which then may be bundled to new/other
+    Certificate's Shares are released, which then may be bundled to new/other
     Certificate(s).
 
     The collection of Shares connected to a Certificate is fixed: therefore,
@@ -91,19 +91,19 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         """
         Handle the binding of a new certificate's (given as parameter) shares.
         This is done with two custom statements that process several rows in one
-        query: one for the join table, and another for updating the 'is_bound'
-        flag of all affected shares.
+        query: one for updating the join table, and another for updating the
+        'is_bound' flag of all affected shares.
         """
         stmt1 = sql["CERTIFICATE"]["BUNDLE_JOIN"].params(
             id = certificate.id,
             l = certificate.first_share,
             u = certificate.last_share
         )
-        stmt2 = sql["SHARE"]["BIND_RANGE"].params(
+        stmt2 = sql["SHARE"]["BIND_OR_RELEASE_RANGE"].params(
+            is_bound = True,
             l = certificate.first_share,
             u = certificate.last_share
         )
-
         db.engine.execute(stmt1)
         db.engine.execute(stmt2)
         db.commit_and_flush_cache()
@@ -131,3 +131,17 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         rs = db.engine.execute(stmt)
 
         return rs_to_dict(rs)
+
+    @staticmethod
+    def release_shares(certificate):
+        """
+        Release the range of shares bound to a canceled certificate (given as
+        parameter) by setting the 'is_bound' flag of affected shares to 'false'.
+        """
+        stmt = sql["SHARE"]["BIND_OR_RELEASE_RANGE"].params(
+            is_bound = False,
+            l = certificate.first_share,
+            u = certificate.last_share
+        )
+        db.engine.execute(stmt)
+        db.commit_and_flush_cache()
