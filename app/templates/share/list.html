@@ -7,11 +7,11 @@
 
 {% block content %}
   <p>
-    {% if not last_share_number %}
-      No shares issued yet!
-    {% else %}
-      Shares issued up to <strong>#{{ last_share_number }}</strong>
-    {% endif %}
+  {% if not last_share_number %}
+    No shares issued yet!
+  {% else %}
+    Shares issued up to <strong>#{{ last_share_number }}</strong>
+  {% endif %}
   </p>
   {% if unbound_ranges %}
   <p>
@@ -40,6 +40,7 @@
     <thead>
       <tr>
         <th>Certificate</th>
+        <th># of shares</th>
         <th>Owner</th>
         <th>Total votes</th>
       </tr>
@@ -47,7 +48,8 @@
     <tbody>
     {% for c in certificates %}
       <tr id = {{ c.id }}>
-        <td>{{ "%s—%s (%s shares)" % (c.first_share, c.last_share, c.share_count,) }}</td>
+        <td>{{ "%s—%s" % (c.first_share, c.last_share,) }}</td>
+        <td>{{ c.share_count }}</td>
         <td>TBA</td>
         <td>{{ c.votes }}</td>
       </tr>

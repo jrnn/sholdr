@@ -47,7 +47,7 @@ def login():
         notify.login_error()
         return render_template(
             "auth/login.html",
-            error = "Invalid credentials",
+            errors = [ "Invalid credentials" ],
             form = f
         )
 

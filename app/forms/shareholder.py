@@ -68,7 +68,7 @@ class ShareholderForm(CustomBaseForm):
         ]
     )
     street_ext = StringField(
-        label = "Street address (optional)",
+        label = "",
         validators = [ MaxLength(255) ]
     )
     zip_code = StringField(

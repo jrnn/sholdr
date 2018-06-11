@@ -1,48 +1,19 @@
 {% extends "layout.html" %}
-{% from "macros.html" import link_button %}
+{% from "macros.html" import link_button, readonly_field %}
 
 {% block subheader %}
-  Certificate details
+  Share certificate details
 {% endblock %}
 
 {% block content %}
   <form>
-    <div class = "form-group">
-      <label for = "shares">Shares</label>
-      <input
-        class = "form-control"
-        id = "shares"
-        readonly
-        value = "{{ "%s—%s" % (certificate.first_share, certificate.last_share,) }}"
-      />
-    </div>
-    <div class = "form-group">
-      <label for = "owner">Current owner</label>
-      <input
-        class = "form-control"
-        id = "owner"
-        readonly
-        value = "TBA"
-      />
-    </div>
-    <div class = "form-group">
-      <label for = "votes">Total votes</label>
-      <input
-        class = "form-control"
-        id = "votes"
-        readonly
-        value = "{{ total_votes }}"
-      />
-    </div>
-    <div class = "form-group">
-      <label for = "status">Status</label>
-      <input
-        class = "form-control"
-        id = "status"
-        readonly
-        value = "{{ certificate.get_status() }}"
-      />
-    </div>
+    {{ readonly_field(
+      "Shares",
+      "%s—%s" % (certificate.first_share, certificate.last_share,)
+    ) }}
+    {{ readonly_field( "Current owner", "TBA" ) }}
+    {{ readonly_field( "Total votes", total_votes ) }}
+    {{ readonly_field( "Status", certificate.get_status() ) }}
   </form>
   <div class = "divider" ></div>
   <h5 class = "padded">

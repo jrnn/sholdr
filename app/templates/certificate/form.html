@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% from "macros.html" import
-  link_button, render_field, submit_button
+  link_button, render_dual_field, render_field, submit_button
 %}
 
 {% block subheader %}
@@ -12,30 +12,18 @@
     action = "{{ url_for('certificate.bundle') }}"
     method = "POST"
   >
-    {% set class = "form-control" %}
-    {% if form.last_share.errors %}
-      {% set class = class + " is-invalid" %}
-    {% endif %}
-    <div class = "form-group">
-      {{ form.first_share.label }}
-      {{ form.first_share( class = class ) }}
-    </div>
-    <div class = "form-group">
-      {{ form.last_share.label }}
-      {{ form.last_share( class = class ) }}
-      <div class = "invalid-feedback">
-        {% for error in form.last_share.errors %}
-          {{ error }}
-        {% endfor %}
-      </div>
-    </div>
+    {{ render_dual_field(
+      form.first_share,
+      form.last_share,
+      form.last_share.errors
+    ) }}
     {{ render_field( form.issued_on ) }}
     {{ render_field( form.shareholder_id ) }}
     {{ form.csrf_token }}
     {{ submit_button( "Submit" ) }}
   </form>
   {{ link_button(
-    "Cancel",
+    "Go back",
     url_for('share.list')
   ) }}
 {% endblock %}

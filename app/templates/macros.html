@@ -22,6 +22,33 @@
 {% endmacro %}
 
 {#
+    Like above, but for cases where two adjacent fields share validation errors.
+    Since the errors can be connected to either field, pass errors explicitly as
+    a parameter.
+#}
+{% macro render_dual_field(first_field, second_field, errors) %}
+  {% set class = "form-control" %}
+  {% if errors %}
+    {% set class = class + " is-invalid" %}
+  {% endif %}
+  <div class = "form-group">
+    {{ first_field.label }}
+    {{ first_field( class = class ) }}
+  </div>
+  <div class = "form-group">
+    {% if second_field.label.text != "" %}
+      {{ second_field.label }}
+    {% endif %}
+    {{ second_field( class = class ) }}
+    <div class = "invalid-feedback">
+    {% for error in errors %}
+      {{ error }}
+    {% endfor %}
+    </div>
+  </div>
+{% endmacro %}
+
+{#
     Renders a checkbox field stylized with Bootstrap 4. Requires WTForm field as
     parameter (field). Takes no other parameters, so does not allow stylizing
     with kwargs ...
@@ -34,7 +61,7 @@
 {% endmacro %}
 
 {#
-    A few simple button elements that recur throughout the app ...
+    Macros for rendering recurring UI elements
 #}
 {% macro delete_button(label, action) %}
   <form
@@ -57,6 +84,27 @@
   >
     {{ label }}
   </a>
+{% endmacro %}
+
+{% macro navlink(label, href) %}
+  <a
+    class = "nav-link"
+    href = "{{ href }}"
+  >
+    {{ label }}
+  </a>
+{% endmacro %}
+
+{% macro readonly_field(label, value) %}
+  <div class = "form-group">
+    <label for = "{{ label }}">{{ label }}</label>
+    <input
+      class = "form-control"
+      id = "{{ label }}"
+      readonly
+      value = "{{ value }}"
+    />
+  </div>
 {% endmacro %}
 
 {% macro submit_button(label) %}
