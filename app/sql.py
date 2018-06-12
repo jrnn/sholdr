@@ -38,11 +38,19 @@ def get_statements():
             " WHERE %s = :value" % (table, column,)
         )
 
+    def find_max(table, column):
+        return text(
+            "SELECT"
+            " MAX(%s) AS max"
+            " FROM %s" % (column, table,)
+        )
+
     return {
         "_COMMON" : {
             "CHECK_IF_UNIQUE" : check_if_unique,
             "COUNT_ALL" : count_all,
-            "COUNT_WHERE" : count_where
+            "COUNT_WHERE" : count_where,
+            "FIND_MAX" : find_max
         },
         "CERTIFICATE" : {
             "BUNDLE_JOIN" : text(
@@ -92,11 +100,6 @@ def get_statements():
                 "SELECT id FROM share"
                 " WHERE is_bound = :is_bound"
                 " ORDER BY id ASC"
-            ),
-            "LAST_SHARE_NUMBER" : text(
-                "SELECT"
-                " MAX(id) AS max"
-                " FROM share"
             )
         },
         "SHARE_CLASS" : {

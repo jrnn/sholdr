@@ -18,6 +18,8 @@
     a Certificate.
 """
 
+import dateutil.parser as dtp
+
 from .mixins import IssuableMixin
 from app import (
     cache,
@@ -88,10 +90,25 @@ class Share(IssuableMixin, db.Model):
         Return the id number up to which shares have been issued, or zero if no
         shares have been issued.
         """
-        stmt = sql["SHARE"]["LAST_SHARE_NUMBER"]
+        stmt = sql["_COMMON"]["FIND_MAX"]("share", "id")
         rs = db.engine.execute(stmt).fetchone()
 
         if not rs.max:
             return 0
         else:
             return rs.max
+
+    @staticmethod
+    @cache.cached(key_prefix = "latest_share_issue")
+    def latest_issue_date():
+        """
+        Return the date on which shares last were issued. If no shares have been
+        issued, return a ridiculously ancient date.
+        """
+        stmt = sql["_COMMON"]["FIND_MAX"]("share", "issued_on")
+        rs = db.engine.execute(stmt).fetchone()
+
+        if not rs.max:
+            return dtp.parse("1900-01-01").date()
+        else:
+            return dtp.parse(rs.max).date()

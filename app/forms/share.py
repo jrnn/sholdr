@@ -4,7 +4,12 @@
     is needed.
 """
 
-from .validators import NotFutureDate
+import os
+
+from .validators import (
+    NotEarlierThan,
+    NotFutureDate
+)
 from flask_wtf import FlaskForm
 from wtforms import (
     DateField,
@@ -12,6 +17,10 @@ from wtforms import (
     SelectField,
     ValidationError
 )
+
+MAX_SHARES = None
+if os.environ.get("HEROKU"):
+    MAX_SHARES = os.environ.get("MAX_SHARES")
 
 
 
@@ -24,13 +33,23 @@ class ShareForm(FlaskForm):
         label = "... up to number",
         render_kw = { "placeholder" : "Give a positive integer" }
     )
+    latest_issue = DateField(
+        label = "Latest issue date",
+        render_kw = { "readonly" : True }
+    )
     issued_on = DateField(
         label = "Issued on",
         render_kw = {
             "placeholder" : "Pick a date",
             "type" : "date"
         },
-        validators = [ NotFutureDate() ]
+        validators = [
+            NotEarlierThan(
+                earlier = "latest_issue",
+                message = "Cannot be earlier than date of the latest issue"
+            ),
+            NotFutureDate()
+        ]
     )
     share_class_id = SelectField(
         label = "Share class",
@@ -47,6 +66,6 @@ class ShareForm(FlaskForm):
         if u < l:
             raise ValidationError("Must be at least %s" % l)
 
-        ## TEMPORARY SAFEGUARD FOR PRODUCTION (DB IS VERY LIMITED)
-        if u > 250:
-            raise ValidationError("Sorry but free trial supports only up to 250 shares. GIVE ME MONEY")
+        ## SAFEGUARD FOR PRODUCTION (DB IS VERY LIMITED)
+        if MAX_SHARES and u > MAX_SHARES:
+            raise ValidationError("Sorry but free trial supports only up to %s shares. GIVE ME MONEY") % MAX_SHARES

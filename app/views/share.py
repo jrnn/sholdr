@@ -50,12 +50,13 @@ def issue():
     integer in sequence and Y the given upper bound.
 
     The form needs some data from DB (dynamic options for dropdown, current max
-    share number). WTForms cannot handle these properly 'in-class', so the
+    share number, etc.) WTForms cannot handle these properly 'in-class', so the
     relevant queries are done here and filled in on each request.
     """
     f = ShareForm(request.form)
     l = Share.last_share_number() + 1
 
+    f.latest_issue.data = Share.latest_issue_date()
     f.lower_bound.data = l
     f.share_class_id.choices = ShareClass.get_dropdown_options()
 
