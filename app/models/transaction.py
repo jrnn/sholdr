@@ -55,3 +55,5 @@ class Transaction(BaseMixin, UuidMixin, db.Model):
         nullable = False
     )
     remarks = Column(String(255))
+
+    __tablename__ = "_transaction"

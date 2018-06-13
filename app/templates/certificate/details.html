@@ -11,7 +11,7 @@
       "Shares",
       "%s—%s" % (certificate.first_share, certificate.last_share,)
     ) }}
-    {{ readonly_field( "Current owner", "TBA" ) }}
+    {{ readonly_field( "Current owner", current_owner.name ) }}
     {{ readonly_field( "Total votes", total_votes ) }}
     {{ readonly_field( "Status", certificate.get_status() ) }}
   </form>
@@ -58,6 +58,10 @@
   {{ link_button(
     "Go back",
     url_for('share.list')
+  ) }}
+  {{ link_button(
+    "Transfer ownership",
+    url_for('certificate.transfer', id = certificate.id)
   ) }}
   {{ link_button(
     "Cancel certificate",

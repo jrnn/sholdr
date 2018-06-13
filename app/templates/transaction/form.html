@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% from "macros.html" import
+  link_button, render_field, submit_button
+%}
+
+{% block subheader %}
+  Transfer certificate ownership
+{% endblock %}
+
+{% block content %}
+  <form
+    action = "{{ url_for('certificate.transfer', id = form.certificate_id.data) }}"
+    method = "POST"
+  >
+    {{ render_field( form.shares ) }}
+    {{ render_field( form.owner ) }}
+    {{ render_field( form.shareholder_id ) }}
+    {{ render_field( form.recorded_on ) }}
+    {{ render_field( form.price ) }}
+    {{ render_field( form.remarks ) }}
+    {{ form.certificate_id }}
+    {{ form.csrf_token }}
+    {{ submit_button( "Submit" ) }}
+  </form>
+  {{ link_button(
+    "Go back",
+    url_for('certificate.details', id = form.certificate_id.data)
+  ) }}
+{% endblock %}

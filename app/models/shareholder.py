@@ -123,6 +123,18 @@ class Shareholder(BaseMixin, UuidMixin, db.Model):
                 s["type_id"] = s["nin"]
         return ss
 
+    @staticmethod
+    @cache.cached(key_prefix = "shareholder_dropdown")
+    def get_dropdown_options():
+        """
+        Fetch all shareholders with a simple query, and return an array of
+        (value, label) tuples for use as dropdown options.
+        """
+        return [
+            (s.id, s.name,)
+            for s in db.engine.execute(sql["SHAREHOLDER"]["FIND_ALL_FOR_DROPDOWN"])
+        ]
+
 
 
 class NaturalPerson(Shareholder):

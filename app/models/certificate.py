@@ -143,6 +143,14 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
 
     @staticmethod
     @cache.memoize()
+    def get_current_owner(id):
+        stmt = sql["CERTIFICATE"]["FIND_CURRENT_OWNER"].params(id = id)
+        rs = db.engine.execute(stmt).fetchone()
+
+        return { "id" : rs.id, "name" : rs.name }
+
+    @staticmethod
+    @cache.memoize()
     def get_share_composition_for(id):
         """
         Fetch the quantity and sum votes of shares bound to given certificate,

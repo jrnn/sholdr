@@ -42,12 +42,8 @@ class CertificateForm(FlaskForm):
         ]
     )
     shareholder_id = SelectField(
-        choices = [ ("tba", "Not yet implemented") ],
         label = "Initial owner",
-        render_kw = {
-            "placeholder" : "Select shareholder",
-            "readonly" : True
-        }
+        render_kw = { "placeholder" : "Select shareholder" }
     )
 
 

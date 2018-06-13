@@ -89,6 +89,19 @@ def get_statements():
                 " WHERE c.canceled_on IS NULL"
                 " ORDER BY c.first_share ASC"
             ),
+            "FIND_CURRENT_OWNER" : text(
+                "SELECT"
+                " id, name"
+                " FROM juridical_person"
+                " UNION SELECT"
+                " id, last_name || ', ' || first_name AS name"
+                " FROM natural_person"
+                " JOIN ( SELECT"
+                " shareholder_id as _id, MAX(recorded_on)"
+                " FROM _transaction"
+                " WHERE certificate_id = :id ) _s"
+                " ON id = _s._id"
+            ),
             "FIND_EARLIEST_BUNDLE_DATE" : text(
                 "SELECT"
                 " MAX(_s.date) AS max"
@@ -140,6 +153,14 @@ def get_statements():
             )
         },
         "SHAREHOLDER" : {
+            "FIND_ALL_FOR_DROPDOWN" : text(
+                "SELECT"
+                " id, name"
+                " FROM juridical_person"
+                " UNION SELECT"
+                " id, last_name || ', ' || first_name AS name"
+                " FROM natural_person"
+            ),
             "FIND_ALL_FOR_LIST" : text(
                 "SELECT"
                 " j.business_id, j.name,"
