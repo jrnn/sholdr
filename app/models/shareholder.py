@@ -71,6 +71,15 @@ class Shareholder(BaseMixin, UuidMixin, db.Model):
     )
     type = Column(String(16))
 
+    transactions = db.relationship(
+        "Transaction",
+        backref = db.backref(
+            "shareholder",
+            lazy = True
+        ),
+        lazy = True
+    )
+
     __mapper_args__ = {
         "polymorphic_identity" : "shareholder",
         "polymorphic_on" : type

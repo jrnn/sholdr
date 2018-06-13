@@ -38,7 +38,8 @@ def init_db(db):
         certificate,
         share,
         shareclass,
-        shareholder
+        shareholder,
+        transaction
     )
 
     try:

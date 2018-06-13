@@ -75,11 +75,19 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
     shares = db.relationship(
         "Share",
         backref = db.backref(
-            "certificates",
+            "certificate",
             lazy = True
         ),
         lazy = "subquery",
         secondary = shares
+    )
+    transactions = db.relationship(
+        "Transaction",
+        backref = db.backref(
+            "certificate",
+            lazy = True
+        ),
+        lazy = True
     )
 
     def get_status(self):
