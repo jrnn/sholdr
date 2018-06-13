@@ -21,6 +21,8 @@
     the same unchanging information.
 """
 
+import dateutil.parser as dtp
+
 from .mixins import (
     BaseMixin,
     IssuableMixin,
@@ -107,6 +109,29 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         db.engine.execute(stmt1)
         db.engine.execute(stmt2)
         db.commit_and_flush_cache()
+
+    @staticmethod
+    def earliest_possible_bundle_date(lower, upper):
+        """
+        For the given range of shares, find:
+          1. the latest cancellation date of all certificates those share have
+             been part of;
+          2. the latest issue date of those shares (by definition the issue date
+             of the upper-bound share)
+        and return the maximum of those dates. This is the earliest date that
+        all the shares in the range exist and are unbound; in other words, the
+        earliest date that it is logically possible to bind them together.
+        """
+        stmt = sql["CERTIFICATE"]["FIND_EARLIEST_BUNDLE_DATE"].params(
+            lower = lower,
+            upper = upper
+        )
+        rs = db.engine.execute(stmt).fetchone()
+
+        if rs.max:
+            return dtp.parse(rs.max).date()
+        else:
+            return None
 
     @staticmethod
     @cache.memoize()

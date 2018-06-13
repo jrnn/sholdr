@@ -88,6 +88,22 @@ def get_statements():
                 " ON c.id = _s._id"
                 " WHERE c.canceled_on IS NULL"
                 " ORDER BY c.first_share ASC"
+            ),
+            "FIND_EARLIEST_BUNDLE_DATE" : text(
+                "SELECT"
+                " MAX(_s.date) AS max"
+                " FROM ( SELECT"
+                " MAX(issued_on) AS date"
+                " FROM share"
+                " WHERE id = :upper"
+                " UNION SELECT"
+                " MAX(c.canceled_on)"
+                " FROM certificate c"
+                " JOIN ( SELECT"
+                " DISTINCT(certificate_id) AS id"
+                " FROM certificate_share"
+                " WHERE share_id >= :lower AND share_id <= :upper ) cs"
+                " ON c.id = cs.id ) _s"
             )
         },
         "SHARE" : {

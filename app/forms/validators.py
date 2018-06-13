@@ -11,6 +11,7 @@ from app import (
     db,
     sql
 )
+from app.models.certificate import Certificate
 from app.models.share import Share
 from app.util.util import is_within_range
 from wtforms.validators import (
@@ -70,7 +71,7 @@ class NotEarlierThan(object):
 
     def __call__(self, form, field):
         if not isinstance(field.data, datetime.date):
-            raise ValidationError()
+            pass
         elif field.data < form._fields.get(self.earlier).data:
             raise ValidationError(self.message)
 
@@ -85,7 +86,7 @@ class NotEmpty(object):
 class NotFutureDate(object):
     def __call__(self, form, field):
         if not isinstance(field.data, datetime.date):
-            raise ValidationError()
+            pass
         elif field.data > datetime.date.today():
             raise ValidationError("Cannot be in the future")
 
@@ -103,12 +104,36 @@ class PasswordFormat(object):
         self.message = message
 
     def __call__(self, form, field):
-        pw = field.data
         allowed = "^[A-Za-z0-9!#$%&'*+.:,;/=?@^_~-]+$"
         reqs = "((?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,})"
 
-        if not (re.match(allowed, pw) and re.match(reqs, pw)):
+        if not (re.match(allowed, field.data) and re.match(reqs, field.data)):
             raise ValidationError(self.message)
+
+
+
+class PossibleBundleDate(object):
+    """
+    This validator is only meant to be used by the Certificate form. It checks
+    that the given issue date (1) does not overlap with possible prior bindings
+    of the shares, (2) does not precede the issue date of any of the shares.
+
+    The actual work is done by the Certificate model class, while this validator
+    just collects relevant values together and typechecks them.
+    """
+    def __call__(self, form, field):
+        date = field.data
+        lower = form._fields.get("first_share").data
+        upper = form._fields.get("last_share").data
+
+        if type(lower) != int or type(upper) != int or not isinstance(date, datetime.date):
+            return
+        elif lower > upper:
+            return
+
+        earliest = Certificate.earliest_possible_bundle_date(lower, upper)
+        if earliest and date < earliest:
+            raise ValidationError("Earliest possible date is %s" % earliest)
 
 
 
@@ -161,19 +186,18 @@ class WithinBounds(object):
     not bound to another Certificate.
     """
     def __call__(self, form, field):
-        l = form.first_share.data
-        u = field.data
+        lower = form.first_share.data
+        upper = field.data
 
-        if type(l) != int or type(u) != int:
-            raise ValidationError()
-        if u < l:
+        if type(lower) != int or type(upper) != int:
+            raise ValidationError("Not a valid integer value")
+        elif upper < lower:
             raise ValidationError("Upper bound must be greater than lower bound (idiot...)")
-
-        m = Share.last_share_number()
-        if u > m:
-            raise ValidationError("Shares have only been issued up to %s" % m)
-        if l < 1:
+        elif lower < 1:
             raise ValidationError("Numbering of shares starts from 1")
 
-        if not is_within_range((l,u,), Share.get_unbound_ranges()):
+        cap = Share.last_share_number()
+        if upper > cap:
+            raise ValidationError("Shares have only been issued up to %s" % cap)
+        elif not is_within_range((lower,upper,), Share.get_unbound_ranges()):
             raise ValidationError("One or more shares within this range is already bound to a certificate")

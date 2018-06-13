@@ -7,6 +7,7 @@
 from .validators import (
     NotEarlierThan,
     NotFutureDate,
+    PossibleBundleDate,
     WithinBounds
 )
 from flask_wtf import FlaskForm
@@ -35,7 +36,10 @@ class CertificateForm(FlaskForm):
             "placeholder" : "Pick a date",
             "type" : "date"
         },
-        validators = [ NotFutureDate() ]
+        validators = [
+            NotFutureDate(),
+            PossibleBundleDate()
+        ]
     )
     shareholder_id = SelectField(
         choices = [ ("tba", "Not yet implemented") ],
