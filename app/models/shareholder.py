@@ -98,20 +98,13 @@ class Shareholder(BaseMixin, UuidMixin, db.Model):
     @cache.cached(key_prefix = "shareholder_list")
     def get_all_for_list():
         """
-        Fetch all shareholders with only the fields needed on the list view.
-        Need to do a bit of extra 'manual work' in translating query results
-        due to subclassing ...
+        Fetch all shareholders with a fairly complex query that has the exact
+        fields and calculations needed on the list view.
         """
         stmt = sql["SHAREHOLDER"]["FIND_ALL_FOR_LIST"]
         rs = db.engine.execute(stmt)
-        ss = rs_to_dict(rs)
 
-        for s in ss:
-            s["type_id"] = s["business_id"]
-            if s["type"] == "natural_person":
-                s["name"] = "%s, %s" % (s["last_name"], s["first_name"],)
-                s["type_id"] = s["nin"]
-        return ss
+        return rs_to_dict(rs)
 
     @staticmethod
     @cache.cached(key_prefix = "shareholder_dropdown")

@@ -53,6 +53,11 @@ def get_statements():
             " WHERE %s = :value" % (column, table, where,)
         )
 
+    GET_SHAREHOLDER_NAMES = "SELECT" \
+        " id, name FROM juridical_person" \
+        " UNION SELECT id, last_name || ', ' || first_name" \
+        " FROM natural_person"
+
     return {
         "_COMMON" : {
             "CHECK_IF_UNIQUE" : check_if_unique,
@@ -96,28 +101,18 @@ def get_statements():
                 " ON sc.id = s.share_class_id"
                 " GROUP BY _id ) _s"
                 " ON c.id = _s._id"
-                " JOIN ( SELECT"
-                " id, name"
-                " FROM juridical_person"
-                " UNION SELECT"
-                " id, last_name || ', ' || first_name"
-                " FROM natural_person ) _sh"
+                " JOIN ( %s ) _sh"
                 " ON _sh.id = c.owner_id"
                 " WHERE c.canceled_on IS NULL"
-                " ORDER BY c.first_share ASC"
+                " ORDER BY c.first_share ASC" % GET_SHAREHOLDER_NAMES
             ),
             "FIND_CURRENT_OWNER" : text(
                 "SELECT"
                 " c.owner_id AS id, _s.name"
                 " FROM certificate c"
-                " JOIN ( SELECT"
-                " id, name"
-                " FROM juridical_person"
-                " UNION SELECT"
-                " id, last_name || ', ' || first_name"
-                " FROM natural_person ) _s"
+                " JOIN ( %s ) _s"
                 " ON _s.id = c.owner_id"
-                " WHERE c.id = :id"
+                " WHERE c.id = :id" % GET_SHAREHOLDER_NAMES
             ),
             "FIND_EARLIEST_BUNDLE_DATE" : text(
                 "SELECT"
@@ -139,15 +134,10 @@ def get_statements():
                 "SELECT"
                 " t.price, t.recorded_on, _s.name AS owner"
                 " FROM _transaction t"
-                " JOIN ( SELECT"
-                " id, name"
-                " FROM juridical_person"
-                " UNION SELECT"
-                " id, last_name || ', ' || first_name"
-                " FROM natural_person ) _s"
+                " JOIN ( %s ) _s"
                 " ON _s.id = t.shareholder_id"
                 " WHERE t.certificate_id = :id"
-                " ORDER BY t.recorded_on ASC"
+                " ORDER BY t.recorded_on ASC" % GET_SHAREHOLDER_NAMES
             )
         },
         "SHARE" : {
@@ -195,23 +185,27 @@ def get_statements():
                 " WHERE shareholder_id = :id ) _s"
             ),
             "FIND_ALL_FOR_DROPDOWN" : text(
-                "SELECT"
-                " id, name"
-                " FROM juridical_person"
-                " UNION SELECT"
-                " id, last_name || ', ' || first_name AS name"
-                " FROM natural_person"
+                "%s ORDER BY name ASC" % GET_SHAREHOLDER_NAMES
             ),
             "FIND_ALL_FOR_LIST" : text(
                 "SELECT"
-                " j.business_id, j.name,"
-                " n.first_name, n.last_name, n.nin,"
-                " s.country, s.id, s.type"
+                " s.id, s.country, _s.name, _s.type_id,"
+                " COALESCE(_c.shares, 0) AS share_count"
                 " FROM shareholder s"
-                " LEFT JOIN natural_person n"
-                " ON s.id = n.id"
-                " LEFT JOIN juridical_person j"
-                " ON s.id = j.id"
+                " JOIN ( SELECT"
+                " id, name, business_id AS type_id"
+                " FROM juridical_person"
+                " UNION SELECT"
+                " id, last_name || ', ' || first_name, nin"
+                " FROM natural_person ) _s"
+                " ON s.id = _s.id"
+                " LEFT JOIN ( SELECT"
+                " owner_id AS id, SUM(share_count) AS shares"
+                " FROM certificate"
+                " WHERE canceled_on IS NULL"
+                " GROUP BY owner_id ) _c"
+                " ON s.id = _c.id"
+                " ORDER BY _s.name ASC"
             )
         }
     }
