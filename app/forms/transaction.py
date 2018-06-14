@@ -7,6 +7,8 @@
 from . import CustomBaseForm
 from .validators import (
     MaxLength,
+    NotEarlierThan,
+    NotEqualTo,
     NotFutureDate
 )
 from flask_wtf import FlaskForm
@@ -23,6 +25,11 @@ from wtforms import (
 
 class TransactionForm(CustomBaseForm):
     certificate_id = StringField(render_kw = { "hidden" : True })
+    owner_id = StringField(render_kw = { "hidden" : True })
+    latest_transaction = DateField(
+        label = "Date of last transaction",
+        render_kw = { "readonly" : True }
+    )
     shares = StringField(
         label = "Certificate",
         render_kw = { "readonly" : True }
@@ -33,9 +40,13 @@ class TransactionForm(CustomBaseForm):
     )
     shareholder_id = SelectField(
         label = "New owner",
-        render_kw = { "placeholder" : "Select shareholder" }
-        # cannot be empty
-        # cannot be same as current owner
+        render_kw = { "placeholder" : "Select shareholder" },
+        validators = [
+            NotEqualTo(
+                message = "Cannot be same as current owner",
+                other = "owner_id"
+            )
+        ]
     )
     recorded_on = DateField(
         label = "Transaction date",
@@ -43,8 +54,13 @@ class TransactionForm(CustomBaseForm):
             "placeholder" : "Pick a date",
             "type" : "date"
         },
-        validators = [ NotFutureDate() ]
-        # cannot precede earlier transactions
+        validators = [
+            NotEarlierThan(
+                earlier = "latest_transaction",
+                message = "Cannot be earlier than date of last transaction"
+            ),
+            NotFutureDate()
+        ]
     )
     price = DecimalField(
         default = 0,

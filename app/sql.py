@@ -45,12 +45,21 @@ def get_statements():
             " FROM %s" % (column, table,)
         )
 
+    def find_max_where(table, column, where):
+        return text(
+            "SELECT"
+            " MAX(%s) AS max"
+            " FROM %s"
+            " WHERE %s = :value" % (column, table, where,)
+        )
+
     return {
         "_COMMON" : {
             "CHECK_IF_UNIQUE" : check_if_unique,
             "COUNT_ALL" : count_all,
             "COUNT_WHERE" : count_where,
-            "FIND_MAX" : find_max
+            "FIND_MAX" : find_max,
+            "FIND_MAX_WHERE" : find_max_where
         },
         "CERTIFICATE" : {
             "BUNDLE_JOIN" : text(

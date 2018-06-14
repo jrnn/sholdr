@@ -59,12 +59,14 @@
     "Go back",
     url_for('share.list')
   ) }}
-  {{ link_button(
-    "Transfer ownership",
-    url_for('certificate.transfer', id = certificate.id)
-  ) }}
-  {{ link_button(
-    "Cancel certificate",
-    url_for('certificate.cancel', id = certificate.id)
-  ) }}
+  {% if not certificate.canceled_on %}
+    {{ link_button(
+      "Transfer ownership",
+      url_for('certificate.transfer', id = certificate.id)
+    ) }}
+    {{ link_button(
+      "Cancel certificate",
+      url_for('certificate.cancel', id = certificate.id)
+    ) }}
+  {% endif %}
 {% endblock %}

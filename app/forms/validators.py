@@ -83,6 +83,23 @@ class NotEmpty(object):
 
 
 
+class NotEqualTo(object):
+    def __init__(self, other, message = None):
+        if not message:
+            message = "Cannot be same as %s" % other.lower()
+        self.message = message
+        self.other = other
+
+    def __call__(self, form, field):
+        try:
+            other = form[self.other]
+        except:
+            raise ValidationError("Field %s does not exist!" % self.other)
+        if field.data == other.data:
+            raise ValidationError(self.message)
+
+
+
 class NotFutureDate(object):
     def __call__(self, form, field):
         if not isinstance(field.data, datetime.date):

@@ -92,9 +92,15 @@ def details(id):
 def transfer(id):
     """
     Depending on request type, either (1) show blank form for recording a
-    transaction, or (2) create new transaction.
+    transaction, or (2) create new transaction. Refuse to do anything if the
+    certificate in question has been canceled.
     """
     c = Certificate.query.get_or_404(id)
+
+    if c.canceled_on:
+        notify.has_been_canceled("certificate")
+        return redirect(url_for("certificate.details", id = id))
+
     f = TransactionForm(request.form)
     f.shareholder_id.choices = Shareholder.get_dropdown_options()
 
@@ -107,15 +113,19 @@ def transfer(id):
         t.save_or_update()
 
         notify.create_ok("transaction")
-        return redirect(url_for("certificate.details", id = c.id))
+        return redirect(url_for("certificate.details", id = id))
 
     elif request.method == "POST":
         notify.invalid_input()
 
     else:
-        f.certificate_id.data = c.id
-        f.owner.data = Certificate.get_current_owner(c.id).get("name")
+        f.certificate_id.data = id
         f.shares.data = "%s—%s" % (c.first_share, c.last_share,)
+
+        current_owner = Certificate.get_current_owner(id)
+        f.owner.data = current_owner.get("name")
+        f.owner_id.data = current_owner.get("id")
+        f.latest_transaction.data = Certificate.get_latest_transaction_date(id)
 
     return render_template(
         "transaction/form.html",
@@ -123,14 +133,20 @@ def transfer(id):
     )
 
 
+
 @bp.route("/<id>/cancel", methods = ("GET", "POST",))
 @login_required
 def cancel(id):
     """
-    Practically the opposite of 'bundle()' above.
+    Practically the opposite of 'bundle()' above. Refuse to do anything if the
+    certificate in question has been canceled already.
     """
     c = Certificate.query.get_or_404(id)
     f = CancellationForm(request.form)
+
+    if c.canceled_on:
+        notify.has_been_canceled("certificate")
+        return redirect(url_for("certificate.details", id = id))
 
     if f.validate_on_submit():
         c.canceled_on = f.canceled_on.data
@@ -145,6 +161,7 @@ def cancel(id):
     else:
         f = CancellationForm(obj = c)
         f.shares.data = "%s—%s" % (c.first_share, c.last_share,)
+        f.latest_transaction.data = Certificate.get_latest_transaction_date(id)
 
     return render_template(
         "certificate/cancel.html",

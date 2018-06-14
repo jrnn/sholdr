@@ -12,7 +12,7 @@
     onSubmit = "return confirm('Are you sure? There\'s no going back.');"
   >
     {{ render_field( form.shares ) }}
-    {{ render_field( form.issued_on ) }}
+    {{ render_field( form.latest_transaction ) }}
     {{ render_field( form.canceled_on ) }}
     {{ form.id }}
     {{ form.csrf_token }}
@@ -26,6 +26,4 @@
       value = "Cancel certificate"
     />
   </form>
-  <p>TO-DO : change "issued_on" to "latest transaction" when transactions have been implemented</p>
-  <p>TO-DO : is an additional "remarks/reason of cancellation" field needed...?</p>
 {% endblock %}

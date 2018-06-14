@@ -54,8 +54,8 @@ class CancellationForm(FlaskForm):
         label = "Certificate",
         render_kw = { "readonly" : True }
     )
-    issued_on = DateField(
-        label = "Date of issue",
+    latest_transaction = DateField(
+        label = "Date of last transaction",
         render_kw = { "readonly" : True }
     )
     canceled_on = DateField(
@@ -66,8 +66,8 @@ class CancellationForm(FlaskForm):
         },
         validators = [
             NotEarlierThan(
-                earlier = "issued_on",
-                message = "Cannot be earlier than date of issue"
+                earlier = "latest_transaction",
+                message = "Cannot be earlier than date of last transaction"
             ),
             NotFutureDate()
         ]

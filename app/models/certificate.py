@@ -151,6 +151,21 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
 
     @staticmethod
     @cache.memoize()
+    def get_latest_transaction_date(id):
+        stmt = sql["_COMMON"]["FIND_MAX_WHERE"](
+            table = "_transaction",
+            column = "recorded_on",
+            where = "certificate_id"
+        ).params(value = id)
+        rs = db.engine.execute(stmt).fetchone()
+
+        if rs.max:
+            return dtp.parse(rs.max).date()
+        else:
+            return None
+
+    @staticmethod
+    @cache.memoize()
     def get_share_composition_for(id):
         """
         Fetch the quantity and sum votes of shares bound to given certificate,
