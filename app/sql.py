@@ -106,9 +106,9 @@ def get_statements():
                 " id, last_name || ', ' || first_name AS name"
                 " FROM natural_person"
                 " JOIN ( SELECT"
-                " shareholder_id as _id, MAX(recorded_on)"
-                " FROM _transaction"
-                " WHERE certificate_id = :id ) _s"
+                " owner_id as _id"
+                " FROM certificate"
+                " WHERE id = :id ) _s"
                 " ON id = _s._id"
             ),
             "FIND_EARLIEST_BUNDLE_DATE" : text(

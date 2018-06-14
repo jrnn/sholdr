@@ -33,12 +33,11 @@ bp = Blueprint(
 @login_required
 def bundle():
     """
-    Depending on request type, either (1) show blank form for bundling shares
-    into certificates, or (2) create new certificate and bind its component
-    shares, then create a trivial transaction naming the initial owner.
+    Depending on request type, either (1) show form for bundling shares into
+    certificates, or (2) create new certificate and bind its component shares.
     """
     f = CertificateForm(request.form)
-    f.shareholder_id.choices = Shareholder.get_dropdown_options()
+    f.owner_id.choices = Shareholder.get_dropdown_options()
 
     if f.validate_on_submit():
         c = Certificate()
@@ -47,12 +46,6 @@ def bundle():
 
         c.save_or_update()
         Certificate.bind_shares(c)
-
-        t = Transaction()
-        t.certificate_id = c.id
-        t.shareholder_id = f.shareholder_id.data
-        t.recorded_on = f.issued_on.data
-        t.save_or_update()
 
         notify.create_ok("certificate")
         return redirect(url_for("share.list"))
@@ -75,7 +68,7 @@ def details(id):
     share class, and transaction history.
     """
     c = Certificate.query.get_or_404(id)
-    sc = Certificate.get_share_composition_for(id)
+    sc = Certificate.get_share_composition(id)
 
     return render_template(
         "certificate/details.html",
@@ -91,14 +84,14 @@ def details(id):
 @login_required
 def transfer(id):
     """
-    Depending on request type, either (1) show blank form for recording a
-    transaction, or (2) create new transaction. Refuse to do anything if the
-    certificate in question has been canceled.
+    Depending on request type, either (1) show form for recording a transaction,
+    or (2) create new transaction, and update 'current owner' field on the
+    certificate. Refuse to do anything if the certificate in question already
+    has been canceled.
     """
     c = Certificate.query.get_or_404(id)
-
     if c.canceled_on:
-        notify.has_been_canceled("certificate")
+        notify.is_already_canceled("certificate")
         return redirect(url_for("certificate.details", id = id))
 
     f = TransactionForm(request.form)
@@ -108,6 +101,7 @@ def transfer(id):
         t = Transaction()
         f.populate_obj(t)
 
+        c.owner_id = f.shareholder_id.data
         t.price = int(100 * t.price)
         t.price_per_share = int(t.price / c.share_count)
         t.save_or_update()
@@ -122,10 +116,10 @@ def transfer(id):
         f.certificate_id.data = id
         f.shares.data = "%s—%s" % (c.first_share, c.last_share,)
 
-        current_owner = Certificate.get_current_owner(id)
-        f.owner.data = current_owner.get("name")
-        f.owner_id.data = current_owner.get("id")
-        f.latest_transaction.data = Certificate.get_latest_transaction_date(id)
+        f.owner_id.data = c.owner_id
+        f.owner.data = Certificate.get_current_owner(id).get("name")
+        f.last_transaction.data = Certificate.get_last_transaction_date(id) \
+                                  or c.issued_on
 
     return render_template(
         "transaction/form.html",
@@ -138,16 +132,16 @@ def transfer(id):
 @login_required
 def cancel(id):
     """
-    Practically the opposite of 'bundle()' above. Refuse to do anything if the
-    certificate in question has been canceled already.
+    Depending on request type, either (1) show form for canceling certificate,
+    or (2) cancel certificate and release its component shares. Refuse to do
+    anything if the certificate in question already has been canceled.
     """
     c = Certificate.query.get_or_404(id)
-    f = CancellationForm(request.form)
-
     if c.canceled_on:
-        notify.has_been_canceled("certificate")
+        notify.is_already_canceled("certificate")
         return redirect(url_for("certificate.details", id = id))
 
+    f = CancellationForm(request.form)
     if f.validate_on_submit():
         c.canceled_on = f.canceled_on.data
         Certificate.release_shares(c)
@@ -161,7 +155,8 @@ def cancel(id):
     else:
         f = CancellationForm(obj = c)
         f.shares.data = "%s—%s" % (c.first_share, c.last_share,)
-        f.latest_transaction.data = Certificate.get_latest_transaction_date(id)
+        f.last_transaction.data = Certificate.get_last_transaction_date(id) \
+                                  or c.issued_on
 
     return render_template(
         "certificate/cancel.html",

@@ -1,7 +1,6 @@
 """
     This module contains the WTForm classes that handle the forms for bundling
-    and unbundling (canceling) Certificates. Standard Flask-WTForm base class is
-    used, and there is nothing special apart from a little custom validation.
+    and unbundling (canceling) Certificates.
 """
 
 from .validators import (
@@ -41,7 +40,7 @@ class CertificateForm(FlaskForm):
             PossibleBundleDate()
         ]
     )
-    shareholder_id = SelectField(
+    owner_id = SelectField(
         label = "Initial owner",
         render_kw = { "placeholder" : "Select shareholder" }
     )
@@ -54,7 +53,7 @@ class CancellationForm(FlaskForm):
         label = "Certificate",
         render_kw = { "readonly" : True }
     )
-    latest_transaction = DateField(
+    last_transaction = DateField(
         label = "Date of last transaction",
         render_kw = { "readonly" : True }
     )
@@ -66,7 +65,7 @@ class CancellationForm(FlaskForm):
         },
         validators = [
             NotEarlierThan(
-                earlier = "latest_transaction",
+                earlier = "last_transaction",
                 message = "Cannot be earlier than date of last transaction"
             ),
             NotFutureDate()

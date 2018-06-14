@@ -1,15 +1,14 @@
 """
-    This module contains the Transaction model. A custom Mixin that generates
-    UUIDs as primary keys is applied.
+    This module contains the Transaction model. Table name has extra underscore
+    in front because TRANSACTION is a reserved SQL keyword.
 
     Transactions stand for events where ownership of a Certificate changes,
     recording (1) when the event takes place, (2) how much money is involved,
     (3) to whom ownership is transferred.
 
-    Certificates can go through several Transactions during their validity. The
-    most recent Transaction tells which Shareholder that Certificate belongs to
-    currently. When a Certificate is bundled, a 'trivial' Transaction at 0 EUR
-    is written, just so that the Certificate initially has an owner.
+    Certificates can go through several Transactions during their validity.
+    Certificates always know their current owner, but Transactions can tell the
+    whole succession of owners over time.
 
     Transaction prices are of interest mainly when the issuing company is either
     the seller or buyer, because the difference in shares' purchase and buyback

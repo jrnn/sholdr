@@ -1,6 +1,5 @@
 """
-    This module contains the Certificate model. A custom Mixin that generates
-    UUIDs as primary keys is applied.
+    This module contains the Certificate model.
 
     In practice, Certificates are just bundles of sequential Shares. They are
     named after the first and last Share in the sequence (e.g. 001-050). A
@@ -19,6 +18,10 @@
     Certificates memorize some key points about that relationship (first_share,
     last_share, share_count) to avoid having to query the DB over and again for
     the same unchanging information.
+
+    Also, to simplify life a bit, Certificates remember their current owner.
+    Doing this with a 'max-where-join' query through Transactions is needlessly
+    heavy and results in bloated, hard-to-read queries.
 """
 
 import dateutil.parser as dtp
@@ -71,6 +74,11 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         BigInteger,
         nullable = False
     )
+    owner_id = Column(
+        String(32),
+        ForeignKey("shareholder.id"),
+        nullable = False
+    )
 
     shares = db.relationship(
         "Share",
@@ -119,7 +127,15 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         db.commit_and_flush_cache()
 
     @staticmethod
-    def earliest_possible_bundle_date(lower, upper):
+    @cache.memoize()
+    def get_current_owner(id):
+        stmt = sql["CERTIFICATE"]["FIND_CURRENT_OWNER"].params(id = id)
+        rs = db.engine.execute(stmt).fetchone()
+
+        return { "id" : rs.id, "name" : rs.name }
+
+    @staticmethod
+    def get_earliest_possible_bundle_date(lower, upper):
         """
         For the given range of shares, find:
           1. the latest cancellation date of all certificates those share have
@@ -143,15 +159,7 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
 
     @staticmethod
     @cache.memoize()
-    def get_current_owner(id):
-        stmt = sql["CERTIFICATE"]["FIND_CURRENT_OWNER"].params(id = id)
-        rs = db.engine.execute(stmt).fetchone()
-
-        return { "id" : rs.id, "name" : rs.name }
-
-    @staticmethod
-    @cache.memoize()
-    def get_latest_transaction_date(id):
+    def get_last_transaction_date(id):
         stmt = sql["_COMMON"]["FIND_MAX_WHERE"](
             table = "_transaction",
             column = "recorded_on",
@@ -166,7 +174,7 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
 
     @staticmethod
     @cache.memoize()
-    def get_share_composition_for(id):
+    def get_share_composition(id):
         """
         Fetch the quantity and sum votes of shares bound to given certificate,
         broken down by share class.

@@ -1,7 +1,6 @@
 """
     This module contains the WTForm class that handles the forms for recording
-    Transactions. A tweaked base class that trims surrounding whitespace from
-    all fields is applied.
+    Transactions (i.e. transfers of certificate ownership).
 """
 
 from . import CustomBaseForm
@@ -26,7 +25,7 @@ from wtforms import (
 class TransactionForm(CustomBaseForm):
     certificate_id = StringField(render_kw = { "hidden" : True })
     owner_id = StringField(render_kw = { "hidden" : True })
-    latest_transaction = DateField(
+    last_transaction = DateField(
         label = "Date of last transaction",
         render_kw = { "readonly" : True }
     )
@@ -56,7 +55,7 @@ class TransactionForm(CustomBaseForm):
         },
         validators = [
             NotEarlierThan(
-                earlier = "latest_transaction",
+                earlier = "last_transaction",
                 message = "Cannot be earlier than date of last transaction"
             ),
             NotFutureDate()

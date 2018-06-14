@@ -32,12 +32,6 @@ def delete_error(entity, tied_to):
         error_class
     )
 
-def has_been_canceled(entity):
-    return flash(
-        "This %s has already been canceled, leave it be!" % entity,
-        error_class
-    )
-
 def incorrect_type(entity):
     return flash(
         "Incorrect %s type. Stop messing with the address bar!" % entity,
@@ -47,6 +41,12 @@ def incorrect_type(entity):
 def invalid_input():
     return flash(
         "Check your inputs, Sahib. Something's not right.",
+        error_class
+    )
+
+def is_already_canceled(entity):
+    return flash(
+        "This %s has already been canceled, leave well enough alone!" % entity,
         error_class
     )
 

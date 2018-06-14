@@ -148,7 +148,7 @@ class PossibleBundleDate(object):
         elif lower > upper:
             return
 
-        earliest = Certificate.earliest_possible_bundle_date(lower, upper)
+        earliest = Certificate.get_earliest_possible_bundle_date(lower, upper)
         if earliest and date < earliest:
             raise ValidationError("Earliest possible date is %s" % earliest)
 
