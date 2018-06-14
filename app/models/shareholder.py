@@ -125,6 +125,17 @@ class Shareholder(BaseMixin, UuidMixin, db.Model):
             for s in db.engine.execute(sql["SHAREHOLDER"]["FIND_ALL_FOR_DROPDOWN"])
         ]
 
+    @staticmethod
+    def has_transactions(id):
+        """
+        Check if shareholder either is current owner of a certificate, or has
+        transaction history. If yes, return True; otherwise False.
+        """
+        stmt = sql["SHAREHOLDER"]["COUNT_TRANSACTIONS"].params(id = id)
+        rs = db.engine.execute(stmt).fetchone()
+
+        return rs.count > 0
+
 
 
 class NaturalPerson(Shareholder):

@@ -184,6 +184,16 @@ def get_statements():
             )
         },
         "SHAREHOLDER" : {
+            "COUNT_TRANSACTIONS" : text(
+                "SELECT"
+                " COUNT(*) AS count"
+                " FROM ( SELECT id"
+                " FROM certificate"
+                " WHERE owner_id = :id"
+                " UNION SELECT id"
+                " FROM _transaction"
+                " WHERE shareholder_id = :id ) _s"
+            ),
             "FIND_ALL_FOR_DROPDOWN" : text(
                 "SELECT"
                 " id, name"

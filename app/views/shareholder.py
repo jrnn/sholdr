@@ -128,8 +128,13 @@ def create_or_update():
 def delete(id):
     """
     Delete shareholder by primary key (path variable), if found. Otherwise throw
-    404.
+    404. Refuse to delete shareholder who is owner of at least one certificate,
+    or has been party to at least one transaction.
     """
+    if Shareholder.has_transactions(id):
+        notify.delete_error("shareholder", "certificate")
+        return redirect(url_for("shareholder.list"))
+
     if not Shareholder.query.get(id).delete_if_exists():
         abort(404)
     notify.delete_ok("shareholder")
