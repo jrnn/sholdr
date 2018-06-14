@@ -75,7 +75,8 @@ def details(id):
         certificate = c,
         current_owner = Certificate.get_current_owner(id),
         share_classes = sc,
-        total_votes = sum([ s["votes"] for s in sc ])
+        total_votes = sum([ s["votes"] for s in sc ]),
+        transactions = Certificate.get_transactions(id)
     )
 
 

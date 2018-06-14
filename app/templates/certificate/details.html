@@ -50,9 +50,15 @@
       </tr>
     </thead>
     <tbody>
-      <td>TBA</td>
-      <td>TBA</td>
-      <td>TBA</td>
+    {% for t in transactions %}
+      <tr>
+        <td>{{ t.recorded_on }}</td>
+        <td>{{ t.owner }}</td>
+        <td style="text-align : right">
+          {{ '{:,.2f}'.format(t.price / 100) }}
+        </td>
+      </tr>
+    {% endfor %}
     </tbody>
   </table>
   {{ link_button(

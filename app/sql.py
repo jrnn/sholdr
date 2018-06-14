@@ -84,7 +84,8 @@ def get_statements():
             ),
             "FIND_ALL_FOR_LIST" : text(
                 "SELECT"
-                " c.id, c.first_share, c.last_share, c.share_count, _s.votes"
+                " c.id, c.first_share, c.last_share, c.share_count,"
+                " _s.votes, _sh.name AS owner"
                 " FROM certificate c"
                 " JOIN ( SELECT"
                 " cs.certificate_id AS _id, SUM(sc.votes) AS votes"
@@ -95,6 +96,13 @@ def get_statements():
                 " ON sc.id = s.share_class_id"
                 " GROUP BY _id ) _s"
                 " ON c.id = _s._id"
+                " JOIN ( SELECT"
+                " id, name"
+                " FROM juridical_person"
+                " UNION SELECT"
+                " id, last_name || ', ' || first_name"
+                " FROM natural_person ) _sh"
+                " ON _sh.id = c.owner_id"
                 " WHERE c.canceled_on IS NULL"
                 " ORDER BY c.first_share ASC"
             ),
@@ -126,6 +134,20 @@ def get_statements():
                 " FROM certificate_share"
                 " WHERE share_id >= :lower AND share_id <= :upper ) cs"
                 " ON c.id = cs.id ) _s"
+            ),
+            "FIND_TRANSACTIONS" : text(
+                "SELECT"
+                " t.price, t.recorded_on, _s.name AS owner"
+                " FROM _transaction t"
+                " JOIN ( SELECT"
+                " id, name"
+                " FROM juridical_person"
+                " UNION SELECT"
+                " id, last_name || ', ' || first_name"
+                " FROM natural_person ) _s"
+                " ON _s.id = t.shareholder_id"
+                " WHERE t.certificate_id = :id"
+                " ORDER BY t.recorded_on ASC"
             )
         },
         "SHARE" : {

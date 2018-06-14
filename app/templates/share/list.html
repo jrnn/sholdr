@@ -50,7 +50,7 @@
       <tr id = {{ c.id }}>
         <td>{{ "%s—%s" % (c.first_share, c.last_share,) }}</td>
         <td>{{ c.share_count }}</td>
-        <td>TBA</td>
+        <td>{{ c.owner }}</td>
         <td>{{ c.votes }}</td>
       </tr>
     {% endfor %}

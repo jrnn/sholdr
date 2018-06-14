@@ -185,6 +185,14 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         return rs_to_dict(rs)
 
     @staticmethod
+    @cache.memoize()
+    def get_transactions(id):
+        stmt = sql["CERTIFICATE"]["FIND_TRANSACTIONS"].params(id = id)
+        rs = db.engine.execute(stmt)
+
+        return rs_to_dict(rs)
+
+    @staticmethod
     @cache.cached(key_prefix = "certificate_list")
     def find_all_for_list():
         """
