@@ -32,7 +32,7 @@ def list():
     """
     return render_template(
         "shareclass/list.html",
-        shareclasses = ShareClass.find_all_for_list()
+        shareclasses = ShareClass.get_all_for_list()
     )
 
 
@@ -94,7 +94,7 @@ def delete(id):
     Delete share class by primary key (path variable), if found. Otherwise throw
     404. Refuse to delete share class that is bound to at least one share.
     """
-    if ShareClass.count_shares_for(id):
+    if ShareClass.count_shares_in_class(id):
         notify.delete_error("share class", "share")
         return redirect(url_for("shareclass.list"))
 

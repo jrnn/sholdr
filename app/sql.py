@@ -69,7 +69,7 @@ def get_statements():
                 " FROM share s"
                 " WHERE s.id >= :lower AND s.id <= :upper"
             ),
-            "CALCULATE_SHARE_COMPOSITION_FOR" : text(
+            "CALCULATE_SHARE_COMPOSITION" : text(
                 "SELECT"
                 " name, COUNT(*) AS count, SUM(votes) AS votes"
                 " FROM ( SELECT"
@@ -108,16 +108,16 @@ def get_statements():
             ),
             "FIND_CURRENT_OWNER" : text(
                 "SELECT"
+                " c.owner_id AS id, _s.name"
+                " FROM certificate c"
+                " JOIN ( SELECT"
                 " id, name"
                 " FROM juridical_person"
                 " UNION SELECT"
-                " id, last_name || ', ' || first_name AS name"
-                " FROM natural_person"
-                " JOIN ( SELECT"
-                " owner_id as _id"
-                " FROM certificate"
-                " WHERE id = :id ) _s"
-                " ON id = _s._id"
+                " id, last_name || ', ' || first_name"
+                " FROM natural_person ) _s"
+                " ON _s.id = c.owner_id"
+                " WHERE c.id = :id"
             ),
             "FIND_EARLIEST_BUNDLE_DATE" : text(
                 "SELECT"

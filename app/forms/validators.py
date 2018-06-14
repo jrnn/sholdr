@@ -213,7 +213,7 @@ class WithinBounds(object):
         elif lower < 1:
             raise ValidationError("Numbering of shares starts from 1")
 
-        cap = Share.last_share_number()
+        cap = Share.get_last_share_number()
         if upper > cap:
             raise ValidationError("Shares have only been issued up to %s" % cap)
         elif not is_within_range((lower,upper,), Share.get_unbound_ranges()):

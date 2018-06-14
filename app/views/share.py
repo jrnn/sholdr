@@ -34,8 +34,8 @@ def list():
     """
     return render_template(
         "share/list.html",
-        certificates = Certificate.find_all_for_list(),
-        last_share_number = Share.last_share_number(),
+        certificates = Certificate.get_all_for_list(),
+        last_share_number = Share.get_last_share_number(),
         unbound_ranges = Share.get_unbound_ranges()
     )
 
@@ -54,10 +54,10 @@ def issue():
     relevant queries are done here and filled in on each request.
     """
     f = ShareForm(request.form)
-    l = Share.last_share_number() + 1
+    lower = Share.get_last_share_number() + 1
 
-    f.latest_issue.data = Share.latest_issue_date()
-    f.lower_bound.data = l
+    f.latest_issue.data = Share.get_latest_issue_date()
+    f.lower_bound.data = lower
     f.share_class_id.choices = ShareClass.get_dropdown_options()
 
     if f.validate_on_submit():

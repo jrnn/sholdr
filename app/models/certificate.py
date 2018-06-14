@@ -80,24 +80,6 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         nullable = False
     )
 
-    shares = db.relationship(
-        "Share",
-        backref = db.backref(
-            "certificate",
-            lazy = True
-        ),
-        lazy = "subquery",
-        secondary = shares
-    )
-    transactions = db.relationship(
-        "Transaction",
-        backref = db.backref(
-            "certificate",
-            lazy = True
-        ),
-        lazy = True
-    )
-
     def get_status(self):
         if not self.canceled_on:
             return "Valid"
@@ -135,10 +117,11 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         return { "id" : rs.id, "name" : rs.name }
 
     @staticmethod
+    @cache.memoize()
     def get_earliest_possible_bundle_date(lower, upper):
         """
         For the given range of shares, find:
-          1. the latest cancellation date of all certificates those share have
+          1. the latest cancellation date of all certificates those shares have
              been part of;
           2. the latest issue date of those shares (by definition the issue date
              of the upper-bound share)
@@ -179,7 +162,7 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         Fetch the quantity and sum votes of shares bound to given certificate,
         broken down by share class.
         """
-        stmt = sql["CERTIFICATE"]["CALCULATE_SHARE_COMPOSITION_FOR"].params(id = id)
+        stmt = sql["CERTIFICATE"]["CALCULATE_SHARE_COMPOSITION"].params(id = id)
         rs = db.engine.execute(stmt)
 
         return rs_to_dict(rs)
@@ -194,7 +177,7 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
 
     @staticmethod
     @cache.cached(key_prefix = "certificate_list")
-    def find_all_for_list():
+    def get_all_for_list():
         """
         Fetch all certificates for the list view. Use a custom aggregate JOIN
         query to include sum of votes per certificate in the result set.

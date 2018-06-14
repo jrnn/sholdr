@@ -1,6 +1,5 @@
 """
-    This module contains the Shareholder model. A custom Mixin that generates
-    UUIDs as primary keys is applied.
+    This module contains the Shareholder model.
 
     Shareholders can be either natural persons (i.e. human beings) or juridical
     persons (i.e. organizations), with some differences in what information is
@@ -71,15 +70,6 @@ class Shareholder(BaseMixin, UuidMixin, db.Model):
     )
     type = Column(String(16))
 
-    transactions = db.relationship(
-        "Transaction",
-        backref = db.backref(
-            "shareholder",
-            lazy = True
-        ),
-        lazy = True
-    )
-
     __mapper_args__ = {
         "polymorphic_identity" : "shareholder",
         "polymorphic_on" : type
@@ -106,7 +96,7 @@ class Shareholder(BaseMixin, UuidMixin, db.Model):
 
     @staticmethod
     @cache.cached(key_prefix = "shareholder_list")
-    def find_all_for_list():
+    def get_all_for_list():
         """
         Fetch all shareholders with only the fields needed on the list view.
         Need to do a bit of extra 'manual work' in translating query results

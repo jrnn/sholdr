@@ -54,6 +54,36 @@ class Share(IssuableMixin, db.Model):
     )
 
     @staticmethod
+    @cache.cached(key_prefix = "last_share_number")
+    def get_last_share_number():
+        """
+        Return the id number up to which shares have been issued, or zero if no
+        shares have been issued.
+        """
+        stmt = sql["_COMMON"]["FIND_MAX"]("share", "id")
+        rs = db.engine.execute(stmt).fetchone()
+
+        if not rs.max:
+            return 0
+        else:
+            return rs.max
+
+    @staticmethod
+    @cache.cached(key_prefix = "latest_share_issue")
+    def get_latest_issue_date():
+        """
+        Return the date on which shares last were issued. If no shares have been
+        issued, return a ridiculously ancient date.
+        """
+        stmt = sql["_COMMON"]["FIND_MAX"]("share", "issued_on")
+        rs = db.engine.execute(stmt).fetchone()
+
+        if not rs.max:
+            return dtp.parse("1900-01-01").date()
+        else:
+            return dtp.parse(rs.max).date()
+
+    @staticmethod
     @cache.cached(key_prefix = "find_all_unbound")
     def get_unbound_ranges():
         """
@@ -82,33 +112,3 @@ class Share(IssuableMixin, db.Model):
             s.id = i
             db.session.add(s)
         db.commit_and_flush_cache()
-
-    @staticmethod
-    @cache.cached(key_prefix = "last_share_number")
-    def last_share_number():
-        """
-        Return the id number up to which shares have been issued, or zero if no
-        shares have been issued.
-        """
-        stmt = sql["_COMMON"]["FIND_MAX"]("share", "id")
-        rs = db.engine.execute(stmt).fetchone()
-
-        if not rs.max:
-            return 0
-        else:
-            return rs.max
-
-    @staticmethod
-    @cache.cached(key_prefix = "latest_share_issue")
-    def latest_issue_date():
-        """
-        Return the date on which shares last were issued. If no shares have been
-        issued, return a ridiculously ancient date.
-        """
-        stmt = sql["_COMMON"]["FIND_MAX"]("share", "issued_on")
-        rs = db.engine.execute(stmt).fetchone()
-
-        if not rs.max:
-            return dtp.parse("1900-01-01").date()
-        else:
-            return dtp.parse(rs.max).date()

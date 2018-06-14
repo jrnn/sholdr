@@ -41,7 +41,7 @@ def list():
     """
     return render_template(
         "shareholder/list.html",
-        shareholders = Shareholder.find_all_for_list()
+        shareholders = Shareholder.get_all_for_list()
     )
 
 

@@ -11,9 +11,7 @@
     {% if field.errors %}
       {{ field(class = class + " is-invalid", **kwargs) }}
       <div class = "invalid-feedback">
-        {% for error in field.errors %}
-          {{ error }}
-        {% endfor %}
+        {{ field.errors[0] }}
       </div>
     {% else %}
       {{ field(class = class, **kwargs) }}
@@ -40,11 +38,11 @@
       {{ second_field.label }}
     {% endif %}
     {{ second_field( class = class ) }}
+    {% if errors %}
     <div class = "invalid-feedback">
-    {% for error in errors %}
-      {{ error }}
-    {% endfor %}
+      {{ errors[0] }}
     </div>
+    {% endif %}
   </div>
 {% endmacro %}
 

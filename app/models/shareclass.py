@@ -1,6 +1,5 @@
 """
-    This module contains the Share Class model. A custom Mixin that generates
-    UUIDs as primary keys is applied.
+    This module contains the Share Class model.
 
     Share Classes are used to categorize Shares in terms of privilege: that is,
     Shares of different Classes confer different rights to their owner. For the
@@ -38,17 +37,8 @@ class ShareClass(BaseMixin, UuidMixin, db.Model):
     )
     remarks = Column(String(255))
 
-    shares = db.relationship(
-        "Share",
-        backref = db.backref(
-            "share_class",
-            lazy = True
-        ),
-        lazy = True
-    )
-
     @staticmethod
-    def count_shares_for(id):
+    def count_shares_in_class(id):
         stmt = sql["_COMMON"]["COUNT_WHERE"]("share", "share_class_id")
         rs = db.engine.execute(stmt.params(value = id)).fetchone()
 
@@ -56,10 +46,10 @@ class ShareClass(BaseMixin, UuidMixin, db.Model):
 
     @staticmethod
     @cache.cached(key_prefix = "share_class_list")
-    def find_all_for_list():
+    def get_all_for_list():
         """
-        Fetch all share classes for the list view. Use a custom aggregate JOIN
-        query to include number of shares per class in the result set.
+        Fetch all share classes for the list view, including number of shares
+        per class.
         """
         stmt = sql["SHARE_CLASS"]["FIND_ALL_FOR_LIST"]
         rs = db.engine.execute(stmt)
