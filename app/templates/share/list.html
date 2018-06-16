@@ -30,11 +30,12 @@
     url_for('share.issue')
   ) }}
   <div class = "divider"></div>
-  <h5 class = "padded">
+  <h5 style = "position : absolute;">
     Share certificates
   </h5>
   <table
-    class = "table table-hover"
+    class = "table hover"
+    data-page-length = "10"
     id = "certificates"
   >
     <thead>
@@ -47,7 +48,7 @@
     </thead>
     <tbody>
     {% for c in certificates %}
-      <tr id = {{ c.id }}>
+      <tr data-href = "{{ c.id }}">
         <td>{{ "%s—%s" % (c.first_share, c.last_share,) }}</td>
         <td>{{ c.share_count }}</td>
         <td>{{ c.owner }}</td>
@@ -63,11 +64,9 @@
 {% endblock %}
 
 {% block scripts %}
-  <script>
-    $(document).ready(function() {
-      $("#certificates").on("click", "tbody tr", function() {
-        window.location.href = "/certificate/" + $(this).attr("id");
-      });
-    });
-  </script>
+  <script
+    data-root = "/certificate/"
+    data-tableIds = "certificates"
+    src = "{{ url_for('static', filename = 'datatable_init.js') }}"
+  ></script>
 {% endblock %}

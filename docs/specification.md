@@ -59,4 +59,4 @@ Some kind of specification or guidelines or whatever ...
 
 ### UI and sugarcoating
 - [Bootstrap](https://github.com/twbs/bootstrap) out-of-the-box!
-- Possibly [DataTables](https://github.com/DataTables/DataTables) at some point?
+- [DataTables](https://github.com/DataTables/DataTables) as well

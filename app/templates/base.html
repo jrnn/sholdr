@@ -12,6 +12,10 @@
       rel = "stylesheet"
     />
     <link
+      href = "https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css"
+      rel = "stylesheet"
+    />
+    <link
       href = "{{ url_for('static', filename = 'styles.css') }}"
       rel = "stylesheet"
     />
@@ -19,8 +23,8 @@
       charset = "utf-8"
     />
     <meta
-      content="width = device-width, initial-scale = 1, shrink-to-fit = no"
-      name="viewport"
+      content = "width = device-width, initial-scale = 1, shrink-to-fit = no"
+      name = "viewport"
     >
     <title>
       sholdr
@@ -74,6 +78,9 @@
       crossorigin = "anonymous"
       integrity = "sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
       src = "https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
+    ></script>
+    <script
+      src = "https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"
     ></script>
     {% block scripts %}
     {% endblock %}

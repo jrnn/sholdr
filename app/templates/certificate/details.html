@@ -16,10 +16,14 @@
     {{ readonly_field( "Status", certificate.get_status() ) }}
   </form>
   <div class = "divider" ></div>
-  <h5 class = "padded">
+  <h5 style = "position : absolute;">
     Share composition
   </h5>
-  <table class = "table">
+  <table
+    class = "table"
+    data-page-length = "10"
+    id = "composition"
+  >
     <thead>
       <tr>
         <th>Class</th>
@@ -33,15 +37,19 @@
         <td>{{ s.name }}</td>
         <td>{{ s.count }}</td>
         <td>{{ s.votes }}</td>
-      <tr>
+      </tr>
     {% endfor %}
     </tbody>
   </table>
   <div class = "divider" ></div>
-  <h5 class = "padded">
+  <h5 style = "position : absolute;">
     Transaction history
   </h5>
-  <table class = "table">
+  <table
+    class = "table"
+    data-page-length = "10"
+    id = "transactions"
+  >
     <thead>
       <tr>
         <th>Date</th>
@@ -75,4 +83,11 @@
       url_for('certificate.cancel', id = certificate.id)
     ) }}
   {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script
+  data-tableIds = "composition;transactions"
+  src = "{{ url_for('static', filename = 'datatable_init.js') }}"
+></script>
 {% endblock %}

@@ -7,7 +7,8 @@
 
 {% block content %}
   <table
-    class = "table table-hover"
+    class = "table hover"
+    data-page-length = "10"
     id = "shareclasses"
   >
     <thead>
@@ -19,7 +20,7 @@
     </thead>
     <tbody>
     {% for s in shareclasses %}
-      <tr id = {{ s.id }}>
+      <tr data-href = "{{ s.id }}">
         <td>{{ s.name }}</td>
         <td>{{ s.votes }}</td>
         <td>{{ s.count }}</td>
@@ -34,11 +35,9 @@
 {% endblock %}
 
 {% block scripts %}
-  <script>
-    $(document).ready(function() {
-      $("#shareclasses").on("click", "tbody tr", function() {
-        window.location.href = "/shareclass/" + $(this).attr("id");
-      });
-    });
-  </script>
+  <script
+    data-root = "/shareclass/"
+    data-tableIds = "shareclasses"
+    src = "{{ url_for('static', filename = 'datatable_init.js') }}"
+  ></script>
 {% endblock %}

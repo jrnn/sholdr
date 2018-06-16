@@ -7,7 +7,8 @@
 
 {% block content %}
   <table
-    class = "table table-hover"
+    class = "table hover"
+    data-page-length = "10"
     id = "shareholders"
   >
     <thead>
@@ -20,7 +21,7 @@
     </thead>
     <tbody>
     {% for s in shareholders %}
-      <tr id = {{ s.id }}>
+      <tr data-href = "{{ s.id }}">
         <td>{{ s.name }}</td>
         <td>{{ s.type_id }}</td>
         <td>{{ s.country }}</td>
@@ -40,11 +41,9 @@
 {% endblock %}
 
 {% block scripts %}
-  <script>
-    $(document).ready(function() {
-      $("#shareholders").on("click", "tbody tr", function() {
-        window.location.href = "/shareholder/" + $(this).attr("id");
-      });
-    });
-  </script>
+  <script
+    data-root = "/shareholder/"
+    data-tableIds = "shareholders"
+    src = "{{ url_for('static', filename = 'datatable_init.js') }}"
+  ></script>
 {% endblock %}
