@@ -48,6 +48,25 @@ def list():
 
 @bp.route("/<id>", methods = ("GET",))
 @login_required
+def details(id):
+    """
+    Show basic information, certificates, and transaction history of one
+    shareholder.
+    """
+    certificates = Shareholder.get_shareholder_certificates(id)
+
+    return render_template(
+        "shareholder/details.html",
+        certificates = certificates,
+        shareholder = Shareholder.get_shareholder_details(id),
+        total_votes = sum([ c["votes"] for c in certificates ]),
+        transactions = Shareholder.get_shareholder_transactions(id)
+    )
+
+
+
+@bp.route("/edit/<id>", methods = ("GET",))
+@login_required
 def form(id):
     """
     Find shareholder by given primary key (path variable), then query for the

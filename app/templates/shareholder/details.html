@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+{% from "macros.html" import link_button, readonly_field %}
+
+{% block subheader %}
+  Shareholder details
+{% endblock %}
+
+{% set id_label = "National ID / Date of birth" %}
+{% if shareholder.type == "juridical_person" %}
+  {% set id_label = "Business ID" %}
+{% endif %}
+
+{% block content %}
+  <form>
+    {{ readonly_field( "Name", shareholder.name ) }}
+    {{ readonly_field( id_label, shareholder.type_id ) }}
+    {{ readonly_field( "Email", shareholder.email ) }}
+    {{ readonly_field( "Country", shareholder.country ) }}
+    {{ readonly_field( "Total shares", shareholder.share_count ) }}
+    {{ readonly_field( "Total votes", total_votes ) }}
+  </form>
+  <div class = "divider" ></div>
+  <h5 style = "position : absolute;">
+    Currently held certificates
+  </h5>
+  <table
+    class = "table"
+    data-page-length = "10"
+    id = "certificates"
+  >
+    <thead>
+      <tr>
+        <th>Certificate</th>
+        <th># of shares</th>
+        <th>Total votes</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for c in certificates %}
+      <tr>
+        <td>{{ "%s—%s" % (c.first_share, c.last_share,) }}</td>
+        <td>{{ c.share_count }}</td>
+        <td>{{ c.votes }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <div class = "divider" ></div>
+  <h5 style = "position : absolute;">
+    Transaction history
+  </h5>
+  <table
+    class = "table"
+    data-page-length = "10"
+    id = "transactions"
+  >
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Ownership transferred to</th>
+        <th>Price (EUR)</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for t in transactions %}
+      <tr>
+        <td>{{ t.recorded_on }}</td>
+        <td>{{ t.owner }}</td>
+        <td style="text-align : right">
+          {{ '{:,.2f}'.format(t.price / 100) }}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {{ link_button(
+    "Go back",
+    url_for('shareholder.list')
+  ) }}
+  {{ link_button(
+    "Edit shareholder details",
+    url_for('shareholder.form', id = shareholder.id )
+  ) }}
+{% endblock %}
+
+{% block scripts %}
+<script
+  data-tableIds = "certificates;transactions"
+  src = "{{ url_for('static', filename = 'datatable_init.js') }}"
+></script>
+{% endblock %}

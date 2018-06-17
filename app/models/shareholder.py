@@ -119,6 +119,39 @@ class Shareholder(BaseMixin, UuidMixin, db.Model):
         ]
 
     @staticmethod
+    @cache.memoize()
+    def get_shareholder_certificates(id):
+        """
+        Fetch certificates and some related aggregate data currently owner by
+        one shareholder.
+        """
+        stmt = sql["SHAREHOLDER"]["FIND_CURRENT_CERTIFICATES"].params(id = id)
+        rs = db.engine.execute(stmt)
+
+        return rs_to_dict(rs)
+
+    @staticmethod
+    @cache.memoize()
+    def get_shareholder_details(id):
+        """
+        Fetch the data of one shareholder needed on the details page.
+        """
+        stmt = sql["SHAREHOLDER"]["FIND_DETAILS"].params(id = id)
+        return db.engine.execute(stmt).fetchone()
+
+    @staticmethod
+    @cache.memoize()
+    def get_shareholder_transactions(id):
+        """
+        Fetch transactions where given shareholder is either buyer or seller.
+        NOTE! This does not currently work. Transaction model must be tweaked.
+        """
+        stmt = sql["SHAREHOLDER"]["FIND_TRANSACTIONS"].params(id = id)
+        rs = db.engine.execute(stmt)
+
+        return rs_to_dict(rs)
+
+    @staticmethod
     def has_transactions(id):
         """
         Check if shareholder either is current owner of a certificate, or has

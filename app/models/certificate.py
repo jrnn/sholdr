@@ -24,6 +24,7 @@
     heavy and results in bloated, hard-to-read queries.
 """
 
+import datetime
 import dateutil.parser as dtp
 
 from .mixins import (
@@ -135,10 +136,12 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         )
         rs = db.engine.execute(stmt).fetchone()
 
-        if rs.max:
-            return dtp.parse(rs.max).date()
-        else:
+        if not rs.max:
             return None
+        elif isinstance(rs.max, datetime.date):
+            return rs.max
+        else:
+            return dtp.parse(rs.max).date()
 
     @staticmethod
     @cache.memoize()
@@ -150,10 +153,12 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         ).params(value = id)
         rs = db.engine.execute(stmt).fetchone()
 
-        if rs.max:
-            return dtp.parse(rs.max).date()
-        else:
+        if not rs.max:
             return None
+        elif isinstance(rs.max, datetime.date):
+            return rs.max
+        else:
+            return dtp.parse(rs.max).date()
 
     @staticmethod
     @cache.memoize()

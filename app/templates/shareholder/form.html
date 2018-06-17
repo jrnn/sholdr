@@ -55,10 +55,11 @@
     {{ form.csrf_token }}
     {{ submit_button( "Submit" ) }}
   </form>
-  {{ link_button(
-    "Go back",
-    url_for('shareholder.list')
-  ) }}
+  {% set go_back_url = url_for('shareholder.list') %}
+  {% if form.id.data != "new" %}
+    {% set go_back_url = url_for('shareholder.details', id = form.id.data) %}
+  {% endif %}
+  {{ link_button( "Go back", go_back_url ) }}
   {% if form.id.data != "new" %}
     {{ delete_button(
       "Delete",

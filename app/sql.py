@@ -7,6 +7,8 @@
     Statements with variable table and/or column references are defined 'up
     front' as functions and then passed into the statement dictionary, so that
     the table/column names can be passed as parameters depending on context.
+    Also, a couple of recurring patterns are defined once and then plugged in
+    to statements where applicable.
 """
 
 from sqlalchemy.sql import text
@@ -53,10 +55,40 @@ def get_statements():
             " WHERE %s = :value" % (column, table, where,)
         )
 
-    GET_SHAREHOLDER_NAMES = "SELECT" \
-        " id, name FROM juridical_person" \
-        " UNION SELECT id, last_name || ', ' || first_name" \
+    GET_SHAREHOLDER_DETAILS = ("SELECT"
+        " s.id, s.country, s.email, s.type, _s.name, _s.type_id,"
+        " COALESCE(_c.shares, 0) AS share_count"
+        " FROM shareholder s"
+        " JOIN ( SELECT"
+        " id, name, business_id AS type_id"
+        " FROM juridical_person"
+        " UNION SELECT"
+        " id, last_name || ', ' || first_name, nin"
+        " FROM natural_person ) _s"
+        " ON s.id = _s.id"
+        " LEFT JOIN ( SELECT"
+        " owner_id AS id, SUM(share_count) AS shares"
+        " FROM certificate"
+        " WHERE canceled_on IS NULL"
+        " GROUP BY owner_id ) _c"
+        " ON s.id = _c.id"
+    )
+
+    GET_SHAREHOLDER_NAMES = ("SELECT"
+        " id, name FROM juridical_person"
+        " UNION SELECT id, last_name || ', ' || first_name"
         " FROM natural_person"
+    )
+
+    GET_VOTES_PER_CERTIFICATE = ("SELECT"
+        " cs.certificate_id AS _id, SUM(sc.votes) AS votes"
+        " FROM certificate_share cs"
+        " JOIN share s"
+        " ON s.id = cs.share_id"
+        " JOIN share_class sc"
+        " ON sc.id = s.share_class_id"
+        " GROUP BY _id"
+    )
 
     return {
         "_COMMON" : {
@@ -92,19 +124,12 @@ def get_statements():
                 " c.id, c.first_share, c.last_share, c.share_count,"
                 " _s.votes, _sh.name AS owner"
                 " FROM certificate c"
-                " JOIN ( SELECT"
-                " cs.certificate_id AS _id, SUM(sc.votes) AS votes"
-                " FROM certificate_share cs"
-                " JOIN share s"
-                " ON s.id = cs.share_id"
-                " JOIN share_class sc"
-                " ON sc.id = s.share_class_id"
-                " GROUP BY _id ) _s"
+                " JOIN ( %s ) _s"
                 " ON c.id = _s._id"
                 " JOIN ( %s ) _sh"
                 " ON _sh.id = c.owner_id"
                 " WHERE c.canceled_on IS NULL"
-                " ORDER BY c.first_share ASC" % GET_SHAREHOLDER_NAMES
+                " ORDER BY c.first_share ASC" % (GET_VOTES_PER_CERTIFICATE, GET_SHAREHOLDER_NAMES,)
             ),
             "FIND_CURRENT_OWNER" : text(
                 "SELECT"
@@ -188,24 +213,28 @@ def get_statements():
                 "%s ORDER BY name ASC" % GET_SHAREHOLDER_NAMES
             ),
             "FIND_ALL_FOR_LIST" : text(
+                "%s ORDER BY _s.name ASC" % GET_SHAREHOLDER_DETAILS
+            ),
+            "FIND_CURRENT_CERTIFICATES" : text(
                 "SELECT"
-                " s.id, s.country, _s.name, _s.type_id,"
-                " COALESCE(_c.shares, 0) AS share_count"
-                " FROM shareholder s"
-                " JOIN ( SELECT"
-                " id, name, business_id AS type_id"
-                " FROM juridical_person"
-                " UNION SELECT"
-                " id, last_name || ', ' || first_name, nin"
-                " FROM natural_person ) _s"
-                " ON s.id = _s.id"
-                " LEFT JOIN ( SELECT"
-                " owner_id AS id, SUM(share_count) AS shares"
-                " FROM certificate"
-                " WHERE canceled_on IS NULL"
-                " GROUP BY owner_id ) _c"
-                " ON s.id = _c.id"
-                " ORDER BY _s.name ASC"
+                " c.id, c.first_share, c.last_share, c.share_count, _s.votes"
+                " FROM certificate c"
+                " JOIN ( %s ) _s"
+                " ON c.id = _s._id"
+                " WHERE c.canceled_on IS NULL"
+                " AND c.owner_id = :id" % GET_VOTES_PER_CERTIFICATE
+            ),
+            "FIND_DETAILS" : text(
+                "%s WHERE s.id = :id" % GET_SHAREHOLDER_DETAILS
+            ),
+            "FIND_TRANSACTIONS" : text(
+                "SELECT"
+                " t.price, t.recorded_on, _s.name AS owner"
+                " FROM _transaction t"
+                " JOIN ( %s ) _s"
+                " ON _s.id = t.shareholder_id"
+                " WHERE t.shareholder_id = :id"
+                " ORDER BY t.recorded_on ASC" % GET_SHAREHOLDER_NAMES
             )
         }
     }
