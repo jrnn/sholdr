@@ -44,8 +44,13 @@
     {{ render_field( form.zip_code ) }}
     {{ render_field( form.city ) }}
     {{ render_field( form.country ) }}
-    {{ render_checkbox( form.has_access ) }}
-    {{ render_checkbox( form.is_admin ) }}
+    {% if current_user.is_admin %}
+      {{ render_checkbox( form.has_access ) }}
+      {{ render_checkbox( form.is_admin ) }}
+    {% else %}
+      {{ form.has_access(hidden = True) }}
+      {{ form.is_admin(hidden = True) }}
+    {% endif %}
     <input
       hidden
       name = "type"
@@ -60,7 +65,7 @@
     {% set go_back_url = url_for('shareholder.details', id = form.id.data) %}
   {% endif %}
   {{ link_button( "Go back", go_back_url ) }}
-  {% if form.id.data != "new" %}
+  {% if form.id.data != "new" and current_user.is_admin %}
     {{ delete_button(
       "Delete",
       url_for('shareholder.delete', id = form.id.data)

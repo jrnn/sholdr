@@ -14,7 +14,11 @@ from app.models.shareholder import (
     Shareholder
 )
 from app.util import notify
-from app.util.auth import hashPassword
+from app.util.auth import (
+    hashPassword,
+    login_manager,
+    login_required
+)
 from flask import (
     abort,
     Blueprint,
@@ -23,7 +27,7 @@ from flask import (
     request,
     url_for
 )
-from flask_login import login_required
+from flask_login import current_user
 
 bp = Blueprint(
     "shareholder",
@@ -34,7 +38,7 @@ bp = Blueprint(
 
 
 @bp.route("/", methods = ("GET",))
-@login_required
+@login_required("ADMIN")
 def list():
     """
     Show all shareholders on a list.
@@ -47,14 +51,17 @@ def list():
 
 
 @bp.route("/<id>", methods = ("GET",))
-@login_required
+@login_required()
 def details(id):
     """
     Show basic information, certificates, and transaction history of one
-    shareholder.
+    shareholder. In addition to admin, the shareholder in question also has
+    access to this view.
     """
-    certificates = Shareholder.get_shareholder_certificates(id)
+    if not current_user.is_admin and id != current_user.get_id():
+        return login_manager.unauthorized()
 
+    certificates = Shareholder.get_shareholder_certificates(id)
     return render_template(
         "shareholder/details.html",
         certificates = certificates,
@@ -66,7 +73,7 @@ def details(id):
 
 
 @bp.route("/edit/<id>", methods = ("GET",))
-@login_required
+@login_required()
 def form(id):
     """
     Find shareholder by given primary key (path variable), then query for the
@@ -76,7 +83,13 @@ def form(id):
     If value "new" is given, show empty form instead. Shareholder type must be
     given as query parameter, so that the correct WTForm class is passed to
     Jinja. If an incorrect or no type is given, redirect to list view.
+
+    In addition to admin, the shareholder in question also has access to this
+    view.
     """
+    if not current_user.is_admin and id != current_user.get_id():
+        return login_manager.unauthorized()
+
     if id == "new":
         type = request.args.get("type")
 
@@ -106,14 +119,19 @@ def form(id):
 
 
 @bp.route("/", methods = ("POST",))
-@login_required
+@login_required()
 def create_or_update():
     """
     Either create a new shareholder or update existing one, depending on whether
     there is a record in DB for given primary key (passed as hidden form field).
     Hash and store password only when creating new shareholder.
+
+    In addition to admin, the shareholder in question also is allowed to edit
+    their own information.
     """
     id = request.form.get("id")
+    if not current_user.is_admin and id != current_user.get_id():
+        return login_manager.unauthorized()
 
     if request.form.get("type") == "natural":
         f = NaturalPersonForm(request.form)
@@ -138,12 +156,12 @@ def create_or_update():
     del f.id # avoid overwriting id = 'new' when creating new
     f.populate_obj(s)
     s.save_or_update()
-    return redirect(url_for("shareholder.list"))
+    return redirect(url_for("shareholder.details", id = s.id))
 
 
 
 @bp.route("/<id>/delete", methods = ("POST",))
-@login_required
+@login_required("ADMIN")
 def delete(id):
     """
     Delete shareholder by primary key (path variable), if found. Otherwise throw

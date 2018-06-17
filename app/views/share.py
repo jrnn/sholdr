@@ -8,6 +8,7 @@ from app.models.certificate import Certificate
 from app.models.share import Share
 from app.models.shareclass import ShareClass
 from app.util import notify
+from app.util.auth import login_required
 from flask import (
     Blueprint,
     redirect,
@@ -15,7 +16,6 @@ from flask import (
     request,
     url_for
 )
-from flask_login import login_required
 
 bp = Blueprint(
     "share",
@@ -26,7 +26,7 @@ bp = Blueprint(
 
 
 @bp.route("/", methods = ("GET",))
-@login_required
+@login_required("ADMIN")
 def list():
     """
     Show the subindex for managing shares. (Okay it's not exactly a 'list' but
@@ -42,7 +42,7 @@ def list():
 
 
 @bp.route("/new", methods = ("GET", "POST",))
-@login_required
+@login_required("ADMIN")
 def issue():
     """
     Depending on request type, either (1) show blank form for issuing new

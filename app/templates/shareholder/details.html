@@ -73,10 +73,12 @@
     {% endfor %}
     </tbody>
   </table>
-  {{ link_button(
-    "Go back",
-    url_for('shareholder.list')
-  ) }}
+  {% if current_user.is_admin %}
+    {{ link_button(
+      "Go back",
+      url_for('shareholder.list')
+    ) }}
+  {% endif %}
   {{ link_button(
     "Edit shareholder details",
     url_for('shareholder.form', id = shareholder.id )

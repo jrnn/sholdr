@@ -10,7 +10,15 @@ from . import (
     shareclass,
     shareholder
 )
-from flask import render_template
+from flask import (
+    redirect,
+    render_template,
+    url_for
+)
+from flask_login import (
+    current_user,
+    login_required
+)
 
 
 
@@ -35,4 +43,10 @@ def init_views(app):
         print(e)
         return render_template("500.html"), 500
 
-    app.add_url_rule("/", "shareholder.list")
+    @app.route("/")
+    @login_required
+    def my_page():
+        return redirect(url_for(
+            "shareholder.details",
+            id = current_user.get_id()
+        ))

@@ -3,10 +3,13 @@
 
 {% block nav %}
   <nav class = "container nav justify-content-end">
-    {% if current_user.is_authenticated %}
+    {% if current_user.is_admin %}
       {{ navlink( "Shareholders", url_for('shareholder.list') ) }}
       {{ navlink( "Shares", url_for('share.list') ) }}
       {{ navlink( "Share classes", url_for('shareclass.list') ) }}
+    {% endif %}
+    {% if current_user.is_authenticated %}
+      {{ navlink( "My page", url_for('my_page') ) }}
       {{ navlink( "Logout", url_for('auth.logout') ) }}
     {% else %}
       {{ navlink( "Login", url_for('auth.login') ) }}

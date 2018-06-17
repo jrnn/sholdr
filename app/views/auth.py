@@ -8,6 +8,7 @@ from app.models.shareholder import Shareholder
 from app.util import notify
 from app.util.auth import (
     checkPassword,
+    login_required,
     logout_user_memoized
 )
 from flask import (
@@ -16,10 +17,7 @@ from flask import (
     render_template,
     request
 )
-from flask_login import (
-    login_required,
-    login_user
-)
+from flask_login import login_user
 
 bp = Blueprint(
     "auth",
@@ -58,7 +56,7 @@ def login():
 
 
 @bp.route("/logout")
-@login_required
+@login_required()
 def logout():
     logout_user_memoized()
     notify.logout_ok()

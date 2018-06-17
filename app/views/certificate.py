@@ -12,6 +12,7 @@ from app.models.certificate import Certificate
 from app.models.shareholder import Shareholder
 from app.models.transaction import Transaction
 from app.util import notify
+from app.util.auth import login_required
 from flask import (
     Blueprint,
     redirect,
@@ -19,7 +20,6 @@ from flask import (
     request,
     url_for
 )
-from flask_login import login_required
 
 bp = Blueprint(
     "certificate",
@@ -30,7 +30,7 @@ bp = Blueprint(
 
 
 @bp.route("/", methods = ("GET", "POST",))
-@login_required
+@login_required("ADMIN")
 def bundle():
     """
     Depending on request type, either (1) show form for bundling shares into
@@ -61,7 +61,7 @@ def bundle():
 
 
 @bp.route("/<id>", methods = ("GET",))
-@login_required
+@login_required("ADMIN")
 def details(id):
     """
     Show page with certificate basic information, share composition breakdown by
@@ -82,7 +82,7 @@ def details(id):
 
 
 @bp.route("/<id>/transfer", methods = ("GET", "POST",))
-@login_required
+@login_required("ADMIN")
 def transfer(id):
     """
     Depending on request type, either (1) show form for recording a transaction,
@@ -130,7 +130,7 @@ def transfer(id):
 
 
 @bp.route("/<id>/cancel", methods = ("GET", "POST",))
-@login_required
+@login_required("ADMIN")
 def cancel(id):
     """
     Depending on request type, either (1) show form for canceling certificate,

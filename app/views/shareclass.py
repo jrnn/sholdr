@@ -6,6 +6,7 @@
 from app.forms.shareclass import ShareClassForm
 from app.models.shareclass import ShareClass
 from app.util import notify
+from app.util.auth import login_required
 from flask import (
     abort,
     Blueprint,
@@ -14,7 +15,6 @@ from flask import (
     request,
     url_for
 )
-from flask_login import login_required
 
 bp = Blueprint(
     "shareclass",
@@ -25,7 +25,7 @@ bp = Blueprint(
 
 
 @bp.route("/", methods = ("GET",))
-@login_required
+@login_required("ADMIN")
 def list():
     """
     Show all share classes on a list.
@@ -38,7 +38,7 @@ def list():
 
 
 @bp.route("/<id>", methods = ("GET",))
-@login_required
+@login_required("ADMIN")
 def form(id):
     """
     Find share class by given primary key (path variable), and show form
@@ -58,7 +58,7 @@ def form(id):
 
 
 @bp.route("/", methods = ("POST",))
-@login_required
+@login_required("ADMIN")
 def create_or_update():
     """
     Either create a new share class or update existing one, depending on whether
@@ -88,7 +88,7 @@ def create_or_update():
 
 
 @bp.route("/<id>/delete", methods = ("POST",))
-@login_required
+@login_required("ADMIN")
 def delete(id):
     """
     Delete share class by primary key (path variable), if found. Otherwise throw

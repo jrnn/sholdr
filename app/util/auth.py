@@ -15,6 +15,7 @@ from flask_login import (
     LoginManager,
     logout_user
 )
+from functools import wraps
 
 
 
@@ -37,6 +38,29 @@ def logout_user_memoized():
         current_user.id
     )
     logout_user()
+
+def login_required(role = None):
+    """
+    Tweaked @login_required decorator that should otherwise work similarly as
+    the flask-login standard, but the keyword "ADMIN" can be passed to delimit
+    certain views to administrators only. Access rights in the app are very
+    simple (only basic vs. admin distinction).
+    """
+    def wrapper(f):
+        @wraps(f)
+        def decorated_view(*args, **kwargs):
+            if not current_user.get_id():
+                return login_manager.unauthorized()
+
+            if not (current_user.is_authenticated() and current_user.is_active()):
+                return login_manager.unauthorized()
+
+            if role == "ADMIN" and not current_user.is_admin:
+                return login_manager.unauthorized()
+
+            return f(*args, **kwargs)
+        return decorated_view
+    return wrapper
 
 def checkPassword(password, pw_hash):
     return bcrypt.check_password_hash(pw_hash, password)
