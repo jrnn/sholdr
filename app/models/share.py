@@ -18,6 +18,7 @@
     a Certificate.
 """
 
+import datetime
 import dateutil.parser as dtp
 
 from .mixins import IssuableMixin
@@ -80,6 +81,8 @@ class Share(IssuableMixin, db.Model):
 
         if not rs.max:
             return dtp.parse("1900-01-01").date()
+        elif isinstance(rs.max, datetime.date):
+            return rs.max
         else:
             return dtp.parse(rs.max).date()
 
