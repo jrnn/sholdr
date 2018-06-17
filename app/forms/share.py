@@ -20,7 +20,7 @@ from wtforms import (
 
 MAX_SHARES = None
 if os.environ.get("HEROKU"):
-    MAX_SHARES = os.environ.get("MAX_SHARES")
+    MAX_SHARES = int(os.environ.get("MAX_SHARES"))
 
 
 
