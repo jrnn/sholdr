@@ -24,7 +24,7 @@ from wtforms import (
 
 class TransactionForm(CustomBaseForm):
     certificate_id = StringField(render_kw = { "hidden" : True })
-    owner_id = StringField(render_kw = { "hidden" : True })
+    seller_id = StringField(render_kw = { "hidden" : True })
     last_transaction = DateField(
         label = "Date of last transaction",
         render_kw = { "readonly" : True }
@@ -33,17 +33,17 @@ class TransactionForm(CustomBaseForm):
         label = "Certificate",
         render_kw = { "readonly" : True }
     )
-    owner = StringField(
+    seller = StringField(
         label = "Current owner",
         render_kw = { "readonly" : True }
     )
-    shareholder_id = SelectField(
+    buyer_id = SelectField(
         label = "New owner",
         render_kw = { "placeholder" : "Select shareholder" },
         validators = [
             NotEqualTo(
                 message = "Cannot be same as current owner",
-                other = "owner_id"
+                other = "seller_id"
             )
         ]
     )

@@ -32,7 +32,7 @@
       </tr>
     </thead>
     <tbody>
-    {% for s in share_classes %}
+    {% for s in shareclasses %}
       <tr>
         <td>{{ s.name }}</td>
         <td>{{ s.count }}</td>
@@ -53,7 +53,8 @@
     <thead>
       <tr>
         <th>Date</th>
-        <th>Ownership transferred to</th>
+        <th>Seller</th>
+        <th>Buyer</th>
         <th>Price (EUR)</th>
       </tr>
     </thead>
@@ -61,7 +62,8 @@
     {% for t in transactions %}
       <tr>
         <td>{{ t.recorded_on }}</td>
-        <td>{{ t.owner }}</td>
+        <td>{{ t.seller }}</td>
+        <td>{{ t.buyer }}</td>
         <td style="text-align : right">
           {{ '{:,.2f}'.format(t.price / 100) }}
         </td>

@@ -157,12 +157,14 @@ def get_statements():
             ),
             "FIND_TRANSACTIONS" : text(
                 "SELECT"
-                " t.price, t.recorded_on, _s.name AS owner"
+                " t.price, t.recorded_on, _s.name AS seller, _b.name AS buyer"
                 " FROM _transaction t"
                 " JOIN ( %s ) _s"
-                " ON _s.id = t.shareholder_id"
+                " ON _s.id = t.seller_id"
+                " JOIN ( %s ) _b"
+                " ON _b.id = t.buyer_id"
                 " WHERE t.certificate_id = :id"
-                " ORDER BY t.recorded_on ASC" % GET_SHAREHOLDER_NAMES
+                " ORDER BY t.recorded_on ASC" % (GET_SHAREHOLDER_NAMES, GET_SHAREHOLDER_NAMES,)
             )
         },
         "SHARE" : {
@@ -207,7 +209,8 @@ def get_statements():
                 " WHERE owner_id = :id"
                 " UNION SELECT id"
                 " FROM _transaction"
-                " WHERE shareholder_id = :id ) _s"
+                " WHERE seller_id = :id"
+                " OR buyer_id = :id ) _s"
             ),
             "FIND_ALL_FOR_DROPDOWN" : text(
                 "%s ORDER BY name ASC" % GET_SHAREHOLDER_NAMES
@@ -229,12 +232,18 @@ def get_statements():
             ),
             "FIND_TRANSACTIONS" : text(
                 "SELECT"
-                " t.price, t.recorded_on, _s.name AS owner"
+                " t.price, t.recorded_on, c.first_share, c.last_share,"
+                " _s.name AS seller, _b.name AS buyer"
                 " FROM _transaction t"
                 " JOIN ( %s ) _s"
-                " ON _s.id = t.shareholder_id"
-                " WHERE t.shareholder_id = :id"
-                " ORDER BY t.recorded_on ASC" % GET_SHAREHOLDER_NAMES
+                " ON _s.id = t.seller_id"
+                " JOIN ( %s ) _b"
+                " ON _b.id = t.buyer_id"
+                " JOIN certificate c"
+                " ON c.id = t.certificate_id"
+                " WHERE t.seller_id = :id"
+                " OR t.buyer_id = :id"
+                " ORDER BY t.recorded_on ASC" % (GET_SHAREHOLDER_NAMES, GET_SHAREHOLDER_NAMES,)
             )
         }
     }

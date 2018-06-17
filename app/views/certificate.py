@@ -67,15 +67,15 @@ def details(id):
     Show page with certificate basic information, share composition breakdown by
     share class, and transaction history.
     """
-    c = Certificate.query.get_or_404(id)
-    sc = Certificate.get_share_composition(id)
+    certificate = Certificate.query.get_or_404(id)
+    shareclasses = Certificate.get_share_composition(id)
 
     return render_template(
         "certificate/details.html",
-        certificate = c,
+        certificate = certificate,
         current_owner = Certificate.get_current_owner(id),
-        share_classes = sc,
-        total_votes = sum([ s["votes"] for s in sc ]),
+        shareclasses = shareclasses,
+        total_votes = sum([ s["votes"] for s in shareclasses ]),
         transactions = Certificate.get_transactions(id)
     )
 
@@ -96,13 +96,13 @@ def transfer(id):
         return redirect(url_for("certificate.details", id = id))
 
     f = TransactionForm(request.form)
-    f.shareholder_id.choices = Shareholder.get_dropdown_options()
+    f.buyer_id.choices = Shareholder.get_dropdown_options()
 
     if f.validate_on_submit():
         t = Transaction()
         f.populate_obj(t)
 
-        c.owner_id = f.shareholder_id.data
+        c.owner_id = f.buyer_id.data
         t.price = int(100 * t.price)
         t.price_per_share = int(t.price / c.share_count)
         t.save_or_update()
@@ -117,8 +117,8 @@ def transfer(id):
         f.certificate_id.data = id
         f.shares.data = "%s—%s" % (c.first_share, c.last_share,)
 
-        f.owner_id.data = c.owner_id
-        f.owner.data = Certificate.get_current_owner(id).get("name")
+        f.seller_id.data = c.owner_id
+        f.seller.data = Certificate.get_current_owner(id).get("name")
         f.last_transaction.data = Certificate.get_last_transaction_date(id) \
                                   or c.issued_on
 

@@ -13,14 +13,14 @@
     method = "POST"
   >
     {{ render_field( form.shares ) }}
-    {{ render_field( form.owner ) }}
+    {{ render_field( form.seller ) }}
     {{ render_field( form.last_transaction ) }}
-    {{ render_field( form.shareholder_id ) }}
+    {{ render_field( form.buyer_id ) }}
     {{ render_field( form.recorded_on ) }}
     {{ render_field( form.price ) }}
     {{ render_field( form.remarks ) }}
     {{ form.certificate_id }}
-    {{ form.owner_id }}
+    {{ form.seller_id }}
     {{ form.csrf_token }}
     {{ submit_button( "Submit" ) }}
   </form>

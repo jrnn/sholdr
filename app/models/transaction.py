@@ -4,7 +4,7 @@
 
     Transactions stand for events where ownership of a Certificate changes,
     recording (1) when the event takes place, (2) how much money is involved,
-    (3) to whom ownership is transferred.
+    and (3) who is selling and who is buying.
 
     Certificates can go through several Transactions during their validity.
     Certificates always know their current owner, but Transactions can tell the
@@ -36,7 +36,12 @@ class Transaction(BaseMixin, UuidMixin, db.Model):
         ForeignKey("certificate.id"),
         nullable = False
     )
-    shareholder_id = Column(
+    buyer_id = Column(
+        String(32),
+        ForeignKey("shareholder.id"),
+        nullable = False
+    )
+    seller_id = Column(
         String(32),
         ForeignKey("shareholder.id"),
         nullable = False
