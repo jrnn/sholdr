@@ -26,6 +26,7 @@ Description
 
 Documentation
 -------------
+- [Manual](https://github.com/jrnn/sholdr/blob/master/docs/manual.md)
 - [User stories](https://github.com/jrnn/sholdr/blob/master/docs/user_stories.md)
 - [Database diagram](https://github.com/jrnn/sholdr/blob/master/docs/db_model.pdf)
 - [Sorry excuse of a spec](https://github.com/jrnn/sholdr/blob/master/docs/specification.md)
@@ -33,8 +34,13 @@ Documentation
 It runs on Heroku
 -----------------
 Click [here](https://sholdr.herokuapp.com/) to see sholdr in action.
-You can log in with:
+Log in as admin:
 ```
 email : celery@man.io
+password : Qwerty_123
+```
+Log in as basic user:
+```
+email : chuck@norr.is
 password : Qwerty_123
 ```
