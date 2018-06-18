@@ -87,6 +87,8 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         else:
             return "Canceled"
 
+
+
     @staticmethod
     def bind_shares(certificate):
         """
@@ -109,6 +111,8 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         db.engine.execute(stmt2)
         db.commit_and_flush_cache()
 
+
+
     @staticmethod
     @cache.memoize()
     def get_current_owner(id):
@@ -116,6 +120,8 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         rs = db.engine.execute(stmt).fetchone()
 
         return { "id" : rs.id, "name" : rs.name }
+
+
 
     @staticmethod
     @cache.memoize()
@@ -143,9 +149,14 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         else:
             return dtp.parse(rs.max).date()
 
+
+
     @staticmethod
     @cache.memoize()
     def get_last_transaction_date(id):
+        """
+        Fetch the date of the latest transaction done on a given certificate.
+        """
         stmt = sql["_COMMON"]["FIND_MAX_WHERE"](
             table = "_transaction",
             column = "recorded_on",
@@ -160,6 +171,8 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         else:
             return dtp.parse(rs.max).date()
 
+
+
     @staticmethod
     @cache.memoize()
     def get_share_composition(id):
@@ -172,13 +185,21 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
 
         return rs_to_dict(rs)
 
+
+
     @staticmethod
     @cache.memoize()
     def get_transactions(id):
+        """
+        Fetch all transactions done on a given certificate. Part of the needed
+        information requires join/aggregate querying.
+        """
         stmt = sql["CERTIFICATE"]["FIND_TRANSACTIONS"].params(id = id)
         rs = db.engine.execute(stmt)
 
         return rs_to_dict(rs)
+
+
 
     @staticmethod
     @cache.cached(key_prefix = "certificate_list")
@@ -191,6 +212,8 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         rs = db.engine.execute(stmt)
 
         return rs_to_dict(rs)
+
+
 
     @staticmethod
     def release_shares(certificate):

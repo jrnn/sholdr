@@ -54,6 +54,8 @@ class Share(IssuableMixin, db.Model):
         nullable = False
     )
 
+
+
     @staticmethod
     @cache.cached(key_prefix = "last_share_number")
     def get_last_share_number():
@@ -68,6 +70,8 @@ class Share(IssuableMixin, db.Model):
             return 0
         else:
             return rs.max
+
+
 
     @staticmethod
     @cache.cached(key_prefix = "latest_share_issue")
@@ -86,6 +90,8 @@ class Share(IssuableMixin, db.Model):
         else:
             return dtp.parse(rs.max).date()
 
+
+
     @staticmethod
     @cache.cached(key_prefix = "find_all_unbound")
     def get_unbound_ranges():
@@ -99,6 +105,8 @@ class Share(IssuableMixin, db.Model):
 
         return get_consecutive_ranges([ r.id for r in rs ])
 
+
+
     @staticmethod
     def issue_from_form(f):
         """
@@ -106,10 +114,10 @@ class Share(IssuableMixin, db.Model):
         as parameter. Note that checking form validity is on method caller's
         responsibility.
         """
-        l = f.lower_bound.data
-        u = f.upper_bound.data + 1
+        lower = f.lower_bound.data
+        upper = f.upper_bound.data + 1
 
-        for i in range(l, u):
+        for i in range(lower, upper):
             s = Share()
             f.populate_obj(s)
             s.id = i

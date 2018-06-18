@@ -1,7 +1,5 @@
 """
-    This module contains the WTForm class that handles the login form. It uses
-    the standard Flask-WTForm base class, and is altogether very simple with
-    no validation or other intricacies.
+    This module contains the WTForm class that handles the login form.
 """
 
 from app.util.util import (

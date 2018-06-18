@@ -87,24 +87,33 @@ class Shareholder(BaseMixin, UuidMixin, db.Model):
     def is_authenticated(self):
         return True
 
+
+
     @staticmethod
     def count_all():
+        """
+        Simply, count how many shareholders exist in DB.
+        """
         stmt = sql["_COMMON"]["COUNT_ALL"]("shareholder")
         rs = db.engine.execute(stmt).fetchone()
 
         return rs.count
 
+
+
     @staticmethod
     @cache.cached(key_prefix = "shareholder_list")
     def get_all_for_list():
         """
-        Fetch all shareholders with a fairly complex query that has the exact
+        Fetch all shareholders with an aggregate/join query that gets the exact
         fields and calculations needed on the list view.
         """
         stmt = sql["SHAREHOLDER"]["FIND_ALL_FOR_LIST"]
         rs = db.engine.execute(stmt)
 
         return rs_to_dict(rs)
+
+
 
     @staticmethod
     @cache.cached(key_prefix = "shareholder_dropdown")
@@ -118,17 +127,21 @@ class Shareholder(BaseMixin, UuidMixin, db.Model):
             for s in db.engine.execute(sql["SHAREHOLDER"]["FIND_ALL_FOR_DROPDOWN"])
         ]
 
+
+
     @staticmethod
     @cache.memoize()
     def get_shareholder_certificates(id):
         """
-        Fetch certificates and some related aggregate data currently owner by
-        one shareholder.
+        Fetch certificates (and some related aggregate data) currently owned by
+        given shareholder.
         """
         stmt = sql["SHAREHOLDER"]["FIND_CURRENT_CERTIFICATES"].params(id = id)
         rs = db.engine.execute(stmt)
 
         return rs_to_dict(rs)
+
+
 
     @staticmethod
     @cache.memoize()
@@ -139,17 +152,20 @@ class Shareholder(BaseMixin, UuidMixin, db.Model):
         stmt = sql["SHAREHOLDER"]["FIND_DETAILS"].params(id = id)
         return db.engine.execute(stmt).fetchone()
 
+
+
     @staticmethod
     @cache.memoize()
     def get_shareholder_transactions(id):
         """
         Fetch transactions where given shareholder is either buyer or seller.
-        NOTE! This does not currently work. Transaction model must be tweaked.
         """
         stmt = sql["SHAREHOLDER"]["FIND_TRANSACTIONS"].params(id = id)
         rs = db.engine.execute(stmt)
 
         return rs_to_dict(rs)
+
+
 
     @staticmethod
     def has_transactions(id):

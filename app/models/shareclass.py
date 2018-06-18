@@ -37,12 +37,19 @@ class ShareClass(BaseMixin, UuidMixin, db.Model):
     )
     remarks = Column(String(255))
 
+
+
     @staticmethod
     def count_shares_in_class(id):
+        """
+        Count how many shares belong to a given class.
+        """
         stmt = sql["_COMMON"]["COUNT_WHERE"]("share", "share_class_id")
         rs = db.engine.execute(stmt.params(value = id)).fetchone()
 
         return rs.count
+
+
 
     @staticmethod
     @cache.cached(key_prefix = "share_class_list")
@@ -55,6 +62,8 @@ class ShareClass(BaseMixin, UuidMixin, db.Model):
         rs = db.engine.execute(stmt)
 
         return rs_to_dict(rs)
+
+
 
     @staticmethod
     @cache.cached(key_prefix = "share_class_dropdown")

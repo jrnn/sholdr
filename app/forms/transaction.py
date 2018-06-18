@@ -10,7 +10,6 @@ from .validators import (
     NotEqualTo,
     NotFutureDate
 )
-from flask_wtf import FlaskForm
 from wtforms import (
     DateField,
     DecimalField,

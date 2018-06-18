@@ -2,6 +2,10 @@
     This module contains the blueprint for Shareholder management endpoints,
     spanning the standard CRUD operations. Because Shareholders come in two
     flavors (subclassing), the code is a bit bulkier than usual.
+
+    Also, because each Shareholder (as a user) has the right to view and edit
+    their own information, some views handle authorization beyond the simple
+    @login_required decorator.
 """
 
 from app.forms.shareholder import (
@@ -174,5 +178,6 @@ def delete(id):
 
     if not Shareholder.query.get(id).delete_if_exists():
         abort(404)
+
     notify.delete_ok("shareholder")
     return redirect(url_for("shareholder.list"))

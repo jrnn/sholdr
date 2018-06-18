@@ -14,16 +14,18 @@
   {% endif %}
   </p>
   {% if unbound_ranges %}
-  <p>
-    Unbound shares:
-    <ul>
-      {% for (a, b) in unbound_ranges %}
-      <li>
-        {{ a }}—{{ b }}
-      </li>
-      {% endfor %}
-    </ul>
-  </p>
+  <div class = "alert-box">
+    <p>
+      <strong>NB!</strong> There are unbound shares:
+      <ul>
+        {% for (a, b) in unbound_ranges %}
+        <li>
+          {{ a }}—{{ b }}
+        </li>
+        {% endfor %}
+      </ul>
+    </p>
+  </div>
   {% endif %}
   {{ link_button(
     "Issue more shares",

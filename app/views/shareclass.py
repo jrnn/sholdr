@@ -100,5 +100,6 @@ def delete(id):
 
     if not ShareClass.query.get(id).delete_if_exists():
         abort(404)
+
     notify.delete_ok("share class")
     return redirect(url_for("shareclass.list"))

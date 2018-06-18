@@ -7,7 +7,7 @@
     Statements with variable table and/or column references are defined 'up
     front' as functions and then passed into the statement dictionary, so that
     the table/column names can be passed as parameters depending on context.
-    Also, a couple of recurring patterns are defined once and then plugged in
+    Also, a couple of recurring subqueries are defined once and then plugged in
     to statements where applicable.
 """
 

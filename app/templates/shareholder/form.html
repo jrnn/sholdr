@@ -48,8 +48,8 @@
       {{ render_checkbox( form.has_access ) }}
       {{ render_checkbox( form.is_admin ) }}
     {% else %}
-      {{ form.has_access(hidden = True) }}
-      {{ form.is_admin(hidden = True) }}
+      {{ form.has_access( hidden = True ) }}
+      {{ form.is_admin( hidden = True ) }}
     {% endif %}
     <input
       hidden

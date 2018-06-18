@@ -27,10 +27,14 @@ login_manager.login_view = "auth.login"
 login_manager.login_message = None
 login_manager.session_protection = "strong"
 
+
+
 @login_manager.user_loader
 @cache.memoize()
 def load_user(user_id):
     return Shareholder.query.get(user_id)
+
+
 
 def logout_user_memoized():
     cache.delete_memoized(
@@ -38,6 +42,8 @@ def logout_user_memoized():
         current_user.id
     )
     logout_user()
+
+
 
 def login_required(role = None):
     """
@@ -62,8 +68,12 @@ def login_required(role = None):
         return decorated_view
     return wrapper
 
+
+
 def checkPassword(password, pw_hash):
     return bcrypt.check_password_hash(pw_hash, password)
+
+
 
 def hashPassword(password):
     return bcrypt.generate_password_hash(password).decode("utf-8")

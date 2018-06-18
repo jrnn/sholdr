@@ -1,7 +1,6 @@
 """
     This module contains the WTForm class that handles the form for issuing new
-    Shares. It uses the standard Flask-WTForm base class. Some custom validation
-    is needed.
+    Shares.
 """
 
 import os
@@ -57,15 +56,15 @@ class ShareForm(FlaskForm):
     )
 
     def validate_upper_bound(form, field):
-        u = field.data
-        l = form.lower_bound.data
+        upper = field.data
+        lower = form.lower_bound.data
 
-        if type(u) != int:
+        if type(upper) != int:
             raise ValidationError()
 
-        if u < l:
-            raise ValidationError("Must be at least %s" % l)
+        if upper < lower:
+            raise ValidationError("Must be at least %s" % lower)
 
         ## SAFEGUARD FOR PRODUCTION (DB IS VERY LIMITED)
-        if MAX_SHARES and u > MAX_SHARES:
+        if MAX_SHARES and upper > MAX_SHARES:
             raise ValidationError("Sorry but free trial supports only up to %s shares. GIVE ME MONEY") % MAX_SHARES
