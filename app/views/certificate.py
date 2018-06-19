@@ -115,7 +115,7 @@ def transfer(id):
 
     else:
         f.certificate_id.data = id
-        f.shares.data = "%s—%s" % (c.first_share, c.last_share,)
+        f.shares.data = c.get_title()
 
         f.seller_id.data = c.owner_id
         f.seller.data = Certificate.get_current_owner(id).get("name")
@@ -155,7 +155,7 @@ def cancel(id):
 
     else:
         f = CancellationForm(obj = c)
-        f.shares.data = "%s—%s" % (c.first_share, c.last_share,)
+        f.shares.data = c.get_title()
         f.last_transaction.data = Certificate.get_last_transaction_date(id) \
                                   or c.issued_on
 

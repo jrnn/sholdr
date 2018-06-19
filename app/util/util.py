@@ -44,6 +44,22 @@ def apply_upper(s):
 
 
 
+def format_share_range(lower, upper, places = 0):
+    """
+    Pad the two given numbers with zeroes on left to requested number of places,
+    and fill in periods as thousand separators, then return the two formatted
+    numbers with an em dash in the middle. (This is used primarily for titles of
+    certificates.)
+    """
+    f = "{:0>%sd}" % places
+
+    lower = ".".join(f.format(lower)[::-1][i:i+3] for i in range(0, places, 3))[::-1]
+    upper = ".".join(f.format(upper)[::-1][i:i+3] for i in range(0, places, 3))[::-1]
+
+    return "%s—%s" % (lower, upper,)
+
+
+
 def get_consecutive_ranges(ns):
     """
     Find all ranges of consecutive numbers from a _SORTED_ integer list. Return

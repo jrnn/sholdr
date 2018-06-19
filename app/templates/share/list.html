@@ -51,7 +51,7 @@
     <tbody>
     {% for c in certificates %}
       <tr data-href = "{{ c.id }}">
-        <td>{{ "%s—%s" % (c.first_share, c.last_share,) }}</td>
+        <td>{{ c.title }}</td>
         <td>{{ c.share_count }}</td>
         <td>{{ c.owner }}</td>
         <td>{{ c.votes }}</td>

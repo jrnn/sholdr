@@ -37,7 +37,11 @@ from app import (
     db,
     sql
 )
-from app.util.util import rs_to_dict
+from app.models.share import Share
+from app.util.util import (
+    format_share_range,
+    rs_to_dict
+)
 from sqlalchemy import (
     BigInteger,
     Column,
@@ -87,6 +91,13 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         else:
             return "Canceled"
 
+    def get_title(self):
+        return format_share_range(
+            lower = self.first_share,
+            upper = self.last_share,
+            places = len(str(Share.get_last_share_number()))
+        )
+
 
 
     @staticmethod
@@ -110,6 +121,29 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         db.engine.execute(stmt1)
         db.engine.execute(stmt2)
         db.commit_and_flush_cache()
+
+
+
+    @staticmethod
+    @cache.cached(key_prefix = "certificate_list")
+    def get_all_for_list():
+        """
+        Fetch all certificates for the list view. Use a custom aggregate JOIN
+        query to include sum of votes per certificate in the result set.
+        """
+        stmt = sql["CERTIFICATE"]["FIND_ALL_FOR_LIST"]
+        rs = db.engine.execute(stmt)
+
+        certificates = rs_to_dict(rs)
+        places = len(str(Share.get_last_share_number()))
+
+        for c in certificates:
+            c.update({ "title" : format_share_range(
+                lower = c["first_share"],
+                upper = c["last_share"],
+                places = places
+            ) })
+        return certificates
 
 
 
@@ -195,20 +229,6 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         information requires join/aggregate querying.
         """
         stmt = sql["CERTIFICATE"]["FIND_TRANSACTIONS"].params(id = id)
-        rs = db.engine.execute(stmt)
-
-        return rs_to_dict(rs)
-
-
-
-    @staticmethod
-    @cache.cached(key_prefix = "certificate_list")
-    def get_all_for_list():
-        """
-        Fetch all certificates for the list view. Use a custom aggregate JOIN
-        query to include sum of votes per certificate in the result set.
-        """
-        stmt = sql["CERTIFICATE"]["FIND_ALL_FOR_LIST"]
         rs = db.engine.execute(stmt)
 
         return rs_to_dict(rs)

@@ -38,7 +38,7 @@
     <tbody>
     {% for c in certificates %}
       <tr>
-        <td>{{ "%s—%s" % (c.first_share, c.last_share,) }}</td>
+        <td>{{ c.title }}</td>
         <td>{{ c.share_count }}</td>
         <td>{{ c.votes }}</td>
       </tr>
@@ -67,7 +67,7 @@
     {% for t in transactions %}
       <tr>
         <td>{{ t.recorded_on }}</td>
-        <td>{{ "%s—%s" % (t.first_share, t.last_share,) }}</td>
+        <td>{{ t.certificate }}</td>
         <td>{{ t.seller }}</td>
         <td>{{ t.buyer }}</td>
         <td style="text-align : right">
