@@ -48,6 +48,9 @@ def init_views(app):
     @app.route("/")
     @login_required
     def my_page():
+        if current_user.is_admin:
+            return redirect(url_for("shareholder.list"))
+
         return redirect(url_for(
             "shareholder.details",
             id = current_user.get_id()
