@@ -19,7 +19,16 @@ from .mixins import (
     BaseMixin,
     UuidMixin
 )
-from app import db
+from app import (
+    cache,
+    db,
+    sql
+)
+from app.models.share import Share
+from app.util.util import (
+    format_share_range,
+    rs_to_dict
+)
 from sqlalchemy import (
     BigInteger,
     Column,
@@ -61,3 +70,25 @@ class Transaction(BaseMixin, UuidMixin, db.Model):
     remarks = Column(String(255))
 
     __tablename__ = "_transaction"
+
+
+
+    @staticmethod
+    @cache.cached(key_prefix = "transaction_list")
+    def get_all_for_list():
+        """
+        Fetch all transactions for the list view.
+        """
+        stmt = sql["TRANSACTION"]["FIND_ALL_FOR_LIST"]
+        rs = db.engine.execute(stmt)
+
+        transactions = rs_to_dict(rs)
+        places = len(str(Share.get_last_share_number()))
+
+        for t in transactions:
+            t.update({ "title" : format_share_range(
+                lower = t["first_share"],
+                upper = t["last_share"],
+                places = places
+            ) })
+        return transactions

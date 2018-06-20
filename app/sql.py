@@ -80,6 +80,18 @@ def get_statements():
         " FROM natural_person"
     )
 
+    GET_TRANSACTIONS = ("SELECT"
+        " t.price, t.recorded_on, c.first_share, c.last_share,"
+        " _s.name AS seller, _b.name AS buyer"
+        " FROM _transaction t"
+        " JOIN ( %s ) _s"
+        " ON _s.id = t.seller_id"
+        " JOIN ( %s ) _b"
+        " ON _b.id = t.buyer_id"
+        " JOIN certificate c"
+        " ON c.id = t.certificate_id" % (GET_SHAREHOLDER_NAMES, GET_SHAREHOLDER_NAMES,)
+    )
+
     GET_VOTES_PER_CERTIFICATE = ("SELECT"
         " cs.certificate_id AS _id, SUM(sc.votes) AS votes"
         " FROM certificate_share cs"
@@ -231,19 +243,14 @@ def get_statements():
                 "%s WHERE s.id = :id" % GET_SHAREHOLDER_DETAILS
             ),
             "FIND_TRANSACTIONS" : text(
-                "SELECT"
-                " t.price, t.recorded_on, c.first_share, c.last_share,"
-                " _s.name AS seller, _b.name AS buyer"
-                " FROM _transaction t"
-                " JOIN ( %s ) _s"
-                " ON _s.id = t.seller_id"
-                " JOIN ( %s ) _b"
-                " ON _b.id = t.buyer_id"
-                " JOIN certificate c"
-                " ON c.id = t.certificate_id"
-                " WHERE t.seller_id = :id"
+                "%s WHERE t.seller_id = :id"
                 " OR t.buyer_id = :id"
-                " ORDER BY t.recorded_on ASC" % (GET_SHAREHOLDER_NAMES, GET_SHAREHOLDER_NAMES,)
+                " ORDER BY t.recorded_on ASC" % GET_TRANSACTIONS
+            )
+        },
+        "TRANSACTION" : {
+            "FIND_ALL_FOR_LIST" : text(
+                "%s ORDER BY t.recorded_on ASC" % GET_TRANSACTIONS
             )
         }
     }

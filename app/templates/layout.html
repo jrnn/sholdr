@@ -6,6 +6,7 @@
     {% if current_user.is_admin %}
       {{ navlink( "Shareholders", url_for('shareholder.list') ) }}
       {{ navlink( "Shares", url_for('share.list') ) }}
+      {{ navlink( "Transactions", url_for('transaction.list') ) }}
       {{ navlink( "Share classes", url_for('shareclass.list') ) }}
     {% endif %}
     {% if current_user.is_authenticated %}
