@@ -6,7 +6,7 @@
 
 {% block content %}
   <table
-    class = "table"
+    class = "table hover"
     data-page-length = "10"
     id = "transactions"
   >
@@ -21,7 +21,7 @@
     </thead>
     <tbody>
     {% for t in transactions %}
-      <tr>
+      <tr data-href = "{{ t.id }}">
         <td>{{ t.recorded_on }}</td>
         <td>{{ t.title }}</td>
         <td>{{ t.seller }}</td>

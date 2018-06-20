@@ -8,7 +8,7 @@
       {{ navlink( "Shares", url_for('share.list') ) }}
       {{ navlink( "Transactions", url_for('transaction.list') ) }}
       {{ navlink( "Share classes", url_for('shareclass.list') ) }}
-    {% else %}
+    {% elif current_user.is_authenticated %}
       {{ navlink( "My page", url_for('my_page') ) }}
     {% endif %}
     {% if current_user.is_authenticated %}

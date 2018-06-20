@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% from "macros.html" import link_button, readonly_field %}
+
+{% block subheader %}
+  Transaction details
+{% endblock %}
+
+{% block content %}
+  <form>
+    {{ readonly_field( "Certificate", transaction.certificate ) }}
+    {{ readonly_field( "Date of transaction", transaction.recorded_on ) }}
+    {{ readonly_field( "Seller", transaction.seller ) }}
+    {{ readonly_field( "Buyer", transaction.buyer ) }}
+    {{ readonly_field(
+      "Total price",
+      '{:,.2f}'.format(transaction.price / 100)
+    ) }}
+    {{ readonly_field(
+      "Price per share",
+      '{:,.2f}'.format(transaction.price_per_share / 100)
+    ) }}
+    <div class = "form-group">
+      <label for = "remarks">Remarks</label>
+      <textarea
+        class = "form-control"
+        id = "remarks"
+        readonly
+        rows = "6"
+      >{{ transaction.remarks }}</textarea>
+    </div>
+  </form>
+  {{ link_button( "Go back", url_for('transaction.list')) }}
+{% endblock %}

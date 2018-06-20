@@ -92,3 +92,22 @@ class Transaction(BaseMixin, UuidMixin, db.Model):
                 places = places
             ) })
         return transactions
+
+
+
+    @staticmethod
+    @cache.memoize()
+    def get_transaction_details(id):
+        """
+        Fetch the data of one transaction needed on the details page.
+        """
+        stmt = sql["TRANSACTION"]["FIND_DETAILS"].params(id = id)
+        t = rs_to_dict(db.engine.execute(stmt))[0]
+
+        places = len(str(Share.get_last_share_number()))
+        t.update({ "certificate" : format_share_range(
+            lower = t["first_share"],
+            upper = t["last_share"],
+            places = places
+        ) })
+        return t

@@ -80,8 +80,7 @@ def get_statements():
         " FROM natural_person"
     )
 
-    GET_TRANSACTIONS = ("SELECT"
-        " t.price, t.recorded_on, c.first_share, c.last_share,"
+    GET_SELLERS_AND_BUYERS = (
         " _s.name AS seller, _b.name AS buyer"
         " FROM _transaction t"
         " JOIN ( %s ) _s"
@@ -243,14 +242,24 @@ def get_statements():
                 "%s WHERE s.id = :id" % GET_SHAREHOLDER_DETAILS
             ),
             "FIND_TRANSACTIONS" : text(
-                "%s WHERE t.seller_id = :id"
+                "SELECT"
+                " t.price, t.recorded_on, c.first_share, c.last_share,"
+                " %s WHERE t.seller_id = :id"
                 " OR t.buyer_id = :id"
-                " ORDER BY t.recorded_on ASC" % GET_TRANSACTIONS
+                " ORDER BY t.recorded_on ASC" % GET_SELLERS_AND_BUYERS
             )
         },
         "TRANSACTION" : {
             "FIND_ALL_FOR_LIST" : text(
-                "%s ORDER BY t.recorded_on ASC" % GET_TRANSACTIONS
+                "SELECT"
+                " t.id, t.price, t.recorded_on, c.first_share, c.last_share,"
+                " %s ORDER BY t.recorded_on ASC" % GET_SELLERS_AND_BUYERS
+            ),
+            "FIND_DETAILS" : text(
+                "SELECT"
+                " t.price, t.price_per_share, t.recorded_on, t.remarks,"
+                " c.first_share, c.last_share,"
+                " %s WHERE t.id = :id" % GET_SELLERS_AND_BUYERS
             )
         }
     }
