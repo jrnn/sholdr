@@ -67,4 +67,4 @@ class ShareForm(FlaskForm):
 
         ## SAFEGUARD FOR PRODUCTION (DB IS VERY LIMITED)
         if MAX_SHARES and upper > MAX_SHARES:
-            raise ValidationError("Sorry but free trial supports only up to %s shares. GIVE ME MONEY") % MAX_SHARES
+            raise ValidationError("Sorry but free trial supports only up to %s shares. GIVE ME MONEY" % MAX_SHARES)
