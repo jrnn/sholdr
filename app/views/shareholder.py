@@ -65,11 +65,15 @@ def details(id):
     if not current_user.is_admin and id != current_user.get_id():
         return login_manager.unauthorized()
 
+    shareholder = Shareholder.get_shareholder_details(id)
+    if not shareholder:
+        abort(404)
+
     certificates = Shareholder.get_shareholder_certificates(id)
     return render_template(
         "shareholder/details.html",
         certificates = certificates,
-        shareholder = Shareholder.get_shareholder_details(id),
+        shareholder = shareholder,
         total_votes = sum([ c["votes"] for c in certificates ]),
         transactions = Shareholder.get_shareholder_transactions(id)
     )
