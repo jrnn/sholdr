@@ -38,6 +38,7 @@ from app import (
     sql
 )
 from app.models.share import Share
+from app.models.util import rs_to_dict_with_certificate_titles
 from app.util.util import (
     format_share_range,
     rs_to_dict
@@ -134,16 +135,7 @@ class Certificate(BaseMixin, IssuableMixin, UuidMixin, db.Model):
         stmt = sql["CERTIFICATE"]["FIND_ALL_FOR_LIST"]
         rs = db.engine.execute(stmt)
 
-        certificates = rs_to_dict(rs)
-        places = len(str(Share.get_last_share_number()))
-
-        for c in certificates:
-            c.update({ "title" : format_share_range(
-                lower = c["first_share"],
-                upper = c["last_share"],
-                places = places
-            ) })
-        return certificates
+        return rs_to_dict_with_certificate_titles(rs, "title")
 
 
 

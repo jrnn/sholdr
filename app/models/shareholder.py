@@ -21,11 +21,8 @@ from app import (
     db,
     sql
 )
-from app.models.share import Share
-from app.util.util import (
-    format_share_range,
-    rs_to_dict
-)
+from app.models.util import rs_to_dict_with_certificate_titles
+from app.util.util import rs_to_dict
 from sqlalchemy import (
     Boolean,
     Column,
@@ -143,16 +140,7 @@ class Shareholder(BaseMixin, UuidMixin, db.Model):
         stmt = sql["SHAREHOLDER"]["FIND_CURRENT_CERTIFICATES"].params(id = id)
         rs = db.engine.execute(stmt)
 
-        certificates = rs_to_dict(rs)
-        places = len(str(Share.get_last_share_number()))
-
-        for c in certificates:
-            c.update({ "title" : format_share_range(
-                lower = c["first_share"],
-                upper = c["last_share"],
-                places = places
-            ) })
-        return certificates
+        return rs_to_dict_with_certificate_titles(rs, "title")
 
 
 
@@ -176,16 +164,7 @@ class Shareholder(BaseMixin, UuidMixin, db.Model):
         stmt = sql["SHAREHOLDER"]["FIND_TRANSACTIONS"].params(id = id)
         rs = db.engine.execute(stmt)
 
-        transactions = rs_to_dict(rs)
-        places = len(str(Share.get_last_share_number()))
-
-        for t in transactions:
-            t.update({ "certificate" : format_share_range(
-                lower = t["first_share"],
-                upper = t["last_share"],
-                places = places
-            ) })
-        return transactions
+        return rs_to_dict_with_certificate_titles(rs, "certificate")
 
 
 

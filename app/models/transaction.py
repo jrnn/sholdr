@@ -24,11 +24,7 @@ from app import (
     db,
     sql
 )
-from app.models.share import Share
-from app.util.util import (
-    format_share_range,
-    rs_to_dict
-)
+from app.models.util import rs_to_dict_with_certificate_titles
 from sqlalchemy import (
     BigInteger,
     Column,
@@ -82,16 +78,7 @@ class Transaction(BaseMixin, UuidMixin, db.Model):
         stmt = sql["TRANSACTION"]["FIND_ALL_FOR_LIST"]
         rs = db.engine.execute(stmt)
 
-        transactions = rs_to_dict(rs)
-        places = len(str(Share.get_last_share_number()))
-
-        for t in transactions:
-            t.update({ "title" : format_share_range(
-                lower = t["first_share"],
-                upper = t["last_share"],
-                places = places
-            ) })
-        return transactions
+        return rs_to_dict_with_certificate_titles(rs, "title")
 
 
 
@@ -102,12 +89,10 @@ class Transaction(BaseMixin, UuidMixin, db.Model):
         Fetch the data of one transaction needed on the details page.
         """
         stmt = sql["TRANSACTION"]["FIND_DETAILS"].params(id = id)
-        t = rs_to_dict(db.engine.execute(stmt))[0]
+        rs = db.engine.execute(stmt)
+        t = rs_to_dict_with_certificate_titles(rs, "certificate")
 
-        places = len(str(Share.get_last_share_number()))
-        t.update({ "certificate" : format_share_range(
-            lower = t["first_share"],
-            upper = t["last_share"],
-            places = places
-        ) })
-        return t
+        if not t:
+            return None
+        else:
+            return t[0]
