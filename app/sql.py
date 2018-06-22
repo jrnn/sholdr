@@ -168,7 +168,8 @@ def get_statements():
             ),
             "FIND_TRANSACTIONS" : text(
                 "SELECT"
-                " t.price, t.recorded_on, _s.name AS seller, _b.name AS buyer"
+                " t.price, t.price_per_share, t.recorded_on,"
+                " _s.name AS seller, _b.name AS buyer"
                 " FROM _transaction t"
                 " JOIN ( %s ) _s"
                 " ON _s.id = t.seller_id"
@@ -243,7 +244,8 @@ def get_statements():
             ),
             "FIND_TRANSACTIONS" : text(
                 "SELECT"
-                " t.price, t.recorded_on, c.first_share, c.last_share,"
+                " t.price, t.price_per_share, t.recorded_on,"
+                " c.first_share, c.last_share,"
                 " %s WHERE t.seller_id = :id"
                 " OR t.buyer_id = :id"
                 " ORDER BY t.recorded_on ASC" % GET_SELLERS_AND_BUYERS
@@ -252,7 +254,8 @@ def get_statements():
         "TRANSACTION" : {
             "FIND_ALL_FOR_LIST" : text(
                 "SELECT"
-                " t.id, t.price, t.recorded_on, c.first_share, c.last_share,"
+                " t.id, t.price, t.price_per_share, t.recorded_on,"
+                " c.first_share, c.last_share,"
                 " %s ORDER BY t.recorded_on ASC" % GET_SELLERS_AND_BUYERS
             ),
             "FIND_DETAILS" : text(
