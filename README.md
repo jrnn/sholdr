@@ -37,7 +37,7 @@ Disclaimer
 Documentation
 -------------
 - [Requirements](https://github.com/jrnn/sholdr/blob/master/docs/user_stories.md)
-- [Database diagram](https://github.com/jrnn/sholdr/blob/master/docs/db_model.pdf)
+- Database [diagram](https://github.com/jrnn/sholdr/blob/master/docs/db_model.pdf) and [schema](https://github.com/jrnn/sholdr/blob/master/docs/schema.md)
 - [How to install](https://github.com/jrnn/sholdr/blob/master/docs/installation.md)
 - [How to use](https://github.com/jrnn/sholdr/blob/master/docs/manual.md)
 - [Few words on technology etc.](https://github.com/jrnn/sholdr/blob/master/docs/specification.md)

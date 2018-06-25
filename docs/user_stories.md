@@ -32,11 +32,10 @@ As admin, I ...
   ```
 - can further bundle two or more share certificates into one, provided that the
   resultant certificate also forms an uninterrupted sequence
-  - Note : currently can only be done "indirectly" by first canceling the
-    certificates and then bundling their shares into a new certificate
 - can split up one share certificate into several
-  - Note : currently can only be done "indirectly" by first canceling the
-    certificate and then bundling its shares into several new certificates
+  - Note : The above two user stories currently can only be done "indirectly" by
+    first canceling the certificate(s) in question, and then bundling their
+    shares into one or more new certificates
 - record transactions where a share certificate moves from the ownership of one
   shareholder to another for some price
 - can see the composition of a certificate's shares broken down by class
@@ -53,8 +52,8 @@ As admin, I ...
       GROUP BY name
   ;
   ```
-- can view lists of all (1) shareholders, (2) shares, (3) share certificates,
-  (4) transactions, and (5) share classes, with sorting and filtering controls
+- can view lists of all (1) shareholders, (2) share certificates, (3) share
+  classes, and (4) transactions, with sorting and filtering controls
 - can see the full ownership and transaction history of any individual share
   certificate or shareholder
   ```sql
@@ -97,6 +96,24 @@ As admin, I ...
             ) _s
   ;
   ```
+- can see how many votes a certain certificate translates into given the class
+  composition of its constituent shares
+  ```sql
+  SELECT c.id, c.first_share, c.last_share, c.share_count,
+         _s.votes
+      FROM certificate c
+      JOIN ( SELECT cs.certificate_id AS _id,
+                    SUM(sc.votes) AS votes
+             FROM certificate_share cs
+             JOIN share s ON s.id = cs.share_id
+             JOIN share_class sc ON sc.id = s.share_class_id
+             GROUP BY _id
+           ) _s
+      ON c.id = _s._id
+      WHERE c.canceled_on IS NULL
+      ORDER BY c.first_share ASC
+  ;
+  ```
 
 As basic user, I ...
 - can view and update my basic information
@@ -136,6 +153,25 @@ As admin, I ...
   each certificate translates to based on the classification of its shares
 - can see a list of only those shareholders who own at least one share of a
   certain share class
+  ```sql
+  SELECT sh.id, _sh.name
+      FROM shareholder sh
+      JOIN ( SELECT id AS _id, name
+             FROM juridical_person
+             UNION SELECT id, last_name || ', ' || first_name
+             FROM natural_person
+           ) _sh
+      ON sh.id = _sh._id
+      WHERE id IN (
+          SELECT owner_id
+              FROM certificate c
+              JOIN certificate_share cs ON c.id = cs.certificate_id
+              JOIN share s ON s.id = cs.share_id
+              JOIN share_class sc ON sc.id = s.share_class_id
+              WHERE sc.id = :id
+      ) _s
+  ;
+  ```
 - can override the share class of all shares when bundling them into a
   certificate
 - can track login and logout events
