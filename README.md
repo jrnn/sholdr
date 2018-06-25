@@ -46,12 +46,12 @@ It runs on Heroku
 -----------------
 Click [here](https://sholdr.herokuapp.com/) to see sholdr (demo) in action.
 Log in as admin:
-        ```
-        email : celery@man.io
-        password : Qwerty_123
-        ```
+```
+email : celery@man.io
+password : Qwerty_123
+```
 Log in as basic user:
-        ```
-        email : chuck@norr.is
-        password : Qwerty_123
-        ```
+```
+email : chuck@norr.is
+password : Qwerty_123
+```
