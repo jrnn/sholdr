@@ -24,23 +24,34 @@ Description
     split up or merged, share classification can be changed e.g. in conjunction
     with transactions, and so on.
 
+Disclaimer
+----------
+- sholdr is an exercise project. It is **NOT** intended for "real use", for
+  numerous reasons: non-GDPR compliance, naively wasteful data model, zero
+  automatic testing... just to name a few.
+- If you are looking for a shareholder registry application, turn around right
+  now and move on to real, production-grade options.
+- If you for whatever inexplicable reason decide to use sholdr for anything, you
+  do so at your own personal risk, expense, liability, and headache.
+
 Documentation
 -------------
-- [Manual](https://github.com/jrnn/sholdr/blob/master/docs/manual.md)
-- [User stories](https://github.com/jrnn/sholdr/blob/master/docs/user_stories.md)
+- [Requirements](https://github.com/jrnn/sholdr/blob/master/docs/user_stories.md)
 - [Database diagram](https://github.com/jrnn/sholdr/blob/master/docs/db_model.pdf)
-- [Sorry excuse of a spec](https://github.com/jrnn/sholdr/blob/master/docs/specification.md)
+- [How to install](https://github.com/jrnn/sholdr/blob/master/docs/installation.md)
+- [How to use](https://github.com/jrnn/sholdr/blob/master/docs/manual.md)
+- [Few words on technology etc.](https://github.com/jrnn/sholdr/blob/master/docs/specification.md)
 
 It runs on Heroku
 -----------------
-Click [here](https://sholdr.herokuapp.com/) to see sholdr in action.
+Click [here](https://sholdr.herokuapp.com/) to see sholdr (demo) in action.
 Log in as admin:
-```
-email : celery@man.io
-password : Qwerty_123
-```
+        ```
+        email : celery@man.io
+        password : Qwerty_123
+        ```
 Log in as basic user:
-```
-email : chuck@norr.is
-password : Qwerty_123
-```
+        ```
+        email : chuck@norr.is
+        password : Qwerty_123
+        ```

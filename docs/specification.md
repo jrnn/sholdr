@@ -1,5 +1,5 @@
-Some kind of specification or guidelines or whatever ...
---------------------------------------------------------
+Briefly on development choices and dependencies
+-----------------------------------------------
 
 ### Architecture
 - sholdr is a simple webapp built on Python Flask framework, following the
@@ -7,13 +7,11 @@ Some kind of specification or guidelines or whatever ...
   and returns a full HTML page on each request.
 
 ### Code organization
-- It should be obvious from looking at the repository subfolders, that the code
-  follows a functional structure where modules are organized by what they do.
-- Models are grouped in one directory, view blueprints in another, HTML
+- The code follows a functional structure where modules are organized by what
+  they do. Models are grouped in one directory, view blueprints in another, HTML
   templates in yet another, etc.
 - On the subfolder level, code is mostly (but not always) arranged according to
   which database entity it deals with.
-- The only reason for this kind of layout is personal preference ...
 
 ### Configuration
 - There is little difference between production vs. development configurations.
@@ -32,18 +30,17 @@ Some kind of specification or guidelines or whatever ...
   the application via static methods.
 
 ### DTO / validation
-- Data transfer and validation between the model layer and users' greasy fingers
-  is handled exclusively with [flask-WTF](https://github.com/lepture/flask-wtf).
+- Data transfer and validation between the model layer and users' fingers is
+  handled exclusively with [flask-WTF](https://github.com/lepture/flask-wtf).
 - Though WTForms ships with a nice set of validators, almost all forms make use
-  of one or more custom/tweaked validator classes. (Such a special snowflake!)
+  of one or more custom/tweaked validator classes.
 
 ### Optimization
 - Most DB queries can be quite heavyweight, especially when shares start
-  numbering in hundreds of thousands or millions.
-- Hence, enter [flask-Caching](https://github.com/sh4nks/flask-caching).
+  numbering in hundreds of thousands or millions. Hence, enter [flask-Caching](https://github.com/sh4nks/flask-caching).
 - Caching is not tied to controller endpoints, because this can cause awkward
   side effects such as inadvertently caching flashed messages; instead, caching
-  is for most part applied to methods that handle DB queries.
+  is for most part applied to model class methods that handle DB queries.
 - Entire cache is flushed whenever there's an INSERT, UPDATE, or DELETE query.
 
 ### Security
@@ -53,10 +50,9 @@ Some kind of specification or guidelines or whatever ...
 - CSRF tokens off-the-shelf with [flask-WTF](https://github.com/lepture/flask-wtf).
 
 ### Testing
-- There is none...
-- sholdr was never intended for "real use", just for getting acquainted with
-  Flask. So, no point in investing time and effort here.
+- There is none... sholdr was never meant for "real use", just for getting
+  acquainted with Flask. So, no time and effort was put into tests.
 
 ### UI and sugarcoating
-- [Bootstrap](https://github.com/twbs/bootstrap) out-of-the-box!
-- [DataTables](https://github.com/DataTables/DataTables) as well
+- [Bootstrap](https://github.com/twbs/bootstrap) out-of-the-box.
+- [DataTables](https://github.com/DataTables/DataTables) out-of-the-box.
