@@ -31,7 +31,7 @@ As admin, I ...
   ;
   ```
 - can further bundle two or more share certificates into one, provided that the
-  resultant certificate also forms and uninterrupted sequence
+  resultant certificate also forms an uninterrupted sequence
   - Note : currently can only be done "indirectly" by first canceling the
     certificates and then bundling their shares into a new certificate
 - can split up one share certificate into several

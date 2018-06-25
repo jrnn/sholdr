@@ -25,25 +25,33 @@ Assumption is you're on Linux. If not, you'll have to figure this out yourself.
 
         python3 run.py
 
-7. Open http://127.0.0.1:5000/ in a browser.
+7. Open http://127.0.0.1:5000/ in a browser. For the initial login, a dummy user
+   is created as follows:
 
-### On Heroku
-0. Have sholdr running locally, as advised above.
-1. Make sure you have Heroku account and Heroku CLI installed, e.g. check:
+        celery@man.io
+        Qwerty_123
+
+### On Heroku (one-off deployment)
+1. Clone sholdr and see that it runs locally, as advised above.
+2. Make sure you have a Heroku account and Heroku CLI installed, e.g. check:
 
         heroku --version
 
-2. Make sure you're in the project's root folder (see above).
-3. Create heroku app:
+3. Make sure you're in the project's root folder (see above).
+4. Create heroku app:
 
         heroku create unique-app-name-goes-here
 
-   ...where, obviously, you pick whatever app name you like.
-4. Add Heroku Postgres (free hobby-dev plan):
+   ...where, obviously, you pick whatever app name you like. Confirm that a
+   remote named 'heroku' is now set:
+
+        git remote -v
+
+5. Add Heroku Postgres (free hobby-dev plan):
 
         heroku addons:add heroku-postgresql:hobby-dev
 
-5. Set environment variables:
+6. Set environment variables:
    - 'HEROKU' = 1. This is only to let the app know it's running on Heroku.
    - 'SECRET_KEY' = ... Use whatever random sequence of characters and numbers
      you like. For instance, generate a UUID.
@@ -55,16 +63,8 @@ Assumption is you're on Linux. If not, you'll have to figure this out yourself.
         heroku config:set SECRET_KEY=RandomSequenceOfCharsAndNumb3r5
         heroku config:set MAX_SHARES=666
         ```
-6. Deploy project to heroku:
+7. Deploy project to heroku:
 
-        git remote add heroku https://git.heroku.com/unique-app-name-goes-here.git
-        git add .
-        git commit -m "hello heroku"
         git push heroku master
 
-7. Application should now run in https://unique-app-name-goes-here.herokuapp.com/
-8. If you want to develop sholdr (i.e. will do changes to the source code), it's
-   a good idea to enable Heroku—GitHub integration and automatic deployments, as
-   per Heroku's [excellent instructions](https://devcenter.heroku.com/articles/github-integration)
-9. Though there's a .travis.yml, disregard it. Since there's zero tests, no
-   point in hooking up CI.
+8. Application should now run in https://unique-app-name-goes-here.herokuapp.com/
