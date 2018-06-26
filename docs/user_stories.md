@@ -162,13 +162,13 @@ As admin, I ...
              FROM natural_person
            ) _sh
       ON sh.id = _sh._id
-      WHERE id IN (
+      WHERE sh.id IN (
           SELECT owner_id
               FROM certificate c
               JOIN certificate_share cs ON c.id = cs.certificate_id
               JOIN share s ON s.id = cs.share_id
               JOIN share_class sc ON sc.id = s.share_class_id
-              WHERE sc.id = :id
+              WHERE sc.id = :id AND c.canceled_on IS NULL
       ) _s
   ;
   ```
